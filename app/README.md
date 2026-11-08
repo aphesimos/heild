@@ -17,6 +17,8 @@ npm run dev          # Storybook em http://localhost:6006
 npm run app          # a plataforma montada, fora do Storybook (Vite)
 npm run typecheck    # TypeScript
 npm run build-storybook
+npm run site         # o site e as landing pages (Vite, site.html)
+npm run build:site   # build estático do site
 ```
 
 No Storybook, a barra de cima tem dois seletores: **Tema** (o escritório, marca
