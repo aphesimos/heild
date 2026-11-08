@@ -13,7 +13,7 @@ const { chromium } = require('playwright');
   const cab = await p.locator('header').filter({ hasText: 'fila:' }).first().innerText(); console.log('   cabeçalho:', cab.replace(/\n/g, ' | '));
   // Assistente: pedido completo
   await aba('Assistente');
-  await p.getByRole('button', { name: /Feche outubro da Metalúrgica/ }).click();
+  { const ab = p.getByRole('button', { name: 'Abrir sugestões' }); if (await ab.count()) { await ab.click(); await p.waitForTimeout(350) } } await p.getByRole('button', { name: /Feche outubro da Metalúrgica/ }).click();
   ok(await espera(async () => (await p.getByText(/Contábil está fazendo: Fechar outubro/).count()) > 0, 15000), 'trabalho do Contábil aparece no chat do Assistente'); await shot('2-contabil-fazendo');
   ok(await espera(async () => (await p.getByText(/Contábil devolveu ao Assistente/).count()) > 0, 25000), 'Contábil devolve ao Assistente');
   ok(await p.getByText(/Contábil fez: Fechar outubro/).count() > 0, 'cartão do Contábil fica concluído');
@@ -27,7 +27,7 @@ const { chromium } = require('playwright');
   await p.screenshot({ path: `${out}/orq-4-fim-inteiro.png`, fullPage: true });
   // Pergunta jurídica
   await p.getByRole('button', { name: 'Nova conversa' }).click(); await p.waitForTimeout(500);
-  await p.getByRole('button', { name: /fator R em 2027/ }).click();
+  { const ab = p.getByRole('button', { name: 'Abrir sugestões' }); if (await ab.count()) { await ab.click(); await p.waitForTimeout(350) } } await p.getByRole('button', { name: /fator R em 2027/ }).click();
   ok(await espera(async () => (await p.getByText(/Consultor está fazendo/).count()) > 0, 15000), 'Consultor trabalha (cascata)'); await shot('5-consultor');
   ok(await espera(async () => (await p.getByText('Trechos citados').count()) > 0, 50000), 'resposta jurídica no modelo');
   await p.waitForTimeout(1000);
