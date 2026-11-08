@@ -7,7 +7,7 @@ const { chromium } = require('playwright');
   await p.goto('http://localhost:6100/'); await p.waitForTimeout(800);
   await p.getByRole('button', { name: /Fernanda Lima/ }).first().click(); await p.getByRole('button', { name: 'Entrar', exact: true }).click(); await p.waitForTimeout(400); await p.getByLabel('Código').fill('123456'); await p.getByRole('button', { name: 'Confirmar' }).click(); await p.waitForTimeout(1200);
   // Assistente
-  await p.getByRole('button', { name: /Feche outubro da Metalúrgica/ }).click(); await p.waitForTimeout(800); await shot('1-pensando');
+  { const ab = p.getByRole('button', { name: 'Abrir sugestões' }); if (await ab.count()) { await ab.click(); await p.waitForTimeout(350) } } await p.getByRole('button', { name: /Feche outubro da Metalúrgica/ }).click(); await p.waitForTimeout(800); await shot('1-pensando');
   await p.waitForTimeout(6000); await shot('2-passando'); ok(await p.getByText(/Passando para|passou para/).count() > 0, 'Assistente: passagem animada');
   await p.waitForTimeout(3000); await shot('3-andamento'); ok(await p.getByText(/Contábil está fazendo/).count() > 0, 'Assistente mostra o trabalho em andamento no próprio chat');
   // DP sugestão

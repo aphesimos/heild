@@ -3,7 +3,7 @@ const { chromium } = require('playwright');
   const ok = (r, m) => console.log((r ? 'ok   ' : 'FALHA') + ' ' + m);
   await p.goto('http://localhost:6100/'); await p.waitForTimeout(800);
   await p.getByRole('button', { name: /Fernanda Lima/ }).first().click(); await p.getByRole('button', { name: 'Entrar', exact: true }).click(); await p.waitForTimeout(400); await p.getByLabel('Código').fill('123456'); await p.getByRole('button', { name: 'Confirmar' }).click(); await p.waitForTimeout(1200);
-  await p.getByRole('button', { name: /Feche outubro da Metalúrgica/ }).click();
+  { const ab = p.getByRole('button', { name: 'Abrir sugestões' }); if (await ab.count()) { await ab.click(); await p.waitForTimeout(350) } } await p.getByRole('button', { name: /Feche outubro da Metalúrgica/ }).click();
   await p.waitForTimeout(1200); ok(await p.getByText(/pensando/).count() > 0, 'pensando antes de escrever');
   const final = 'Dividi em duas partes: o Contábil concilia e gera o balancete; depois o Fiscal apura o ISS e o PIS/COFINS. Vou acompanhando aqui.';
   await p.waitForTimeout(1900);

@@ -1,4 +1,4 @@
-import { LifebuoyIcon, QuestionIcon, ScalesIcon, SparkleIcon } from '@phosphor-icons/react'
+import { CaretDownIcon, LifebuoyIcon, QuestionIcon, ScalesIcon, SparkleIcon } from '@phosphor-icons/react'
 import { useLoja } from '@/ambiente/loja'
 import { pedidosAssistente, respostasProntas } from '@/dados/simulacao'
 import type { Anexo } from '@/dados/tipos'
@@ -16,6 +16,7 @@ import { Tooltip } from '@/components/ui/tooltip'
 import type { Aviso, Integrante, LimiteUso } from '@/dados/tipos'
 import { useMedia } from '@/hooks/useMedia'
 import { useTema } from '@/theme/ThemeProvider'
+import { cn } from '@/lib/utils'
 import { ListaMensagens } from './ListaMensagens'
 import { mensagensComTime, pedirAoTime } from './pedidoAoTime'
 import type { useHistorico } from './useHistorico'
@@ -44,6 +45,8 @@ interface Props {
 export function AssistenteTela({ contexto, conversa, sugestoes, avisos, limites, plano, onAbrirIntegrante, onVerAvisos, onVerNaAba, pedidos: soEstes }: Props) {
   const pedidosVisiveis = soEstes ? pedidosAssistente.filter((p) => soEstes.includes(p.texto)) : pedidosAssistente
   const [ajuda, setAjuda] = useState(false)
+  // Na demonstração os pedidos de fluxo são muitos: começam recolhidos atrás de "Abrir sugestões".
+  const [abertas, setAbertas] = useState(false)
   const { integrante } = useTema()
   const geral = integrante('geral')
   const largo = useMedia('(min-width: 640px)')
@@ -89,7 +92,20 @@ export function AssistenteTela({ contexto, conversa, sugestoes, avisos, limites,
                 </button>
               ))}
             </div>
-            <div className="flex w-full max-w-xl flex-col items-center gap-2">
+            {pedidosVisiveis.length > 0 && (
+              <button
+                type="button"
+                aria-expanded={abertas}
+                aria-controls="sugestoes-fluxos"
+                onClick={() => setAbertas((v) => !v)}
+                className="text-muted-foreground hover:text-foreground -my-2 flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs transition-colors"
+              >
+                {abertas ? 'Fechar sugestões' : 'Abrir sugestões'}
+                <CaretDownIcon className={cn('size-3.5 transition-transform duration-300', abertas && 'rotate-180')} />
+              </button>
+            )}
+            <div id="sugestoes-fluxos" inert={!abertas} aria-hidden={!abertas} className={cn('grid w-full max-w-xl transition-[grid-template-rows,opacity] duration-300 ease-out', abertas ? 'grid-rows-[1fr] opacity-100' : '-mt-6 grid-rows-[0fr] opacity-0 sm:-mt-8')}>
+            <div className="flex min-h-0 flex-col items-center gap-2 overflow-hidden">
               <span className="text-muted-foreground text-xs">Peça ao time (o pedido vira trabalho entre os integrantes)</span>
               <div className="flex flex-wrap justify-center gap-2">
                 {pedidosVisiveis
@@ -121,6 +137,7 @@ export function AssistenteTela({ contexto, conversa, sugestoes, avisos, limites,
                     </button>
                   ))}
               </div>
+            </div>
             </div>
             {avisos.length > 0 && (
               <section className="flex w-full max-w-xl flex-col gap-2">
