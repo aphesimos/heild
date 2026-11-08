@@ -25,10 +25,11 @@ O protótipo e o site ficam em `app/`, nos branches `prototipo` e `site`.
 ```bash
 cd app
 npm install
-npm run dev                                   # o sistema (protótipo)
-npx vite -c vite.site.config.ts               # o site
-npx vite build -c vite.site.config.ts         # build do site
-npx tsc --noEmit -p tsconfig.app.json         # checagem de tipos
+npm run app                                   # o sistema (protótipo), em Vite
+npm run dev                                   # o Storybook dos componentes (porta 6006)
+npm run typecheck                             # checagem de tipos
+npm run site                                  # o site (só no branch site)
+npm run build:site                            # build estático do site (só no branch site)
 ```
 
 Os testes de ponta a ponta ficam em `app/scripts/*.cjs` (Playwright). Cada um recebe uma pasta para as capturas e espera o app servido numa porta: o protótipo em `http://localhost:6100/` e o site em `http://localhost:6101/` (ver o comentário no topo de cada script).
