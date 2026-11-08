@@ -708,3 +708,10 @@ html:has(.barra-rolagem)::-webkit-scrollbar {
     scrollbar-width: thin;
   }
 }
+
+/* A fila do time da demonstração rola de lado no celular: as pontas esmaecem para mostrar que há mais. */
+@media (max-width: 639px) {
+  .fila-time {
+    mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 32px), transparent);
+  }
+}

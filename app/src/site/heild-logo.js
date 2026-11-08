@@ -9,7 +9,10 @@
  * Formas (window.Heild.animations): centralizar (grade 3x3), contabil (barras), juridico (=), bpo (check),
  * ia (asterisco que gira), atendimento (3 pontos que pulam), orb (o I vira a esfera), financeiro ($),
  * tempo (ampulheta que vira), arquivos (pasta), conversa (balão de fala), celular (aparelho com botão),
- * painel (grade bento), lupa (lente com cabo, varre) e equipe (três pessoas que acenam).
+ * painel (grade bento), lupa (lente com cabo, varre), equipe (três pessoas que acenam) e orbs (o I vira o orb,
+ * que se divide como uma célula em três orbs com olhos e vida própria; na volta elas se fundem de novo).
+ * No morph, orb e orbs abrem os olhos ao chegar e os mantêm em loop enquanto forem o alvo; ao sair, os olhos
+ * fecham antes de recolher e as filhas voltam a se fundir.
  */
 (function () {
   'use strict';
@@ -59,6 +62,27 @@
   /* equipe: três pessoas (cabeça + ombros), a do meio um pouco à frente e acima */
   var EQ = [cap(CX, CY - 110, U, U), cap(CX, CY + 10, U, 190, 90), cap(CX - 200, CY - 10, U, U), cap(CX - 200, CY + 110, U, 170, 90), cap(CX + 200, CY - 10, U, U), cap(CX + 200, CY + 110, U, 170, 90)];
 
+  /* mitose dos orbs. Mãe = o orb (H×H). Fase 1: a mãe estica em amendoim, estrangula e solta A e M2;
+     fase 2 (em cascata): M2 faz o mesmo e solta B e C. Em cada fase as duas filhas partem do mesmo círculo:
+     a distância cresce devagar até o estrangulamento (com o goo, o pescoço afina) e então estala para fora
+     com um leve passar do ponto; o tamanho encolhe junto. u: 0 (mãe inteira) .. 1 (três filhas soltas). */
+  var MIT_M = cap(CX, CY, H, H), MIT_A = cap(CX - 190, CY + 25, 230, 230), MIT_M2 = cap(CX + 120, CY, 250, 250),
+    MIT_B = cap(CX + 75, CY - 70, 170, 170), MIT_C = cap(CX + 230, CY + 75, 150, 150);
+  var ORBS_DIV = 1600, ORBS_FUSE = 1200, ORBS_HOLD = 5400;
+  function mitK(t) { return t < .7 ? .76 * inOut(t / .7) : .76 + .24 * outBack((t - .7) / .3, 1.4); }
+  function mitMix(P, Q, t) { var k = mitK(t), z = inOut(t); return cap(lerp(P.x, Q.x, k), lerp(P.y, Q.y, k), lerp(P.T, Q.T, z), lerp(P.L, Q.L, z)); }
+  function mitose(u) {
+    var t1 = clamp(u / .58), t2 = clamp((u - .42) / .58), a = mitMix(MIT_M, MIT_A, t1), m2 = mitMix(MIT_M, MIT_M2, t1);
+    return [a, mitMix(m2, MIT_B, t2), mitMix(m2, MIT_C, t2)];
+  }
+  /* goo da mitose: forte enquanto alguma fase está no meio (é ele que desenha o amendoim e o pescoço) */
+  function mitGoo(u) {
+    var g = function (t) { return t <= 0 || t >= 1 ? 0 : Math.min(1, t / .08, (1 - t) / .12); };
+    return 18 * Math.max(g(clamp(u / .58)), g(clamp((u - .42) / .58)));
+  }
+  /* no play(): divide, vive, funde de volta (u volta a 0 e a mãe vira o I no BACK) */
+  function orbsU(p) { var ms = p * ORBS_HOLD; return ms < ORBS_DIV ? ms / ORBS_DIV : ms > ORBS_HOLD - ORBS_FUSE ? (ORBS_HOLD - ms) / ORBS_FUSE : 1; }
+
   /* ---------- uma forma por tema: só cápsulas e círculos de 96 ---------- */
   var ANIMS = {
     centralizar: { label: 'Centralizar', caps: grid9(), order: [4, 1, 3, 5, 7, 0, 2, 6, 8], hold: 1900 },
@@ -69,7 +93,7 @@
       holdFx: function (c, i, p) { var o = {}; for (var k in c) o[k] = c[k]; o.r = c.r + 60 * inOut(clamp((p - .15) / .7)); return o; } },
     atendimento: { label: 'Atendimento', caps: [cap(CX - STEP, CY, U, U), cap(CX, CY, U, U), cap(CX + STEP, CY, U, U)], order: [1, 0, 2], hold: 2300,
       holdFx: function (c, i, p, ms) { var o = {}; for (var k in c) o[k] = c[k]; o.y = c.y - 46 * Math.sin(Math.PI * p) * Math.max(0, Math.sin(ms / 640 * Math.PI * 2 - i * .9)); return o; } },
-    orb: { label: 'Orb', caps: [cap(CX, CY, H, H)], order: [0], hold: 3700, orb: true },
+    orb: { label: 'Orb', caps: [cap(CX, CY, H, H)], order: [0], hold: 3700, orb: true, eyes: [{ ci: 0, life: lifeOrb }] },
     tempo: { label: 'Tempo', caps: AMP, order: [2, 3, 0, 1], hold: 2200,
       holdFx: function (c, i, p) { return turn(AMP, 180 * inOut(clamp((p - .2) / .6)))[i]; } },
     arquivos: { label: 'Arquivos', caps: [s(-170, -R, -170, R), s(-170, R, 170, R), s(170, R, 170, -R + 72), s(170, -R + 72, -10, -R + 72), s(-10, -R + 72, -60, -R), s(-60, -R, -170, -R)], order: [0, 1, 5, 2, 4, 3] },
@@ -80,14 +104,20 @@
     lupa: { label: 'Lupa', caps: LUPA, order: [8, 0, 1, 7, 2, 6, 3, 5, 4], hold: 2200,
       holdFx: function (c, i, p, ms) { var o = copy(c), e = Math.sin(Math.PI * p), w = ms / 1500 * Math.PI * 2; o.x = c.x + 10 * Math.sin(w) * e; o.y = c.y + 6 * (1 - Math.cos(w)) * e; return o; } },
     equipe: { label: 'Equipe', caps: EQ, order: [0, 1, 2, 4, 3, 5], hold: 2200,
-      holdFx: function (c, i, p, ms) { var o = copy(c), who = [1, 1, 0, 0, 2, 2][i]; o.y = c.y - 14 * Math.sin(Math.PI * p) * Math.max(0, Math.sin(ms / 700 * Math.PI * 2 - who * 1.1)); return o; } }
+      holdFx: function (c, i, p, ms) { var o = copy(c), who = [1, 1, 0, 0, 2, 2][i]; o.y = c.y - 14 * Math.sin(Math.PI * p) * Math.max(0, Math.sin(ms / 700 * Math.PI * 2 - who * 1.1)); return o; } },
+    /* orbs: o I vira o orb e se divide como uma célula (1 → 2 → 3); cada filha ganha vida própria nos olhos
+       (errante, giro de 360°, deriva) e na volta elas se fundem de novo na mãe, que vira o I */
+    orbs: { label: 'Orbs', caps: [MIT_M, MIT_M, MIT_M], order: [0, 1, 2], hold: ORBS_HOLD, split: mitose, eyeWin: [ORBS_DIV, ORBS_HOLD - ORBS_FUSE],
+      holdFx: function (c, i, p) { return mitose(orbsU(p))[i]; },
+      eyes: [{ ci: 0, life: lifeWander }, { ci: 1, life: lifeSpin }, { ci: 2, life: lifeDrift }] }
   };
   var CYCLE_ORDER = ['centralizar', 'orb', 'contabil', 'juridico', 'bpo', 'ia', 'atendimento'];
   Object.keys(ANIMS).forEach(function (k) {
     var a = ANIMS[k], m = 0;
     a.hold = a.hold || 1600;
     a.rank = []; a.order.forEach(function (ci, n) { a.rank[ci] = n; });
-    a.caps.forEach(function (c) { var ext = Math.abs(Math.sin(c.r * Math.PI / 180)) * (c.L - c.T) / 2 + c.T / 2; m = Math.max(m, Math.abs(c.x - CX) + ext); });
+    a.eyeCaps = a.split ? a.split(1) : a.caps; // onde os olhos ficam quando a forma está completa
+    a.eyeCaps.forEach(function (c) { var ext = Math.abs(Math.sin(c.r * Math.PI / 180)) * (c.L - c.T) / 2 + c.T / 2; m = Math.max(m, Math.abs(c.x - CX) + ext); });
     a.shift = Math.max(0, m - PW / 2);
     a.endHold = a.caps.map(function (c, i) { var e = a.holdFx ? a.holdFx(c, i, 1, a.hold) : c, o = {}; for (var k2 in e) o[k2] = e[k2]; o.r = norm(o.r); return o; });
   });
@@ -128,7 +158,77 @@
   function radius(x, th) { return 1 + x[0] * Math.cos(2 * th) + x[1] * Math.sin(2 * th) + x[2] * Math.cos(3 * th) + x[3] * Math.sin(3 * th) + x[4] * Math.cos(4 * th) + x[5] * Math.sin(4 * th); }
   var ORB_REST = [.32, .26];
   var ORB_LOOK = [[0, ORB_REST], [650, [-.74, .22]], [1850, [.7, -.3]], [2950, ORB_REST]];
-  var ORB_BLINKS = [420, 1500, 2600];
+  var ORB_BLINKS = [420, 1500, 2600], ORB_P = 3700; // ORB_P: o ciclo do olhar em loop (começa e termina no repouso)
+  /* olhar: mola de yaw/pitch rumo ao ponto da linha do tempo `t`; `sg` espelha o lado */
+  function lookStep(st, t, dt, sg) {
+    var tg = ORB_LOOK[0][1]; ORB_LOOK.forEach(function (l) { if (t >= l[0]) tg = l[1]; });
+    var n = Math.ceil(dt * 120), h = n ? dt / n : 0;
+    for (var k = 0; k < n; k++) {
+      st.vy += (sg * tg[0] - st.yaw) * 95 * h; st.vy *= Math.exp(-11 * h); st.yaw += st.vy * h;
+      st.vp += (tg[1] - st.pitch) * 95 * h; st.vp *= Math.exp(-11 * h); st.pitch += st.vp * h;
+    }
+  }
+  function lookTo(st, tg, dt) {
+    var n = Math.ceil(dt * 120), h = n ? dt / n : 0;
+    for (var k = 0; k < n; k++) {
+      st.vy += (tg[0] - st.yaw) * 95 * h; st.vy *= Math.exp(-11 * h); st.yaw += st.vy * h;
+      st.vp += (tg[1] - st.pitch) * 95 * h; st.vp *= Math.exp(-11 * h); st.pitch += st.vp * h;
+    }
+  }
+  function blinkEvery(t, period, offs) { var tm = t % period, sq = 1; offs.forEach(function (b) { var q = (tm - b) / 150; if (q >= 0 && q < 1) sq = 1 - Math.sin(q * Math.PI) * .94; }); return sq; }
+  function hash(n) { var x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  function init(st, sg) { if (st.yaw === undefined) { var r = lookRest(sg); for (var k in r) st[k] = r[k]; } }
+  /* vidas dos olhos: (estado, ms desde que abriram, dt) → { yaw, pitch, sq (abertura), es (tamanho) }.
+     Todas são contínuas no tempo, então o loop nunca salta. */
+  function lifeOrb(st, t, dt) { init(st, 1); var tc = t % ORB_P; lookStep(st, tc, dt, 1); return { yaw: st.yaw, pitch: st.pitch, sq: blink(tc), es: 1 }; }
+  // errante: alvo novo a cada 1,25 s, por mola; os olhos crescem um pouco quando ela "vê" o alvo
+  function lifeWander(st, t, dt) {
+    init(st, -1); var n = Math.floor(t / 1250);
+    lookTo(st, [(hash(n) - .5) * 1.5, (hash(n + 50) - .5) * .7], dt);
+    return { yaw: st.yaw, pitch: st.pitch, sq: blinkEvery(t, 3300, [900, 2600, 2780]), es: 1 + (hash(n + 9) > .4 ? .22 : .06) * Math.sin(Math.PI * clamp((t - n * 1250) / 520)) };
+  }
+  // giro: a cada 4,8 s o olhar dá a volta inteira no corpo (some atrás e volta pelo outro lado)
+  function lifeSpin(st, t) {
+    var k = inOut(clamp((t % 4800 - 1500) / 1500));
+    return { yaw: .3 + TAU * k, pitch: .2 - .14 * Math.sin(Math.PI * k), sq: blinkEvery(t, 4300, [500, 3700]), es: 1 };
+  }
+  // deriva: olhar lento e contínuo, em dois ritmos que não se repetem juntos, e olhos que respiram
+  function lifeDrift(st, t) {
+    return { yaw: -.25 + .55 * Math.sin(TAU * t / 6300), pitch: .08 + .26 * Math.sin(TAU * t / 4700 + 1.3), sq: blinkEvery(t, 3900, [2000, 3550]), es: 1 + .12 * Math.sin(TAU * t / 2700) };
+  }
+  function lookRest(sg) { return { yaw: sg * ORB_REST[0], pitch: ORB_REST[1], vy: 0, vp: 0 }; }
+  function blink(t) { var sq = 1; ORB_BLINKS.forEach(function (b) { var q = (t - b) / 150; if (q >= 0 && q < 1) sq = 1 - Math.sin(q * Math.PI) * .94; }); return sq; }
+  /* gelatina: integra as 6 harmônicas do contorno (impulso dado por jellyKick) */
+  function jellyStep(st, dt) {
+    var n = Math.ceil(dt * 120), h = n ? dt / n : 0, w = lerp(26, 15, .6), D = lerp(11, 3.6, .6), i, k, kk;
+    for (k = 0; k < n; k++) for (i = 0; i < 6; i++) { kk = i > 1 ? w * 1.35 : w; st.jv[i] += (-kk * kk * st.jx[i] - D * st.jv[i]) * h; st.jx[i] = Math.max(-.3, Math.min(.3, st.jx[i] + st.jv[i] * h)); }
+    var e = 0; for (i = 0; i < 6; i++) e += Math.abs(st.jx[i]) + Math.abs(st.jv[i]) * .02;
+    return e;
+  }
+  function jellyKick(st) { st.jx = [0, 0, 0, 0, 0, 0]; st.jv = [2.2 * .6 * 1.4, 0, .5, 0, 0, -.4]; } // impulso de chegada (jelly 0.6)
+  /* contorno deformado do orb de centro (cx, cy) e raio R; o fundo continua apoiado na base */
+  function jellyBody(cx, cy, R, x) {
+    var P = function (u, v) { return (cx + u * R).toFixed(2) + ' ' + (cy + v * R).toFixed(2); };
+    var rr = [], maxY = -9, th, d = '', i;
+    for (i = 0; i < 72; i++) { th = i / 72 * TAU; var r0 = radius(x, th); rr.push(r0); maxY = Math.max(maxY, Math.sin(th) * r0); }
+    var shift = 1 - maxY, flat = Math.max(0, Math.min(.25, x[0])) * .9, fy = 1 - flat;
+    for (i = 0; i < 72; i++) { th = i / 72 * TAU; var py = Math.sin(th) * rr[i] + shift; if (flat > 0 && py > fy) py = fy + (py - fy) * .25; d += (i ? 'L' : 'M') + P(Math.cos(th) * rr[i], py); }
+    return { d: d + 'Z', warp: { sh: shift, x: x } };
+  }
+  /* os dois olhos recortados de um orb de centro (cx, cy) e raio R: [[d, visibilidade], [d, visibilidade]] */
+  function eyePaths(cx, cy, R, yaw, pitch, sq, warp, es) {
+    es = es || 1;
+    var Fr = frame(yaw, pitch), P = function (u, v) { return (cx + u * R).toFixed(2) + ' ' + (cy + v * R).toFixed(2); };
+    return EYES.map(function (ft) {
+      var vis = clamp((proj(ft.c[0] * FACE, ft.c[1] * FACE, Fr)[2] + .12) / .22), ey = ft.c[1], d = '';
+      ft.pts.forEach(function (q, k) {
+        var p = proj((ft.c[0] + (q[0] - ft.c[0]) * es) * FACE, (ey + (q[1] - ey) * sq * es) * FACE, Fr), X = p[0], Y = p[1] + (warp ? warp.sh : 0);
+        if (warp && warp.x) { var r1 = radius(warp.x, Math.atan2(p[1], p[0])); X = p[0] * r1; Y = p[1] * r1 + warp.sh; }
+        d += (k ? 'L' : 'M') + P(X, Y);
+      });
+      return [d + 'Z', vis];
+    });
+  }
 
   /* ---------- o elemento ---------- */
   var NS = 'http://www.w3.org/2000/svg', uid = 0, live = new Set(), raf = 0;
@@ -174,15 +274,18 @@
     }
     stop() { this._anim = null; this._m = null; this._st = null; live.delete(this); this._rest(); return this; }
 
-    /* Leva o I até a forma `name` (sem nome, ou nome desconhecido/orb: volta à pílula), partindo do que
+    /* Leva o I até a forma `name` (sem nome, ou nome desconhecido: volta à pílula), partindo do que
        está desenhado agora: no meio de outra transição, de um play() ou do efeito de repouso. */
     morph(name) {
       if (!this._built) this._build();
-      var a = ANIMS[name]; if (!a || a.orb) { a = null; name = null; }
+      var a = ANIMS[name]; if (!a) { a = null; name = null; }
       if (this._anim) { this._anim = null; if (this._resolve) { var res = this._resolve; this._resolve = null; res(this); } }
       if (RMQ.matches) { // movimento reduzido: vai direto, estático
         this._m = null; this._st = name; live.delete(this);
-        if (a) { this._draw(a.caps, a.shift, 0); this._orbOff(); } else this._rest();
+        if (a) {
+          this._draw(a.eyeCaps, a.shift, 0); this._orbOff();
+          if (a.eyes) { var ps = []; a.eyes.forEach(function (e) { var c = a.eyeCaps[e.ci], o = e.life({}, 0, 0); ps = ps.concat(eyePaths(c.x, c.y, c.T / 2, o.yaw, o.pitch, 1, null, o.es)); }); this._setEyes(ps); }
+        } else this._rest();
         return this;
       }
       var now = performance.now(), m = this._m || (this._m = this._morphInit(now));
@@ -215,7 +318,8 @@
         // volta à pílula como no BACK: mantém o rumo e solta em ordem inversa, de 40 em 40 ms
         S.forEach(function (s, j3) { s.pre = pre[j3]; s.rel = now + (Kp - 1 - oldRank[j3]) * 40; });
       }
-      m.name = name; m.fx = 0; m.ms = 0;
+      if (prev && prev.split && m.su > 0) m.fuseT = now; // as filhas voltam para a mãe: goo para o pescoço se formar
+      m.name = name; m.fx = 0; m.ms = 0; m.su = 0; m.suGo = false;
       return this;
     }
     /* Segue um estado: ligado leva o I à forma `name`; desligado volta à pílula só se `name` for o alvo atual
@@ -233,10 +337,12 @@
         var c = last[j % last.length];
         s.push({ p: [c.x, c.y, c.T, c.L, c.r], v: [0, 0, 0, 0, 0], ci: 0, host: j, pre: capOf(c), rel: 0 });
       }
-      return { name: undefined, s: s, t: now, g0: -1e9, fx: 0, ms: 0, ls: this._lastL || 0, lv: 0, goo: 0 };
+      // eo: abertura dos olhos (0..1); eyeA/eyeSlots: de qual forma e de quais molas são os olhos desenhados
+      return { name: undefined, s: s, t: now, g0: -1e9, fx: 0, ms: 0, ls: this._lastL || 0, lv: 0, goo: 0, eo: 0, eyeA: null, eyeSlots: null, et: 0, lk: null, jel: null, su: 0, suGo: false, fuseT: -1e9 };
     }
     _slotGoal(s, m, a, now) {
       if (now < s.rel) return s.pre;
+      if (a && a.split) return a.split(m.su)[s.ci];
       var c = a ? a.caps[s.ci] : PILL;
       return a && a.holdFx && m.fx > 0 ? a.holdFx(c, s.ci, m.fx, m.ms) : c;
     }
@@ -256,13 +362,20 @@
         spd += Math.hypot(v[0], v[1]) + Math.abs(v[3]) * .5;
         s.g = g.slice();
       }
-      var lt = a ? a.shift : 0;
+      // as letras só fecham quando o I já recolheu: o alvo delas nunca é menor que a largura desenhada agora
+      var lt = a ? a.shift : 0, wx = 0;
+      S.forEach(function (s4) { var q = s4.p, T4 = Math.min(q[2], H), L4 = Math.max(T4, Math.min(q[3], H)); wx = Math.max(wx, Math.abs(q[0] - CX) + Math.abs(Math.sin(q[4] * Math.PI / 180)) * (L4 - T4) / 2 + T4 / 2); });
+      lt = Math.max(lt, wx - PW / 2);
       for (k = 0; k < n; k++) { m.lv += (MK * (lt - m.ls) - MC * m.lv) * h; m.ls += m.lv * h; }
       // efeito de repouso da forma (girar, balançar) entra depois de chegar
       if (a && a.holdFx && all && err < 10) m.fx = clamp(m.fx + dt * 1000 / a.hold);
       if (m.fx > 0) m.ms += dt * 1000;
-      m.goo += (Math.min(11, spd / S.length / 110) - m.goo) * Math.min(1, dt * 12);
-      var done = all && err < .05 && vel < .5 && Math.abs(lt - m.ls) < .05 && Math.abs(m.lv) < .5 && (!a || !a.holdFx || m.fx >= 1);
+      // mitose: começa quando a mãe chegou e corre sozinha até soltar as três filhas
+      if (a && a.split) { if (!m.suGo && all && err < 30) m.suGo = true; if (m.suGo) m.su = Math.min(1, m.su + dt * 1000 / ORBS_DIV); }
+      var gooT = Math.max(Math.min(11, spd / S.length / 110), a && a.split ? mitGoo(m.su) : 0, 16 * clamp(1 - (now - m.fuseT) / 700));
+      m.goo += (gooT - m.goo) * Math.min(1, dt * 12);
+      // forma com olhos não "termina": o olhar e a piscada seguem em loop enquanto ela for o alvo
+      var done = all && err < .05 && vel < .5 && Math.abs(lt - m.ls) < .05 && Math.abs(m.lv) < .5 && (!a || !a.holdFx || m.fx >= 1) && (!a || !a.eyes) && !m.eo;
       if (done) {
         if (!a) { this._m = null; live.delete(this); this._rest(); return; }
         S.forEach(function (s2) { for (var d2 = 0; d2 < 5; d2++) { s2.p[d2] = s2.g[d2]; s2.v[d2] = 0; } });
@@ -273,10 +386,52 @@
         // a que está fundida e coincide com a anfitriã não é desenhada (evita borda dobrada)
         if (s3.host !== j3 && Math.abs(o[0] - hp[0]) < .75 && Math.abs(o[1] - hp[1]) < .75 && Math.abs(o[2] - hp[2]) < .75 &&
             Math.abs(o[3] - hp[3]) < .75 && Math.abs(norm(o[4] - hp[4])) < .5) return null;
-        return { x: o[0], y: o[1], T: o[2], L: o[3], r: o[4] };
+        // nenhuma medida passa da altura das letras (a mola passaria do ponto e o orb/pílula cresceria além dela)
+        var T = Math.min(o[2], H), L = Math.min(o[3], H), ext = Math.min(H / 2, Math.abs(Math.cos(o[4] * Math.PI / 180)) * Math.max(0, L - T) / 2 + T / 2);
+        return { x: o[0], y: Math.max(ext, Math.min(H - ext, o[1])), T: T, L: L, r: o[4] }; // e nada sai da faixa 0..H
       });
-      this._draw(caps, m.ls, m.goo);
-      this._orbOff();
+      var drawn = this._morphEyes(m, a, caps, dt, err, all);
+      this._draw(drawn, m.ls, m.goo);
+      this._last = caps;
+    }
+    /* Olhos (e gelatina do orb grande) no morph. Os olhos só abrem depois que a forma chegou; ao trocar de alvo
+       fecham em ~120 ms enquanto as molas já recolhem, e só reabrem (noutra forma) depois de fechados. Cada olho
+       segue a mola da sua cápsula e some sozinho se ela deixar de ser um círculo do tamanho certo. */
+    _morphEyes(m, a, caps, dt, err, all) {
+      var S = m.s, want = !!(a && a.eyes && all && err < 30 && (!a.split || m.su >= 1)), drawn = caps, slotOf = function (ci) {
+        for (var j = 0; j < S.length; j++) if (S[j].ci === ci && S[j].host === j) return j;
+        return -1;
+      };
+      if (want && m.eyeA !== m.name) {
+        if (m.eo > 0) want = false;
+        else { m.eyeA = m.name; m.et = 0; m.lk = a.eyes.map(function () { return {}; }); m.jel = null; if (a.orb) { m.jel = {}; jellyKick(m.jel); } }
+      }
+      if (want) m.eyeSlots = a.eyes.map(function (e) { return slotOf(e.ci); });
+      m.eo = want ? Math.min(1, m.eo + dt / .26) : Math.max(0, m.eo - dt / .12);
+      var E = ANIMS[m.eyeA], out = [], body = '';
+      if (m.eo > 0 && E && m.eyeSlots) {
+        m.et += dt * 1000;
+        if (m.jel && !want) { var f = Math.exp(-dt * 40); for (var q = 0; q < 6; q++) { m.jel.jx[q] *= f; m.jel.jv[q] *= f; } } // ao sair, a gelatina assenta já
+        var energy = m.jel ? jellyStep(m.jel, dt) : 0;
+        E.eyes.forEach(function (e, i) {
+          var j = m.eyeSlots[i], c = j < 0 ? null : caps[j], g = E.eyeCaps[e.ci], o = e.life(m.lk[i], m.et, dt);
+          if (!c) return;
+          var r = Math.min(c.T, c.L) / 2, round = clamp(1 - Math.abs(c.L - c.T) / c.T / .14), size = clamp((2 * r / g.T - .78) / .17);
+          var sq = o.sq * inOut(m.eo) * round * size, warp = null;
+          // orb grande: enquanto a gelatina mexe, o contorno deformado substitui o retângulo (com os olhos acompanhando)
+          if (m.jel && energy > 2e-4 && round * size > .99) {
+            var b = jellyBody(c.x, c.y, r, m.jel.jx); body = b.d; warp = b.warp;
+            if (drawn === caps) drawn = caps.slice();
+            drawn[j] = null;
+          }
+          if (sq < .06) return;
+          eyePaths(c.x, c.y, r, o.yaw, o.pitch, Math.max(.05, sq), warp, o.es).forEach(function (q) { out.push(q); });
+        });
+      }
+      if (!m.eo) m.jel = null;
+      this._body.setAttribute('d', body);
+      this._setEyes(out);
+      return drawn;
     }
 
     _build() {
@@ -284,6 +439,7 @@
       var root = this.attachShadow ? this.attachShadow({ mode: 'open' }) : this;
       var id = this._id, a = '';
       for (var i = 0; i < 9; i++) a += '<rect></rect>';
+      var eyes = ''; for (i = 0; i < 6; i++) eyes += '<path class="eye" fill="black" d=""></path>'; // 2 por orb, até 3 orbs
       root.innerHTML =
         '<style>:host{display:inline-block;width:160px;line-height:0;color:inherit}svg{width:100%;height:auto;display:block;overflow:visible}</style>' +
         '<svg viewBox="0 0 1259 387" role="img" aria-label="' + (this.getAttribute('label') || 'Heild').replace(/"/g, '&quot;') + '">' +
@@ -292,7 +448,7 @@
         '<feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"></feColorMatrix></filter>' +
         '<mask id="' + id + 'm" maskUnits="userSpaceOnUse" x="-400" y="-200" width="2100" height="800">' +
         '<rect x="-400" y="-200" width="2100" height="800" fill="white"></rect>' +
-        '<path class="eye" fill="black" d=""></path><path class="eye" fill="black" d=""></path></mask></defs>' +
+        eyes + '</mask></defs>' +
         '<path class="he" fill="currentColor" d="' + HE + '"></path>' +
         '<path class="ld" fill="currentColor" fill-rule="evenodd" d="' + LD + '"></path>' +
         '<g class="i" fill="currentColor" mask="url(#' + id + 'm)">' + a + '<path class="body" d=""></path></g></svg>';
@@ -359,7 +515,9 @@
       } else if (t < OUT + a.hold) {
         var ms = t - OUT, p = ms / a.hold;
         if (a.orb) { this._draw([{ x: CX, y: CY, T: 1, L: 1, r: 0 }], a.shift, 0); this._last = [cap(CX, CY, H, H)]; this._orbFrame(ms, a.hold); return; }
-        this._draw(a.holdFx ? a.caps.map(function (c, i) { return a.holdFx(c, i, p, ms); }) : a.caps, a.shift, 0);
+        var capsH = a.holdFx ? a.caps.map(function (c, i) { return a.holdFx(c, i, p, ms); }) : a.caps;
+        this._draw(capsH, a.shift, a.split ? mitGoo(orbsU(p)) : 0);
+        if (a.eyes) this._eyesHold(a, capsH, ms, a.hold);
       } else {
         var mb = t - OUT - a.hold, spanB = BACK - (K - 1) * 40;
         var capsB = a.endHold.map(function (c, i) { return lerpCap(c, PILL, outBack(clamp((mb - (K - 1 - a.rank[i]) * 40) / spanB), 1.1)); });
@@ -373,51 +531,39 @@
       this._body.setAttribute('d', '');
       this._eyes.forEach(function (e) { e.setAttribute('d', ''); });
       if (this._orb) this._orb.last = -1;
+      this._es = null;
+    }
+    _setEyes(ps) {
+      for (var i = 0; i < this._eyes.length; i++) { var e = this._eyes[i], q = ps[i]; e.setAttribute('d', q ? q[0] : ''); if (q) e.setAttribute('fill-opacity', q[1].toFixed(3)); }
     }
     _orbFrame(ms, hold) {
       var st = this._orb, R = H / 2;
       var P = function (x, y) { return (CX + x * R).toFixed(2) + ' ' + (CY + y * R).toFixed(2); };
-      if (st.last < 0 || ms < st.last) {
-        st.yaw = ORB_REST[0]; st.pitch = ORB_REST[1]; st.vy = 0; st.vp = 0;
-        st.jx = [0, 0, 0, 0, 0, 0]; st.jv = [0, 0, 0, 0, 0, 0];
-        st.jv[0] += 2.2 * .6 * 1.4; st.jv[2] += .5; st.jv[5] -= .4;   // impulso de chegada (jelly 0.6)
-        st.last = ms;
-      }
+      if (st.last < 0 || ms < st.last) { var r0 = lookRest(1); for (var k in r0) st[k] = r0[k]; jellyKick(st); st.last = ms; }
       var dt = Math.min(.1, (ms - st.last) / 1000); st.last = ms;
-      var tg = ORB_LOOK[0][1]; ORB_LOOK.forEach(function (l) { if (ms >= l[0]) tg = l[1]; });
-      var n = Math.ceil(dt * 120), h = n ? dt / n : 0, w = lerp(26, 15, .6), D = lerp(11, 3.6, .6), i, kk;
-      for (var s = 0; s < n; s++) {
-        st.vy += (tg[0] - st.yaw) * 95 * h; st.vy *= Math.exp(-11 * h); st.yaw += st.vy * h;
-        st.vp += (tg[1] - st.pitch) * 95 * h; st.vp *= Math.exp(-11 * h); st.pitch += st.vp * h;
-        for (i = 0; i < 6; i++) { kk = i > 1 ? w * 1.35 : w; st.jv[i] += (-kk * kk * st.jx[i] - D * st.jv[i]) * h; st.jx[i] = Math.max(-.3, Math.min(.3, st.jx[i] + st.jv[i] * h)); }
-      }
-      var sq = 1;
-      ORB_BLINKS.forEach(function (b) { var q = (ms - b) / 150; if (q >= 0 && q < 1) sq = 1 - Math.sin(q * Math.PI) * .94; });
+      lookStep(st, ms, dt, 1);
+      var energy = jellyStep(st, dt), warp;
+      var sq = blink(ms);
       sq *= .05 + .95 * inOut(clamp((ms - 60) / 200));
       sq *= 1 - .95 * inOut(clamp((ms - (hold - 430)) / 190));
       sq = Math.max(.05, sq);
       var shut = ms > hold - 240 || ms < 60;
-      var x = st.jx, energy = 0, warp;
-      for (i = 0; i < 6; i++) energy += Math.abs(x[i]) + Math.abs(st.jv[i]) * .02;
       if (energy <= 2e-4) { this._body.setAttribute('d', 'M' + P(-1, 0) + 'A' + R + ' ' + R + ' 0 1 0 ' + P(1, 0) + 'A' + R + ' ' + R + ' 0 1 0 ' + P(-1, 0) + 'Z'); warp = { sh: 0 }; }
-      else {
-        var rr = [], maxY = -9, th, d = '';
-        for (i = 0; i < 72; i++) { th = i / 72 * TAU; var r0 = radius(x, th); rr.push(r0); maxY = Math.max(maxY, Math.sin(th) * r0); }
-        var shift = 1 - maxY, flat = Math.max(0, Math.min(.25, x[0])) * .9, fy = 1 - flat;
-        for (i = 0; i < 72; i++) { th = i / 72 * TAU; var py = Math.sin(th) * rr[i] + shift; if (flat > 0 && py > fy) py = fy + (py - fy) * .25; d += (i ? 'L' : 'M') + P(Math.cos(th) * rr[i], py); }
-        this._body.setAttribute('d', d + 'Z'); warp = { sh: shift, x: x };
-      }
-      var Fr = frame(st.yaw, st.pitch), eyes = this._eyes;
-      EYES.forEach(function (ft, ei) {
-        if (shut) { eyes[ei].setAttribute('d', ''); return; }
-        var vis = clamp((proj(ft.c[0] * FACE, ft.c[1] * FACE, Fr)[2] + .12) / .22), cy = ft.c[1], d2 = '';
-        ft.pts.forEach(function (q, k) {
-          var p = proj(q[0] * FACE, (cy + (q[1] - cy) * sq) * FACE, Fr), X = p[0], Y = p[1] + warp.sh;
-          if (warp.x) { var r1 = radius(warp.x, Math.atan2(p[1], p[0])); X = p[0] * r1; Y = p[1] * r1 + warp.sh; }
-          d2 += (k ? 'L' : 'M') + P(X, Y);
-        });
-        eyes[ei].setAttribute('d', d2 + 'Z'); eyes[ei].setAttribute('fill-opacity', vis.toFixed(3));
+      else { var b = jellyBody(CX, CY, R, st.jx); this._body.setAttribute('d', b.d); warp = b.warp; }
+      this._setEyes(shut ? [] : eyePaths(CX, CY, R, st.yaw, st.pitch, sq, warp));
+    }
+    /* olhos das formas com orbs pequenos no play(): abrem na janela eyeWin (depois da divisão) e fecham antes da fusão */
+    _eyesHold(a, caps, ms, hold) {
+      var lo = a.eyeWin ? a.eyeWin[0] : 0, hi = a.eyeWin ? a.eyeWin[1] : hold, st = this._es, t = ms - lo, out = [];
+      if (!st || ms < st.last) st = this._es = { last: ms, lk: a.eyes.map(function () { return {}; }) };
+      var dt = Math.min(.1, (ms - st.last) / 1000); st.last = ms;
+      if (t < 60 || ms > hi - 240) { this._setEyes([]); return; }
+      var env = (.05 + .95 * inOut(clamp((t - 60) / 200))) * (1 - .95 * inOut(clamp((ms - (hi - 430)) / 190)));
+      a.eyes.forEach(function (e, i) {
+        var o = e.life(st.lk[i], t, dt), c = caps[e.ci];
+        eyePaths(c.x, c.y, c.T / 2, o.yaw, o.pitch, Math.max(.05, o.sq * env), null, o.es).forEach(function (q) { out.push(q); });
       });
+      this._setEyes(out);
     }
   }
 

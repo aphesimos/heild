@@ -78,8 +78,9 @@ html.tema-esmaece * {
 .botao-tema[data-escuro='true']:hover svg {
   transform: rotate(340deg);
 }
-.botao-tema:active {
-  scale: 0.92;
+/* Ao tocar, só o ícone afunda: no menu do celular o botão ocupa a linha toda, e encolher o botão inteiro espremia o texto. */
+.botao-tema:active svg {
+  scale: 0.85;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -9,10 +9,9 @@ import { SessaoProvider } from '@/ambiente/sessao'
 import { CabecalhoIntegrante } from '@/components/compostos/cabecalho-integrante'
 import { Orb } from '@/components/ui/orb'
 import * as exemplo from '@/dados/exemplo'
-import type { Integrante, Mensagem } from '@/dados/tipos'
+import type { Integrante } from '@/dados/tipos'
 import { useAparencia } from '@/hooks/useAparencia'
-import type { EstadoIntegrante } from '@/lib/integrante'
-import { duracaoEscrita } from '@/lib/escrita'
+import { rotuloDoEstado, type EstadoIntegrante } from '@/lib/integrante'
 import { ListaMensagens } from '@/telas/ListaMensagens'
 import { ThemeProvider } from '@/theme/ThemeProvider'
 import { temaFabrica } from '@/theme/temas'
@@ -220,7 +219,7 @@ function Navegacao({ rota, modo, onTrocarModo }: { rota: Rota; modo: ModoCor; on
         {/* Entre 768 e 1340 px o canto bateria no botão de agendar: o tema fica ao lado dele. */}
         <BotaoTema modo={modo} onTrocar={onTrocarModo} className="ml-auto hidden md:max-[1339px]:flex" />
         <BotaoDemonstracao className="max-md:ml-auto h-10 max-[400px]:hidden min-[1340px]:ml-auto" />
-        <button type="button" aria-expanded={menu} aria-controls="menu-movel" aria-label={menu ? 'Fechar o menu' : 'Abrir o menu'} onClick={() => setMenu((v) => !v)} className="botao -mr-2 flex size-11 cursor-pointer items-center justify-center rounded-full md:hidden">
+        <button type="button" aria-expanded={menu} aria-controls="menu-movel" aria-label={menu ? 'Fechar o menu' : 'Abrir o menu'} onClick={() => setMenu((v) => !v)} className="botao -mr-2 flex size-11 cursor-pointer items-center justify-center rounded-full max-[400px]:ml-auto md:hidden">
           {menu ? <XIcon className="size-5" /> : <ListIcon className="size-5" />}
         </button>
       </Wrap>
@@ -551,20 +550,18 @@ function SecaoTime({ setores, titulo, texto }: { setores: string[]; titulo: Reac
   const lista = exemplo.integrantes.filter((i) => i.tipo !== 'criado_pelo_usuario' && setores.includes(i.setor))
   const [id, setId] = useState(lista.find((i) => (exemplo.conversasPorIntegrante[i.id] ?? []).length > 0)?.id ?? lista[0].id)
   const atual = lista.find((i) => i.id === id) ?? lista[0]
-  const conversa = useMemo(() => (exemplo.conversasPorIntegrante[atual.id] ?? []).slice(-3), [atual.id])
-  const painel = useRef<HTMLDivElement>(null)
-  const visto = useVisto(painel, { limiar: 0.4 })
-  const { mensagens: mostradas, estado: estadoAoVivo } = useConversaAoVivo(conversa, visto, atual.id)
+  // Uma foto do chat: a conversa pronta, inteira, sem tocar de novo. Cada integrante no estado em que está.
+  const conversa = useMemo(() => (exemplo.conversasPorIntegrante[atual.id] ?? []).slice(-4), [atual.id])
   return (
     <Secao
       id="time"
       titulo={titulo}
       texto={texto}
       visual={
-        <div ref={painel} data-luz className="bg-background shadow-painel flex h-[min(680px,calc(100svh-120px))] min-h-[460px] flex-col gap-4 overflow-hidden rounded-[28px] p-5 sm:p-6">
-          <CabecalhoIntegrante nivel="h3" integrante={{ ...atual, estado: estadoAoVivo, fazendoAgora: [], fila: 0, pendentes: cartoesPendentes(exemplo.conversasPorIntegrante[atual.id] ?? [], {}) }} />
-          <div className="area-rolagem-dupla min-h-0 flex-1 overflow-y-auto pr-1">
-            {conversa.length ? <ListaMensagens key={atual.id} mensagens={mostradas} /> : <p className="text-muted-foreground text-sm">Ainda sem conversa nesta demonstração.</p>}
+        <div data-luz className="bg-background shadow-painel flex h-[min(680px,calc(100svh-120px))] min-h-[460px] flex-col gap-4 overflow-hidden rounded-[28px] p-5 sm:p-6">
+          <CabecalhoIntegrante nivel="h3" integrante={{ ...atual, fazendoAgora: [], fila: 0, pendentes: cartoesPendentes(exemplo.conversasPorIntegrante[atual.id] ?? [], {}) }} className="bg-surface shadow-contorno rounded-[22px] px-3 py-2.5 sm:px-4" />
+          <div key={atual.id} className="area-rolagem-dupla entra min-h-0 flex-1 overflow-y-auto pr-1">
+            {conversa.length ? <ListaMensagens mensagens={conversa} /> : <p className="text-muted-foreground text-sm">Ainda sem conversa nesta demonstração.</p>}
           </div>
         </div>
       }
@@ -578,11 +575,14 @@ function SecaoTime({ setores, titulo, texto }: { setores: string[]; titulo: Reac
               role="tab"
               type="button"
               aria-selected={i.id === atual.id}
+              title={`${t.nome}: ${rotuloDoEstado[i.estado].toLowerCase()}`}
               onClick={() => setId(i.id)}
               className={cn('botao flex h-11 cursor-pointer items-center gap-2 rounded-full pr-4 pl-1.5 text-sm transition-colors', i.id === atual.id ? 'bg-primary text-primary-foreground' : 'bg-surface shadow-contorno hover:bg-raised')}
             >
-              <Orb cor={t.cor} corOlhos={t.corOlhos} tamanho={30} extras={false} cutucavel={false} estado={i.id === atual.id ? 'trabalhando' : 'disponivel'} animado={i.id === atual.id} />
+              {/* Cada orb com a animação do próprio estado: trabalhando, esperando você, livre, dormindo. */}
+              <Orb cor={t.cor} corOlhos={t.corOlhos} tamanho={30} extras={false} cutucavel={false} estado={i.estado} animado />
               {t.nome}
+              {i.estado === 'precisa_de_voce' && <span className="bg-highlight size-1.5 rounded-full" aria-label=", espera você" />}
             </button>
           )
         })}
@@ -593,51 +593,6 @@ function SecaoTime({ setores, titulo, texto }: { setores: string[]; titulo: Reac
       </ReservaAltura>
     </Secao>
   )
-}
-
-/**
- * A conversa do integrante entrando aos poucos, com as regras do chat do produto:
- * ele pensa (1,5 s; 2,2 s quando responde a uma pergunta), escreve no ritmo de
- * duracaoEscrita e a mensagem leva a hora em que chegou. O orb do cabeçalho
- * acompanha: pensando, depois trabalhando enquanto escreve.
- */
-function useConversaAoVivo(conversa: Mensagem[], ligado: boolean, chave: string) {
-  const [chegadas, setChegadas] = useState<{ desde: number; hora: string }[]>([])
-  const [pensando, setPensando] = useState(false)
-  useEffect(() => {
-    const agoraHora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-    if (!ligado || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      setChegadas(conversa.map(() => ({ desde: 0, hora: agoraHora() })))
-      return
-    }
-    setChegadas([])
-    setPensando(false)
-    let i = 0
-    let t = 0
-    const chega = () => {
-      const m = conversa[i]
-      setChegadas((xs) => [...xs, { desde: Date.now(), hora: agoraHora() }])
-      i++
-      t = window.setTimeout(proxima, (m.autor.tipo === 'integrante' ? duracaoEscrita(m.texto) : 0) + 700)
-    }
-    const proxima = () => {
-      const m = conversa[i]
-      if (!m) return
-      if (m.autor.tipo !== 'integrante') return chega()
-      setPensando(true)
-      const anterior = conversa[i - 1]
-      t = window.setTimeout(() => (setPensando(false), chega()), anterior?.autor.tipo === 'usuario' ? 2200 : 1500)
-    }
-    t = window.setTimeout(proxima, 300)
-    return () => window.clearTimeout(t)
-  }, [conversa, ligado, chave])
-  const lista: Mensagem[] = conversa.slice(0, chegadas.length).map((m, i) => ({ ...m, hora: chegadas[i].hora, ...(m.autor.tipo === 'integrante' && chegadas[i].desde ? { escrever: true, escreverDesde: chegadas[i].desde } : {}) }))
-  const prox = conversa[chegadas.length]
-  const ultima = lista[lista.length - 1]
-  const escrevendo = !!ultima?.escreverDesde && Date.now() - ultima.escreverDesde < duracaoEscrita(ultima.texto)
-  const estado: EstadoIntegrante = pensando ? 'pensando' : escrevendo ? 'trabalhando' : 'disponivel'
-  const mensagens = pensando && prox ? [...lista, { ...prox, id: prox.id + '-p', hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), texto: undefined, cartoes: undefined, pendente: true }] : lista
-  return { mensagens, estado }
 }
 
 function FuncaoIntegrante({ i, entra }: { i: Integrante; entra?: boolean }) {
@@ -728,9 +683,10 @@ const pecasInteiro: [string, string][] = [
   ['BPO', 'bpo'],
   ['Arquivos', 'arquivos'],
   ['App do cliente', 'celular'],
-  ['Assistente', 'ia'],
+  ['Assistente', 'orb'],
   ['Consultor', 'lupa'],
-  ['Integrantes', 'equipe'],
+  ['Integrantes', 'orbs'],
+  ['IA e Agentes', 'ia'],
 ]
 function SecaoInteiro() {
   const soltas = [
@@ -744,6 +700,7 @@ function SecaoInteiro() {
     [-430, 30, -6],
     [-200, -70, 4],
     [190, 40, -9],
+    [-470, -110, 7],
   ]
   const [junto, setJunto] = useState(false)
   const [vivo, setVivo] = useState(false)

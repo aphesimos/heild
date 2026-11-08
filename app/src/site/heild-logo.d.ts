@@ -4,11 +4,12 @@ import type { CSSProperties, Ref } from 'react'
  * Formas do I (window.Heild.animations). Todas só com cápsulas e círculos de 96, dentro da altura das letras:
  * centralizar (grade 3x3), contabil (barras), juridico (=), bpo (check), ia (asterisco), atendimento (3 pontos),
  * orb (esfera), financeiro ($), tempo (ampulheta), arquivos (pasta), conversa (balão de fala),
- * celular (aparelho), painel (grade bento), lupa (lente com cabo), equipe (três pessoas).
+ * celular (aparelho), painel (grade bento), lupa (lente com cabo), equipe (três pessoas),
+ * orbs (o orb se divide como uma célula em três orbs com olhos e vida própria).
  */
 export type HeildLogoAnimation =
   | 'centralizar' | 'contabil' | 'juridico' | 'bpo' | 'ia' | 'atendimento' | 'orb'
-  | 'financeiro' | 'tempo' | 'arquivos' | 'conversa' | 'celular' | 'painel' | 'lupa' | 'equipe'
+  | 'financeiro' | 'tempo' | 'arquivos' | 'conversa' | 'celular' | 'painel' | 'lupa' | 'equipe' | 'orbs'
 
 /** Uma forma conhecida, ou qualquer string (nome desconhecido é ignorado por play e volta à pílula no morph). */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -20,8 +21,9 @@ export interface HeildLogoElement extends HTMLElement {
   play(nome?: NomeForma | 'cycle'): Promise<HeildLogoElement>
   stop(): HeildLogoElement
   /**
-   * Leva o I, de onde ele estiver desenhado agora, até a forma `nome` (sem nome, ou 'orb': volta à pílula).
+   * Leva o I, de onde ele estiver desenhado agora, até a forma `nome` (sem nome: volta à pílula).
    * Pode ser chamado a qualquer momento e em rajada: as cápsulas trocam de alvo por molas, sem corte.
+   * 'orb' e 'orbs' abrem os olhos ao chegar e seguem olhando e piscando em loop enquanto forem o alvo.
    */
   morph(nome?: NomeForma | null): HeildLogoElement
   /** Atalho de morph para estados (hover, foco): ligado vai à forma; desligado volta à pílula só se `nome` for o alvo atual. */

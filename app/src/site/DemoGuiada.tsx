@@ -185,6 +185,30 @@ function Quadro({ roteiro, setores, onEtapa, onRecomecar, aba, setAba, sel, setS
     medir()
     return () => cancelAnimationFrame(raf)
   }, [apontaAprovar])
+  // A dica de um chip do time: medida e desenhada fora da fila (que rola de lado e cortaria a dica).
+  const filaTime = useRef<HTMLDivElement>(null)
+  const chipDica = dica?.alvo.startsWith('chip-') ? dica.alvo.slice(5) : null
+  const [alvoChip, setAlvoChip] = useState<{ x: number; y: number } | null>(null)
+  useLayoutEffect(() => {
+    if (!chipDica || aba !== 'time') return setAlvoChip(null)
+    const fila = filaTime.current
+    const chip = fila?.querySelector<HTMLElement>(`[data-chip="${chipDica}"]`)
+    if (fila && chip) fila.scrollTo({ left: chip.offsetLeft - fila.clientWidth / 2 + chip.offsetWidth / 2, behavior: 'smooth' })
+    let raf = 0
+    const medir = () => {
+      raf = requestAnimationFrame(medir)
+      const r = raiz.current
+      const c = r?.querySelector<HTMLElement>(`[data-chip="${chipDica}"]`)
+      if (!r || !c) return setAlvoChip((v) => (v ? null : v))
+      const rr = r.getBoundingClientRect()
+      const rc = c.getBoundingClientRect()
+      const x = Math.round(Math.min(rr.width - 96, Math.max(96, rc.left - rr.left + rc.width / 2)))
+      const novo = { x, y: Math.round(rc.bottom - rr.top) }
+      setAlvoChip((v) => (v?.x === novo.x && v?.y === novo.y ? v : novo))
+    }
+    medir()
+    return () => cancelAnimationFrame(raf)
+  }, [chipDica, aba])
   const algumPendente = time.some((i) => pendenteDe(i.id) > 0)
 
   return (
@@ -209,37 +233,40 @@ function Quadro({ roteiro, setores, onEtapa, onRecomecar, aba, setAba, sel, setS
       </div>
 
       {aba === 'time' && (
-        <div className="flex shrink-0 flex-col gap-3 px-4 pt-1 pb-1 sm:px-6">
-          {/* Quem trabalha no pedido aparece com o nome; o resto do time, só o orb. Sem rolagem lateral. */}
-          <div role="tablist" aria-label="Integrantes" className="flex flex-wrap items-center gap-1.5">
+        <div className="flex shrink-0 flex-col gap-2 pt-1 pb-2">
+          {/* A fila do time: rola de lado no celular (a dica do chip é desenhada fora dela, para não ser cortada). */}
+          <div ref={filaTime} role="tablist" aria-label="Integrantes" className="sem-barra fila-time flex items-center gap-1.5 overflow-x-auto px-4 py-0.5 sm:flex-wrap sm:overflow-visible sm:px-6">
             {time.map((i) => {
               const doPedido = roteiro.cadeia.includes(i.id)
               const alvo = `chip-${i.id}`
               return (
-                <Alvo key={i.id} dica={dica?.alvo === alvo ? dica.texto : undefined} lado="abaixo">
-                  <button
-                    role="tab"
-                    type="button"
-                    aria-selected={sel === i.id}
-                    aria-label={doPedido ? undefined : i.nome}
-                    title={doPedido ? undefined : i.nome}
-                    onClick={() => setSel(i.id)}
-                    className={cn(
-                      'botao relative flex h-10 cursor-pointer items-center gap-2 rounded-full text-sm whitespace-nowrap transition-colors',
-                      doPedido ? 'pr-3.5 pl-1' : 'px-1',
-                      sel === i.id ? 'bg-raised shadow-pilula font-medium' : 'text-muted-foreground hover:text-foreground',
-                      dica?.alvo === alvo && 'pulso',
-                    )}
-                  >
-                    <Orb cor={aparencia(i).cor} corOlhos={aparencia(i).corOlhos} tamanho={30} extras={false} cutucavel={false} estado={i.estado} />
-                    {doPedido && aparencia(i).nome}
-                    {pendenteDe(i.id) > 0 && <span className="bg-highlight size-1.5 rounded-full" aria-label=", espera você" />}
-                  </button>
-                </Alvo>
+                <button
+                  key={i.id}
+                  role="tab"
+                  type="button"
+                  data-chip={i.id}
+                  aria-selected={sel === i.id}
+                  aria-label={doPedido ? undefined : i.nome}
+                  title={doPedido ? undefined : i.nome}
+                  onClick={() => setSel(i.id)}
+                  className={cn(
+                    'botao relative flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-full text-sm whitespace-nowrap transition-colors',
+                    doPedido ? 'pr-3.5 pl-1' : 'px-1',
+                    sel === i.id ? 'bg-raised shadow-pilula font-medium' : 'text-muted-foreground hover:text-foreground',
+                    dica?.alvo === alvo && 'pulso',
+                  )}
+                >
+                  <Orb cor={aparencia(i).cor} corOlhos={aparencia(i).corOlhos} tamanho={30} extras={false} cutucavel={false} estado={i.estado} />
+                  {doPedido && aparencia(i).nome}
+                  {pendenteDe(i.id) > 0 && <span className="bg-highlight size-1.5 rounded-full" aria-label=", espera você" />}
+                </button>
               )
             })}
           </div>
-          <CabecalhoIntegrante nivel="h3" integrante={iSel} />
+          {/* O cabeçalho do integrante é uma faixa própria: separa a escolha (acima) da conversa (abaixo). */}
+          <div className="px-4 sm:px-6">
+            <CabecalhoIntegrante nivel="h3" integrante={iSel} className="bg-surface shadow-contorno rounded-[22px] px-3 py-2.5 sm:px-4" />
+          </div>
         </div>
       )}
 
@@ -265,6 +292,14 @@ function Quadro({ roteiro, setores, onEtapa, onRecomecar, aba, setAba, sel, setS
           </div>
         )}
       </div>
+
+      {chipDica && alvoChip && (
+        <div className="pointer-events-none absolute z-20 h-0 w-0" style={{ left: alvoChip.x, top: alvoChip.y }}>
+          <span role="status" data-lado="abaixo" className="dica bg-foreground text-background absolute top-full left-0 mt-2.5 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap">
+            {dica?.texto}
+          </span>
+        </div>
+      )}
 
       {apontaAprovar && alvoAprovar && (
         <div className="pointer-events-none absolute z-20 h-0 w-0" style={{ left: alvoAprovar.x, top: alvoAprovar.y }}>

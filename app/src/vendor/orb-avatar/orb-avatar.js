@@ -382,7 +382,7 @@ function listen() {
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { for (const o of live) o._colors(); });
 }
 // Quality levels: outline detail (stride) and canvas resolution cap. Level 2 also animates at half rate.
-const LEVELS = [{ stride: 1, dpr: 2 }, { stride: 2, dpr: 1.5 }, { stride: 3, dpr: 1 }];
+const LEVELS = [{ stride: 1, dpr: 3 }, { stride: 2, dpr: 2 }, { stride: 3, dpr: 2 }]; // ui-lab: resolução nunca abaixo de 2x (em tela 3x o orb borrava); o regulador alivia pelo contorno e pela taxa
 const Q = { level: 0, auto: true, ema: 1, iv: 16.7, bad: 0, good: 0 };
 function setLevel(l) { Q.level = clamp(l, 0, 2); Q.bad = Q.good = 0; for (const o of live) { o._fit(); o._sig = null; if (o._static && o._cw) o._update(0, performance.now() / 1000); } } // ui-lab: redesenha os parados (o _fit limpa o canvas e o laço só desenha os animados)
 function govern(cost, iv) {
