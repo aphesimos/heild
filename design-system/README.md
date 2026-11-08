@@ -111,6 +111,7 @@ Tempos exatos (o componente já aplica):
 | `painel` | grade bento: coluna alta, barras e pontos | painel, dashboard, widgets |
 | `lupa` | lente octogonal com cabo a 45°, que varre | consultor, análise, busca |
 | `equipe` | três pessoas, a do meio mais alta, em onda de aceno | integrantes, o time |
+| `orbs` | o I vira o orb, que se divide como uma célula em três orbs com olhos e olhar próprio; na volta se fundem | integrantes, o time de IA |
 | `cycle` | passa pelas formas originais, em ordem | vitrines e apresentações da marca |
 
 ### O orb na logo
