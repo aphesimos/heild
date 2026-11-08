@@ -648,11 +648,11 @@ body {
 
 /* Faixas que rolam de lado (abas do Painel pequeno, módulos no celular): a borda direita some aos poucos. */
 .abas-mini {
-  mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent);
 }
 @media (max-width: 639px) {
   .modulos-nc {
-    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent);
   }
 }
 
@@ -713,5 +713,20 @@ html:has(.barra-rolagem)::-webkit-scrollbar {
 @media (max-width: 639px) {
   .fila-time {
     mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 32px), transparent);
+  }
+}
+
+/* QA: a conversa rola sob o cabeçalho do integrante e esmaece no topo, sem corte seco. */
+.esmaece-topo {
+  mask-image: linear-gradient(to bottom, transparent, #000 24px);
+}
+/* As peças soltas da seção do inteiro nunca alargam a página (começam fora e entram). */
+.junta {
+  overflow-x: clip;
+}
+/* No celular, os pontos da seção do inteiro ficam só atrás do visual, longe do texto. */
+@media (max-width: 1023px) {
+  #inteiro.grade-pontos::after {
+    mask-image: linear-gradient(to bottom, transparent 0, transparent 42%, #000 58%, #000 calc(100% - 140px), transparent);
   }
 }

@@ -148,15 +148,15 @@ export function SecaoNaoCore({ id, titulo, texto, itens, pares }: { id: string; 
           </div>
           <div id={`${id}-previa`} role="tabpanel" aria-labelledby={`${id}-tab-${item.id}`} className="bg-surface flex min-h-[380px] min-w-0 flex-col gap-4 rounded-[22px] p-4 sm:min-h-[440px] sm:p-5">
             {/* Texto e prévia de todos os módulos na mesma célula (os escondidos só medem): o quadro fica com a altura do maior e nada se mexe ao trocar. */}
-            <div className="grid min-h-0 flex-1">
+            <div className="grid min-h-0 flex-1 grid-cols-1">
               {itens.map((i) =>
                 i.id === item.id ? (
-                  <div key={i.id} className="flex flex-col gap-4 [grid-area:1/1]">
+                  <div key={i.id} className="flex min-w-0 flex-col gap-4 [grid-area:1/1]">
                     <p className="entra text-muted-foreground text-sm leading-relaxed">{i.linha}</p>
                     <div className="previa-nc min-h-0 flex-1">{i.previa}</div>
                   </div>
                 ) : (
-                  <div key={'medida-' + i.id} aria-hidden inert className="invisible flex flex-col gap-4 [grid-area:1/1]">
+                  <div key={'medida-' + i.id} aria-hidden inert className="invisible flex min-w-0 flex-col gap-4 [grid-area:1/1]">
                     <p className="text-sm leading-relaxed">{i.linha}</p>
                     <div>{i.previa}</div>
                   </div>

@@ -514,7 +514,7 @@ function SecaoAprovacaoBpo() {
       texto="O Contas a Pagar monta o lote e uma pessoa confere. O lote vira um cartão no app do cliente: dentro da alçada, aprova quem tem alçada para o total; acima dela, dois aprovadores. Nada é pago sem o registro de quem aprovou."
       className="faixa-suave"
       visual={
-        <div data-luz className="bg-background shadow-painel grid items-center gap-6 rounded-[28px] p-4 sm:p-8 md:grid-cols-[minmax(0,300px)_minmax(0,1fr)]">
+        <div data-luz className="bg-background shadow-painel grid items-start gap-6 rounded-[28px] p-4 sm:p-8 min-[1400px]:grid-cols-[minmax(0,300px)_minmax(0,1fr)]">
           <div className="bg-surface shadow-cartao mx-auto flex w-full max-w-[300px] flex-col gap-3 rounded-[32px] p-3">
             <div className="flex items-center justify-between px-2 pt-1">
               <span className="text-muted-foreground text-xs">{curto(e.nome)}</span>
@@ -598,7 +598,7 @@ function SecaoConciliacaoBpo() {
             <span className="bg-sunken flex size-10 shrink-0 items-center justify-center rounded-full">
               <FileTextIcon className="size-5" />
             </span>
-            <span className="flex min-w-0 flex-1 flex-col">
+            <span className="flex min-w-[12rem] flex-1 flex-col">
               <span className="text-sm font-medium">Relatório de outubro · {curto(padaria.nome)}</span>
               <span className="text-muted-foreground text-xs">{enviado ? 'No app do cliente e em Arquivos › Entregáveis' : 'DRE, caixa e pendências · fechamento à contabilidade até dia 7'}</span>
             </span>

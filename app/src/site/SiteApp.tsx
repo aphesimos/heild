@@ -191,7 +191,7 @@ function Navegacao({ rota, modo, onTrocarModo }: { rota: Rota; modo: ModoCor; on
         <a href="#" aria-label="Heild, página inicial" className="shrink-0" onClick={() => ir('inicio')}>
           <Logo largura={92} />
         </a>
-        <nav aria-label="Principal" className="hidden items-center gap-7 text-sm md:flex">
+        <nav aria-label="Principal" className="hidden items-center gap-7 text-sm whitespace-nowrap lg:flex">
           <div ref={caixa} className="relative" onPointerEnter={(e) => e.pointerType === 'mouse' && abrir()} onPointerLeave={(e) => e.pointerType === 'mouse' && soltar()}>
             <button type="button" aria-expanded={solucoes} aria-controls="menu-solucoes" onClick={(e) => setSolucoes((v) => (e.detail === 0 || !matchMedia('(hover: hover)').matches ? !v : true))} className={cn('flex cursor-pointer items-center gap-1', solucoes || rota === 'contabil' || rota === 'bpo' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
               Soluções <CaretDownIcon className={cn('size-3.5 transition-transform duration-200', solucoes && 'rotate-180')} />
@@ -216,17 +216,17 @@ function Navegacao({ rota, modo, onTrocarModo }: { rota: Rota; modo: ModoCor; on
             </button>
           ))}
         </nav>
-        {/* Entre 768 e 1340 px o canto bateria no botão de agendar: o tema fica ao lado dele. */}
-        <BotaoTema modo={modo} onTrocar={onTrocarModo} className="ml-auto hidden md:max-[1339px]:flex" />
-        <BotaoDemonstracao className="max-md:ml-auto h-10 max-[400px]:hidden min-[1340px]:ml-auto" />
-        <button type="button" aria-expanded={menu} aria-controls="menu-movel" aria-label={menu ? 'Fechar o menu' : 'Abrir o menu'} onClick={() => setMenu((v) => !v)} className="botao -mr-2 flex size-11 cursor-pointer items-center justify-center rounded-full max-[400px]:ml-auto md:hidden">
+        <BotaoDemonstracao className="ml-auto h-10 max-[400px]:hidden" />
+        {/* O tema é sempre o último à direita: no desktop largo fica no canto, fora da coluna; até 1340 px, logo depois do botão de agendar. */}
+        <BotaoTema modo={modo} onTrocar={onTrocarModo} className="-mr-2 -ml-5 hidden lg:max-[1339px]:flex" />
+        <button type="button" aria-expanded={menu} aria-controls="menu-movel" aria-label={menu ? 'Fechar o menu' : 'Abrir o menu'} onClick={() => setMenu((v) => !v)} className="botao -mr-2 flex size-11 cursor-pointer items-center justify-center rounded-full max-[400px]:ml-auto lg:hidden">
           {menu ? <XIcon className="size-5" /> : <ListIcon className="size-5" />}
         </button>
       </Wrap>
       {/* No desktop largo, o tema fica no canto superior direito, fora da coluna do cabeçalho. */}
       <BotaoTema modo={modo} onTrocar={onTrocarModo} className="absolute top-3 right-4 hidden min-[1340px]:flex" />
       {menu && (
-        <nav id="menu-movel" aria-label="Menu" className="menu-movel border-border border-t md:hidden">
+        <nav id="menu-movel" aria-label="Menu" className="menu-movel border-border border-t lg:hidden">
           <Wrap className="flex flex-col gap-1 py-4">
             <span className="text-muted-foreground px-1 pb-1 text-sm">Soluções</span>
             {plataformas.map((p) => (
@@ -502,6 +502,7 @@ function SecaoPlataformas({ menos }: { menos?: string }) {
       titulo={menos ? 'Conheça as outras plataformas.' : 'Uma Heild para cada operação.'}
       texto={menos ? undefined : 'Cada plataforma tem o seu time e o seu Painel, sobre o mesmo cadastro, os mesmos documentos e o mesmo CRM.'}
       grade
+      className="min-h-0 py-24 lg:py-28"
     >
       <div className="flex flex-col gap-3">
         {lista.map((p, i) => (
@@ -558,9 +559,9 @@ function SecaoTime({ setores, titulo, texto }: { setores: string[]; titulo: Reac
       titulo={titulo}
       texto={texto}
       visual={
-        <div data-luz className="bg-background shadow-painel flex h-[min(680px,calc(100svh-120px))] min-h-[460px] flex-col gap-4 overflow-hidden rounded-[28px] p-5 sm:p-6">
+        <div data-luz className="bg-background shadow-painel flex h-[520px] flex-col gap-4 overflow-hidden rounded-[28px] p-5 sm:h-[min(680px,calc(100svh-120px))] sm:min-h-[460px] sm:p-6">
           <CabecalhoIntegrante nivel="h3" integrante={{ ...atual, fazendoAgora: [], fila: 0, pendentes: cartoesPendentes(exemplo.conversasPorIntegrante[atual.id] ?? [], {}) }} className="bg-surface shadow-contorno rounded-[22px] px-3 py-2.5 sm:px-4" />
-          <div key={atual.id} className="area-rolagem-dupla entra min-h-0 flex-1 overflow-y-auto pr-1">
+          <div key={atual.id} className="area-rolagem-dupla esmaece-topo entra min-h-0 flex-1 overflow-y-auto pr-1">
             {conversa.length ? <ListaMensagens mensagens={conversa} /> : <p className="text-muted-foreground text-sm">Ainda sem conversa nesta demonstração.</p>}
           </div>
         </div>
@@ -778,31 +779,34 @@ function SecaoInteiro() {
       titulo="Heild, um sistema no lugar de vinte."
       texto="Heild vem do nórdico heild, o inteiro. Prazos, conversas, horas, arquivos, cobrança e o financeiro dos clientes passam a morar no mesmo lugar, sobre o mesmo cadastro."
       grade
+      visual={
+        <div ref={caixa} data-visual data-junto={junto} data-vivo={vivo} className="junta flex min-h-[440px] flex-col items-center justify-center gap-10 rounded-[28px] py-16" style={{ color: 'var(--primary)' }}>
+          <heild-logo ref={logo} label="Heild" style={{ width: 'min(360px, 64vw)' }} />
+          <ul className="flex max-w-2xl flex-wrap justify-center gap-2.5" aria-label="O que a Heild junta" onPointerLeave={() => passar(null)}>
+            {pecasInteiro.map(([m], i) => (
+              <li
+                key={m}
+                ref={(n) => void (pecas.current[i] = n)}
+                onPointerEnter={() => vivo && passar(i)}
+                data-sobre={sobre === i || undefined}
+                className="peca rounded-full px-4 py-2 text-sm select-none"
+                style={{ ['--dx' as string]: `${soltas[i][0]}px`, ['--dy' as string]: `${soltas[i][1]}px`, ['--r' as string]: `${soltas[i][2]}deg`, ['--i' as string]: i }}
+              >
+                {m}
+              </li>
+            ))}
+          </ul>
+        </div>
+      }
     >
-      <div ref={caixa} data-visual data-junto={junto} data-vivo={vivo} className="junta flex min-h-[440px] flex-col items-center justify-center gap-10 rounded-[28px] py-16" style={{ color: 'var(--primary)' }}>
-        <heild-logo ref={logo} label="Heild" style={{ width: 'min(360px, 64vw)' }} />
-        <ul className="flex max-w-2xl flex-wrap justify-center gap-2.5" aria-label="O que a Heild junta" onPointerLeave={() => passar(null)}>
-          {pecasInteiro.map(([m], i) => (
-            <li
-              key={m}
-              ref={(n) => void (pecas.current[i] = n)}
-              onPointerEnter={() => vivo && passar(i)}
-              data-sobre={sobre === i || undefined}
-              className="peca rounded-full px-4 py-2 text-sm select-none"
-              style={{ ['--dx' as string]: `${soltas[i][0]}px`, ['--dy' as string]: `${soltas[i][1]}px`, ['--r' as string]: `${soltas[i][2]}deg`, ['--i' as string]: i }}
-            >
-              {m}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {null}
     </Secao>
   )
 }
 
 function SecaoPerguntas({ itens }: { itens: [string, string][] }) {
   return (
-    <Secao id="perguntas" titulo="Perguntas frequentes sobre a Heild." className="faixa-suave justify-start pt-28 lg:pt-28">
+    <Secao id="perguntas" titulo="Perguntas frequentes sobre a Heild." className="faixa-suave min-h-0 justify-start pt-28 pb-24 lg:pt-28 lg:pb-28">
       <div className="divide-border flex flex-col divide-y border-y">
         {itens.map(([q, r]) => (
           <details key={q} className="group py-5">
