@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heild · logo</title>
+<link rel="stylesheet" href="../../tokens.css">
+<script src="heild-logo.js"></script>
+<style>
+  body { margin: 0; background: var(--fundo); color: var(--texto); font-family: var(--font-texto); }
+  main { max-width: 1152px; margin: 0 auto; padding: 48px 16px 80px; display: flex; flex-direction: column; gap: 48px; }
+  h1 { font-family: var(--font-titulo); font-weight: 300; letter-spacing: -0.025em; font-size: 36px; margin: 0; }
+  p { color: var(--texto-suave); margin: 8px 0 0; max-width: 60ch; line-height: 1.5; }
+  .grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  figure { margin: 0; background: var(--superficie); box-shadow: var(--sombra-cartao); border-radius: 20px; padding: 32px 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  figure heild-logo { width: 170px; color: var(--primaria); }
+  figcaption { font-size: 14px; color: var(--texto-suave); }
+  .hover { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hover button { font: inherit; font-size: 14px; color: var(--texto); background: var(--superficie); box-shadow: var(--sombra-contorno); border: 0; border-radius: 999px; padding: 10px 16px; cursor: pointer; }
+  .palco { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 40px 0; }
+  .palco heild-logo { width: min(420px, 80vw); color: var(--primaria); }
+  .tema { position: fixed; top: 16px; right: 16px; }
+</style>
+</head>
+<body>
+<button class="tema" onclick="document.documentElement.dataset.tema = document.documentElement.dataset.tema === 'escuro' ? 'claro' : 'escuro'" style="font:inherit;border:0;border-radius:999px;padding:8px 14px;background:var(--superficie);color:var(--texto);box-shadow:var(--sombra-contorno);cursor:pointer">Trocar tema</button>
+<main>
+  <section>
+    <h1>As formas do I</h1>
+    <p>Cada forma em loop, como no hero e nas vitrines. Na interface, a logo toca uma forma uma vez, em resposta a algo que aconteceu.</p>
+  </section>
+  <div class="grade">
+    <figure><heild-logo animation="centralizar" loop></heild-logo><figcaption>centralizar</figcaption></figure>
+    <figure><heild-logo animation="orb" loop></heild-logo><figcaption>orb</figcaption></figure>
+    <figure><heild-logo animation="contabil" loop></heild-logo><figcaption>contabil</figcaption></figure>
+    <figure><heild-logo animation="juridico" loop></heild-logo><figcaption>juridico</figcaption></figure>
+    <figure><heild-logo animation="bpo" loop></heild-logo><figcaption>bpo</figcaption></figure>
+    <figure><heild-logo animation="ia" loop></heild-logo><figcaption>ia</figcaption></figure>
+    <figure><heild-logo animation="atendimento" loop></heild-logo><figcaption>atendimento</figcaption></figure>
+    <figure><heild-logo></heild-logo><figcaption>estático</figcaption></figure>
+  </div>
+  <section>
+    <h1>Seguindo o cursor</h1>
+    <p>Passe o cursor pelos itens: o I vai para a forma de cada um partindo do desenho atual, sem cortes, mesmo indo e voltando rápido.</p>
+    <div class="palco">
+      <heild-logo id="palco"></heild-logo>
+      <div class="hover" id="itens">
+        <button data-forma="centralizar">Painel</button>
+        <button data-forma="contabil">Contábil</button>
+        <button data-forma="bpo">BPO</button>
+        <button data-forma="juridico">Jurídico</button>
+        <button data-forma="ia">Integrantes</button>
+        <button data-forma="atendimento">Atendimento</button>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+  const palco = document.getElementById('palco')
+  document.querySelectorAll('#itens button').forEach((b) => b.addEventListener('pointerenter', () => palco.morph(b.dataset.forma)))
+  document.getElementById('itens').addEventListener('pointerleave', () => palco.morph(null))
+</script>
+</body>
+</html>
