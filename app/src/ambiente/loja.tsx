@@ -36,11 +36,20 @@ export interface Destino {
   tarefa?: string
 }
 
+/** Quem a notificação traz: um integrante (orb no estado dele) ou um contato do cliente (foto, canal). */
+export type QuemToast =
+  | { tipo: 'integrante'; setor: SetorIntegrante; estado?: 'trabalhando' | 'concluido' | 'precisa_de_voce' }
+  | { tipo: 'contato'; nome: string; cliente?: string; canal: 'whatsapp' | 'email' | 'app' }
+
 export interface Toast {
   id: string
   texto: string
   destino?: Destino
   rotuloDestino?: string
+  /** Sem `quem`, é uma confirmação do sistema (ícone, sem pessoa). */
+  quem?: QuemToast
+  /** Hora em que chegou (a notificação mostra "agora" e depois a hora). */
+  em?: number
 }
 
 export interface AvisoSistema {
@@ -321,7 +330,7 @@ interface Loja {
   tarefas: Tarefa[]
   /** Conversas de cada integrante no Time, com as mensagens novas. */
   conversasTime: Record<string, Mensagem[]>
-  toast: (texto: string, destino?: Destino, rotuloDestino?: string) => void
+  toast: (texto: string, destino?: Destino, rotuloDestino?: string, quem?: QuemToast) => void
   fecharToast: (id: string) => void
   avisar: (a: Omit<AvisoSistema, 'id' | 'quando' | 'lidoPor'>) => void
   ler: (id: string, usuario: string) => void
@@ -468,10 +477,11 @@ export const avisosIniciais: AvisoSistema[] = [
 export function LojaProvider({ children, semRotinas }: { children: ReactNode; semRotinas?: boolean }) {
   const [estado, despachar] = useReducer(reduzir, semRotinas, (sem?: boolean) => inicial(avisosIniciais, sem))
 
-  const toast = useCallback((texto: string, destino?: Destino, rotuloDestino?: string) => {
+  const toast = useCallback((texto: string, destino?: Destino, rotuloDestino?: string, quem?: QuemToast) => {
     const id = novoId('t')
-    despachar({ t: 'toast', toast: { id, texto, destino, rotuloDestino } })
-    setTimeout(() => despachar({ t: 'fecharToast', id }), 6500)
+    despachar({ t: 'toast', toast: { id, texto, destino, rotuloDestino, quem, em: Date.now() } })
+    // Quem traz pessoa (integrante, cliente) fica um pouco mais: é para ler.
+    setTimeout(() => despachar({ t: 'fecharToast', id }), quem ? 8000 : 6000)
   }, [])
 
   /* ---------- Motor do trabalho simulado ---------- */
@@ -490,10 +500,10 @@ export function LojaProvider({ children, semRotinas }: { children: ReactNode; se
   const vendoAssistente = () => vistaRef.current.modulo === 'inicio' && vistaRef.current.aba === 'assistente'
   const vendoConversa = (c: string) => vistaRef.current.modulo === 'crm' && vistaRef.current.conversa === c
   /** Sino e toast. Quem já está vendo a coisa não recebe toast, e o aviso nasce lido para essa pessoa. */
-  const notificar = (aviso: Omit<AvisoSistema, 'id' | 'quando' | 'lidoPor'>, olhando: boolean, toastTexto?: string, rotulo?: string) => {
+  const notificar = (aviso: Omit<AvisoSistema, 'id' | 'quando' | 'lidoPor'>, olhando: boolean, toastTexto?: string, rotulo?: string, quem?: QuemToast) => {
     const u = vistaRef.current.usuario
     despachar({ t: 'avisar', aviso: { ...aviso, id: novoId('av'), quando: hora(), lidoPor: olhando && u ? [u] : [] } })
-    if (!olhando && toastTexto) toast(toastTexto, aviso.destino, rotulo)
+    if (!olhando && toastTexto) toast(toastTexto, aviso.destino, rotulo, quem)
   }
   const falar = useCallback((integrante: string, setor: SetorIntegrante, texto: string, cartoes?: Cartao[], ms = PENSA, aoTerminar?: () => void) => {
     const id = novoId('mt')
@@ -560,7 +570,13 @@ export function LojaProvider({ children, semRotinas }: { children: ReactNode; se
         despachar({ t: 'crmItem', conversa: crm.conversa, item: { tipo: 'mensagem', id: novoId('m'), hora: hora(), de: 'cliente', autor: r.autor, canal: 'whatsapp', texto: r.texto } as ItemConversa })
         despachar({ t: 'crmStatus', conversa: crm.conversa, status: 'em_atendimento' })
         const destino: Destino = { modulo: 'crm', aba: 'conversas', conversa: crm.conversa }
-        notificar({ para: [], tipo: 'conversa', setor: t.setor, titulo: `${r.autor} respondeu`, detalhe: r.texto.slice(0, 80), destino }, vendoConversa(crm.conversa), `${r.autor} respondeu no WhatsApp`, 'Ver conversa')
+        const conversaCrm = conversasCrm.find((x) => x.id === crm.conversa)
+        notificar({ para: [], tipo: 'conversa', setor: t.setor, titulo: `${r.autor} respondeu`, detalhe: r.texto.slice(0, 80), destino }, vendoConversa(crm.conversa), r.texto, 'Responder', {
+          tipo: 'contato',
+          nome: r.autor,
+          cliente: conversaCrm?.cliente ?? t.cliente,
+          canal: 'whatsapp',
+        })
         const prox = r.fluxo ? catalogoFluxos[r.fluxo] : undefined
         if (t.origem) {
           const conv = t.origem
@@ -598,7 +614,13 @@ export function LojaProvider({ children, semRotinas }: { children: ReactNode; se
         const destino: Destino = { modulo: 'inicio', aba: 'time', integrante: t.integrante }
         // Quem está no chat do integrante (ou acompanhando o pedido no Assistente) já vê: sem toast.
         const olhando = vendoIntegrante(t.integrante) || (!!t.origem && vendoAssistente())
-        if (fim.aviso) notificar({ para: [], tipo: 'sistema', setor: t.setor, titulo: fim.aviso, detalhe: t.cliente, destino }, olhando, t.silencioso ? undefined : fim.aviso, 'Ver no Time')
+        const pedeVoce = cartoes.some((c) => c.tipo === 'aprovacao')
+        if (fim.aviso)
+          notificar({ para: [], tipo: 'sistema', setor: t.setor, titulo: fim.aviso, detalhe: t.cliente, destino }, olhando, t.silencioso ? undefined : fim.aviso, pedeVoce ? 'Decidir' : 'Ver no Time', {
+            tipo: 'integrante',
+            setor: t.setor,
+            estado: pedeVoce ? 'precisa_de_voce' : 'concluido',
+          })
         despachar({ t: 'evento', evento: { id: novoId('e'), quando: hora(), ator: t.integrante, texto: `Terminou: ${t.titulo}` } })
         if (fim.crm) depois(800, () => enviarAoCliente(t, fim.crm!))
         const proximos = (fim.depois ?? []).map((id) => catalogoFluxos[id]).filter(Boolean)

@@ -715,6 +715,8 @@ function Conversa({ ctx, setor, onSetor }: { ctx: Ctx; setor: SetorIntegrante | 
     loja.statusConversa(id, fio?.responsavel ? 'em_atendimento' : 'nova')
     const resp = fichas[ctx.clienteId]?.responsaveis[setor] ?? fio?.responsavel
     loja.avisar({ para: [idDoUsuario(resp) ?? 'u4'], tipo: 'conversa', setor, titulo: `${ctx.contato.nome} (${ctx.clienteNome}) escreveu pelo app`, detalhe: t.slice(0, 80), destino: { modulo: 'crm', aba: 'conversas', conversa: id } })
+    // No escritório, chega como notificação de mensagem: foto, nome, empresa e o começo do texto.
+    loja.toast(t, { modulo: 'crm', aba: 'conversas', conversa: id }, 'Responder', { tipo: 'contato', nome: ctx.contato.nome, cliente: ctx.clienteNome, canal: 'app' })
     setTexto('')
   }
   return (

@@ -402,7 +402,7 @@ function GavetaPreparar({ p, onFechar }: { p: PedidoPreparar; onFechar: () => vo
           })
           if (p.tarefa) loja.atualizarTarefa(p.tarefa, { status: 'em_andamento', cartaoPendente: true })
           loja.registrar(`integrante ${tom.nome}`, `Preparou ${p.documento} (${p.cliente}) a pedido de ${usuario.nome}`)
-          loja.toast(`${tom.nome} preparou ${p.documento.toLowerCase()}.`, { modulo: 'inicio', aba: 'time', integrante, cliente: clientePorNome(p.cliente)?.id }, 'Ver no Time')
+          loja.toast(`Preparou ${p.documento.toLowerCase()} de ${p.cliente}. Revise antes de enviar.`, { modulo: 'inicio', aba: 'time', integrante, cliente: clientePorNome(p.cliente)?.id }, 'Revisar', { tipo: 'integrante', setor: p.setor, estado: 'precisa_de_voce' })
           onFechar()
         }, 1100)
       }}
