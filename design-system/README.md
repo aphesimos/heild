@@ -103,7 +103,15 @@ Tempos exatos (o componente já aplica):
 | `bpo` | duas cápsulas formam um check | rotina entregue, tarefa concluída |
 | `ia` | três cópias do I em leque que giram 60° | o agente começou a trabalhar |
 | `atendimento` | três pontos pulando em onda | chat, alguém digitando, carregamento |
-| `cycle` | passa por todas, em ordem | vitrines e apresentações da marca |
+| `financeiro` | um $: S em zigue-zague com a haste sobrando em cima e embaixo | financeiro, cobrança, pagamentos |
+| `tempo` | ampulheta que vira 180° e cabe na própria caixa | timesheet, prazos, horas |
+| `arquivos` | pasta em contorno, com aba | arquivos, documentos |
+| `conversa` | balão de fala com rabicho | CRM, conversa com o cliente |
+| `celular` | o aparelho, com um ponto como botão | app do cliente |
+| `painel` | grade bento: coluna alta, barras e pontos | painel, dashboard, widgets |
+| `lupa` | lente octogonal com cabo a 45°, que varre | consultor, análise, busca |
+| `equipe` | três pessoas, a do meio mais alta, em onda de aceno | integrantes, o time |
+| `cycle` | passa pelas formas originais, em ordem | vitrines e apresentações da marca |
 
 ### O orb na logo
 

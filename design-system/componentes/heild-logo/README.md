@@ -44,7 +44,7 @@ const { HeildLogo } = window.Heild
 
 | Atributo | Valores | Padrão | O que faz |
 |---|---|---|---|
-| `animation` | `none`, `centralizar`, `orb`, `contabil`, `juridico`, `bpo`, `ia`, `atendimento`, `cycle` | `none` | Forma em que o I se transforma. `cycle` passa por todas. |
+| `animation` | `none`, `centralizar`, `orb`, `contabil`, `juridico`, `bpo`, `ia`, `atendimento`, `financeiro`, `tempo`, `arquivos`, `conversa`, `celular`, `painel`, `lupa`, `equipe`, `cycle` | `none` | Forma em que o I se transforma. `cycle` passa por todas. |
 | `loop` | booleano | ausente | Repete com 1,3 s de repouso entre as vezes. Sem ele, toca uma vez ao aparecer. |
 | `label` | texto | `Heild` | Nome lido por leitores de tela. |
 
