@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tooltip } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { useTema } from '@/theme/ThemeProvider'
+import { ehHeild, Marca, MarcaHeild } from './marca'
 
 export interface ItemLateral {
   id: string
@@ -45,7 +46,7 @@ const mola = { type: 'spring', stiffness: 420, damping: 40 } as const
  * conteúdo ou passa por cima é a Moldura, pela largura da tela.
  */
 export function BarraLateral({ itens, ativo, onTrocar, usuario, configuracoes, aberta, onAlternar, onAlternarModo, onMinhaConta, onSair, onSuporte, className }: Props) {
-  const { tema, modo } = useTema()
+  const { modo } = useTema()
   const Alternar = aberta ? CaretDoubleLeft : CaretDoubleRight
 
   return (
@@ -57,14 +58,12 @@ export function BarraLateral({ itens, ativo, onTrocar, usuario, configuracoes, a
       className={cn('from-sidebar to-sidebar-end flex h-full flex-col overflow-hidden bg-gradient-to-b py-4', className)}
     >
       {/*
-        Marca, solta, sem moldura: logotipo do sistema por padrão, do escritório
-        na marca branca. Sem logotipo carregado, a sigla do tema faz as vezes.
+        Marca, solta, sem moldura. Heild: HEILD aberta e HE fechada, com a troca
+        animada. Marca branca: a logo completa do escritório aberta e o logotipo
+        dele fechada, sem animação.
       */}
-      <div className="flex h-12 shrink-0 items-center gap-2.5 px-[16px]">
-        <SiglaMarca />
-        <Rotulo aberta={aberta} className="text-base font-medium tracking-tight">
-          {tema.nome_produto}
-        </Rotulo>
+      <div className="flex h-12 shrink-0 items-center px-[16px]">
+        <Marca aberta={aberta} />
       </div>
 
       <ul className="mt-6 flex flex-col gap-1 px-[16px]">
@@ -210,12 +209,14 @@ function ItemMenu({ icone, children, onClick }: { icone: ReactNode; children: Re
   )
 }
 
-/** Marca do sistema (logotipo do tema ou a sigla), a mesma da barra lateral, do login e do app. */
+/** Marca curta do sistema (o HE da Heild, ou o logotipo/sigla do escritório), num quadrado de 44 px. */
 export function SiglaMarca() {
   const { tema } = useTema()
   return (
     <span className="flex h-11 w-11 shrink-0 items-center justify-center">
-      {tema.logotipo_ref ? (
+      {ehHeild(tema) ? (
+        <MarcaHeild aberta={false} />
+      ) : tema.logotipo_ref ? (
         <img src={tema.logotipo_ref} alt={tema.nome_produto} className="max-h-9 w-auto max-w-11 object-contain" />
       ) : (
         <span className="text-foreground text-[26px] leading-none font-semibold tracking-tighter" style={{ fontFamily: 'var(--font-heading)' }} aria-label={tema.nome_produto}>

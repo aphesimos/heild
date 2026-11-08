@@ -1,12 +1,11 @@
 import { ArrowLeftIcon, EyeIcon, EyeSlashIcon, LockKeyIcon, ShieldCheckIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { SiglaMarca } from '@/components/compostos/barra-lateral'
+import { Marca } from '@/components/compostos/marca'
 import { Avatar } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Campo, CampoTexto } from '@/components/ui/formulario'
 import { escritorio, usuariosCfg } from '@/dados/configuracoes'
 import { cn } from '@/lib/utils'
-import { useTema } from '@/theme/ThemeProvider'
 import { papelExibido, permissoesDe } from '@/ambiente/sessao'
 
 /**
@@ -16,7 +15,6 @@ import { papelExibido, permissoesDe } from '@/ambiente/sessao'
  * endereço, antes do login (Fundações 10).
  */
 export function LoginTela({ onEntrar }: { onEntrar: (id: string) => void }) {
-  const { tema } = useTema()
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [ver, setVer] = useState(false)
@@ -49,8 +47,7 @@ export function LoginTela({ onEntrar }: { onEntrar: (id: string) => void }) {
     <div className="from-background to-background-end text-foreground flex min-h-dvh flex-col bg-gradient-to-b">
       {/* Marca no mesmo lugar e no mesmo desenho da barra lateral do sistema. */}
       <header className="flex h-12 shrink-0 items-center gap-2.5 px-[16px] pt-4 sm:mt-4">
-        <SiglaMarca />
-        <span className="text-base font-medium tracking-tight">{tema.nome_produto}</span>
+        <Marca />
       </header>
 
       <main className="flex flex-1 flex-col items-center px-4 py-10 sm:py-14">

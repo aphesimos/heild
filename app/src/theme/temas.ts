@@ -72,8 +72,9 @@ export const areia = {
  */
 export const temaFabrica: Tema = {
   id: 'fabrica',
-  nome_produto: 'Contábil',
-  sigla: 'C',
+  nome_produto: 'Heild',
+  sigla: 'HE',
+  marca: 'heild',
   tokens: {
     primaria: areia[900],
     fundo: areia[50],

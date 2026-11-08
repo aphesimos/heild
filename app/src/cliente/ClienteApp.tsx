@@ -30,6 +30,7 @@ import { fichas, type ContatoCliente, type FichaCliente } from '@/ambiente/clien
 import { useConversaDe } from '@/ambiente/fluxos'
 import { useLoja, usePersistente } from '@/ambiente/loja'
 import { SiglaMarca } from '@/components/compostos/barra-lateral'
+import { ehHeild, Marca } from '@/components/compostos/marca'
 import { Button } from '@/components/ui/button'
 import { CampoEscolha, CampoTexto } from '@/components/ui/formulario'
 import { usuariosCfg } from '@/dados/configuracoes'
@@ -130,9 +131,9 @@ function LoginApp({ onEntrar }: { onEntrar: (nome: string) => void }) {
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto px-6 py-10 [&>*]:shrink-0">
       <div className="-ml-2 flex items-center gap-2.5">
-        <SiglaMarca />
+        {ehHeild(tema) ? <Marca /> : <SiglaMarca />}
         <span>
-          <span className="block font-medium">{tema.nome_produto}</span>
+          {!ehHeild(tema) && <span className="block font-medium">{tema.nome_produto}</span>}
           <span className="text-muted-foreground block text-xs">app.contabilandrade.com.br</span>
         </span>
       </div>

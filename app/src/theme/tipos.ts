@@ -79,7 +79,12 @@ export interface Tema {
   nome_produto: string
   /** Sigla curta usada quando não há logotipo carregado. */
   sigla: string
+  /** Logotipo (a marca curta), usado com a barra lateral fechada e onde cabe pouco. */
   logotipo_ref?: string
+  /** Logo completa do escritório, com a barra aberta, no login e no app. Sem ela, logotipo (ou sigla) e nome. */
+  logo_completa_ref?: string
+  /** A marca da própria Heild: wordmark animado (HE fechado, HEILD aberto). Marca branca não usa. */
+  marca?: 'heild'
   tokens: TokensTema
   modo_escuro?: Partial<TokensTema>
   integrantes_padrao: Partial<Record<SetorIntegrante, IntegrantePadraoTema>>
