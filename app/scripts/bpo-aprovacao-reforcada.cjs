@@ -1,0 +1,21 @@
+const { chromium } = require('playwright');
+(async () => { const out = process.argv[2]; const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1600, height: 900 } }); p.setDefaultTimeout(6000); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  const ok = (r, m) => console.log((r ? 'ok   ' : 'FALHA') + ' ' + m);
+  const dlg = () => p.getByRole('dialog');
+  const lab = async () => { await p.getByRole('button', { name: /Demonstração/ }).click(); await p.waitForTimeout(300) };
+  const entrarApp = async (n) => { await p.getByRole('button', { name: new RegExp('^' + n) }).click(); await p.getByRole('button', { name: 'Receber código' }).click(); await p.getByLabel('Código').fill('123456'); await p.getByRole('button', { name: 'Entrar', exact: true }).click(); await p.waitForTimeout(500) };
+  await p.goto('http://localhost:6100/'); await p.waitForTimeout(800);
+  await lab(); await dlg().getByRole('button', { name: /App do cliente/ }).click(); await p.keyboard.press('Escape'); await p.waitForTimeout(400);
+  await entrarApp('Patrícia Almeida');
+  await p.getByRole('button', { name: 'Ver', exact: true }).click(); await p.waitForTimeout(300);
+  await p.getByRole('button', { name: 'Aprovar', exact: true }).click(); await p.waitForTimeout(300);
+  ok(await p.getByText(/Falta Rogério/).count() > 0, 'reforçada: depois da Patrícia, falta o Rogério'); await p.screenshot({ path: `${out}/app-reforcada.png` });
+  await p.getByRole('navigation', { name: 'Menu do app' }).getByRole('button', { name: 'Mais' }).click(); await p.getByRole('button', { name: /Sair deste aparelho/ }).click(); await p.waitForTimeout(400);
+  await entrarApp('Rogério Almeida');
+  await p.getByRole('button', { name: 'Ver', exact: true }).click(); await p.waitForTimeout(300); await p.getByRole('button', { name: 'Aprovar', exact: true }).click(); await p.waitForTimeout(300);
+  ok(await p.getByText(/Aprovado por Patrícia .* e Rogério/).count() > 0, 'duas aprovações registradas');
+  // Escritório vê
+  await lab(); await dlg().getByRole('button', { name: /Escritório|Plataforma/ }).first().click().catch(()=>{}); await p.keyboard.press('Escape'); await p.waitForTimeout(800);
+  await p.screenshot({ path: `${out}/volta.png` });
+  console.log('erros', JSON.stringify(errs.slice(0, 5))); await b.close();
+})();

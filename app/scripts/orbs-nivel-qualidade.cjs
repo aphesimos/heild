@@ -1,0 +1,13 @@
+const { chromium } = require('playwright');
+(async () => { const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1600, height: 900 }, colorScheme: 'dark', deviceScaleFactor: 2 }); p.setDefaultTimeout(5000);
+  await p.goto('http://localhost:6100/'); await p.waitForTimeout(800);
+  await p.getByRole('button', { name: /Fernanda Lima/ }).first().click(); await p.getByRole('button', { name: 'Entrar', exact: true }).click(); await p.waitForTimeout(400); await p.getByLabel('Código').fill('123456'); await p.getByRole('button', { name: 'Confirmar' }).click(); await p.waitForTimeout(1200);
+  await p.getByRole('tab', { name: /^Visão geral/ }).click(); await p.waitForTimeout(1500); await p.getByRole('button', { name: 'Configurações', exact: true }).first().click(); await p.waitForTimeout(800); await p.getByRole('tab', { name: /^Integrantes/ }).click(); await p.waitForTimeout(1500);
+  const desenho = () => p.evaluate(() => [...document.querySelectorAll('orb-avatar')].filter(o => { const r = o.getBoundingClientRect(); return r.top > 0 && r.bottom < innerHeight && r.width > 0 }).map(o => { const c = o.shadowRoot.querySelector('canvas'); const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let a = 0; for (let i = 3; i < d.length; i += 4) a += d[i]; return (o.hasAttribute('static') ? 'S' : 'A') + Math.round(a / 1000) }));
+  console.log('antes', JSON.stringify(await desenho()));
+  await p.evaluate(() => { window.OrbAvatar.quality = 2 }); await p.waitForTimeout(600);
+  console.log('nível 1', JSON.stringify(await desenho()));
+  await p.evaluate(() => { window.OrbAvatar.quality = 0 }); await p.waitForTimeout(600);
+  console.log('nível 0', JSON.stringify(await desenho()));
+  await b.close();
+})();

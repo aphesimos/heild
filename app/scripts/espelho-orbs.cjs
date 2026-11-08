@@ -1,0 +1,30 @@
+const { chromium } = require('playwright');
+(async () => { const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1600, height: 900 } }); p.setDefaultTimeout(5000); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  const ok = (r, m) => console.log((r ? 'ok   ' : 'FALHA') + ' ' + m);
+  await p.goto('http://localhost:6100/'); await p.waitForTimeout(800);
+  await p.getByRole('button', { name: /Fernanda Lima/ }).first().click(); await p.getByRole('button', { name: 'Entrar', exact: true }).click(); await p.waitForTimeout(400); await p.getByLabel('Código').fill('123456'); await p.getByRole('button', { name: 'Confirmar' }).click(); await p.waitForTimeout(1200);
+  await p.getByRole('tab', { name: /^Time/ }).click(); await p.waitForTimeout(600);
+  await p.locator('button:not([role=tab]):visible', { hasText: 'Vigia do ISS' }).first().click(); await p.mouse.move(5, 890); await p.waitForTimeout(6500);
+  // instala contadores de emote/poke em todos os orbs com espelho
+  await p.evaluate(() => { window.__ev = []; document.querySelectorAll('orb-avatar[data-espelho]').forEach(o => { o.addEventListener('emote', e => window.__ev.push(o.dataset.espelho + ' emote ' + e.detail.name)); o.addEventListener('poke', () => window.__ev.push(o.dataset.espelho + ' poke')) }) });
+  const sono = () => p.evaluate(() => Object.fromEntries([...document.querySelectorAll('orb-avatar[data-espelho^="i-iss"]')].filter(o => o.offsetParent).map(o => [o.dataset.espelho, o.asleep])));
+  console.log('ao abrir', JSON.stringify(await sono()));
+  const v = await sono(); ok(Object.values(v).length >= 3 && Object.values(v).every(Boolean), 'grande, cabeçalho e lateral cochilam juntos');
+  const g = await p.locator('orb-avatar[data-espelho="i-iss:grande"]').boundingBox(); await p.mouse.move(g.x + 36, g.y + 36, { steps: 6 }); await p.waitForTimeout(1500);
+  const a = await sono(); ok(Object.values(a).every((x) => !x), 'acordam juntos quando o cursor chega perto do grande');
+  await p.evaluate(() => { window.__ev = []; document.querySelector('orb-avatar[data-espelho="i-iss:grande"]').emote('sneeze') }); await p.waitForTimeout(300);
+  let ev = await p.evaluate(() => window.__ev); console.log(JSON.stringify(ev));
+  ok(ev.includes('i-iss:cabecalho emote sneeze') && ev.includes('i-iss:lateral emote sneeze'), 'gracinha do grande vai para cabeçalho e lateral');
+  ok(!ev.some(x => !x.startsWith('i-iss')), 'nenhum outro integrante reage');
+  await p.waitForTimeout(3000);
+  await p.evaluate(() => { window.__ev = [] }); await p.locator('orb-avatar[data-espelho="i-iss:cabecalho"]').click(); await p.waitForTimeout(300);
+  ev = await p.evaluate(() => window.__ev); console.log(JSON.stringify(ev));
+  ok(ev.includes('i-iss:lateral poke') && ev.includes('i-iss:grande poke'), 'cutucar o cabeçalho espelha no grande e na lateral');
+  // outro chat: Fiscal
+  await p.locator('button:not([role=tab]):visible', { hasText: 'Fiscal' }).first().click(); await p.waitForTimeout(800);
+  await p.evaluate(() => { window.__ev = []; document.querySelectorAll('orb-avatar[data-espelho]').forEach(o => { o.addEventListener('emote', e => window.__ev.push(o.dataset.espelho + ' emote ' + e.detail.name)); o.addEventListener('poke', () => window.__ev.push(o.dataset.espelho + ' poke')) }) });
+  await p.locator('orb-avatar[data-espelho="i-fiscal:cabecalho"]').click(); await p.waitForTimeout(300);
+  ev = await p.evaluate(() => window.__ev); console.log(JSON.stringify(ev));
+  ok(ev.includes('i-fiscal:lateral poke') && !ev.some(x => x.startsWith('i-iss')), 'no chat do Fiscal: cabeçalho → lateral do Fiscal; o Vigia não reage');
+  console.log('erros', JSON.stringify(errs)); await b.close();
+})();

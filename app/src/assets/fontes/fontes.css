@@ -1,0 +1,37 @@
+/*
+ * PP Neue Montreal (Pangram Pangram), versão 2.700, em quatro arquivos variáveis:
+ * - PP Neue Montreal, romano e itálico: peso 100 a 900; títulos e textos grandes;
+ * - PP Neue Montreal Text, romano e itálico: peso 200 a 700; desenhada para tamanhos pequenos.
+ * Os originais tinham o itálico como eixo ("ital") no mesmo arquivo, mas o Chrome
+ * não liga esse eixo sozinho; por isso foram separados em romano e itálico
+ * (fontTools, instancer), cada um com todos os pesos. A página só baixa o itálico
+ * quando algum texto pede.
+ */
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./pp-neue-montreal/PPNeueMontreal-Roman-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./pp-neue-montreal/PPNeueMontreal-Italic-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PP Neue Montreal Text';
+  src: url('./pp-neue-montreal/PPNeueMontrealText-Roman-Variable.woff2') format('woff2');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PP Neue Montreal Text';
+  src: url('./pp-neue-montreal/PPNeueMontrealText-Italic-Variable.woff2') format('woff2');
+  font-weight: 200 700;
+  font-style: italic;
+  font-display: swap;
+}

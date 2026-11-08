@@ -1,0 +1,16 @@
+const { chromium } = require('playwright');
+(async () => { const out = process.argv[2]; const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1600, height: 900 } }); p.setDefaultTimeout(8000); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  const ok = (r, m) => console.log((r ? 'ok   ' : 'FALHA') + ' ' + m);
+  await p.goto('http://localhost:6100/'); await p.waitForTimeout(800);
+  await p.getByRole('button', { name: /Fernanda Lima/ }).first().click(); await p.getByRole('button', { name: 'Entrar', exact: true }).click(); await p.waitForTimeout(400); await p.getByLabel('Código').fill('123456'); await p.getByRole('button', { name: 'Confirmar' }).click(); await p.waitForTimeout(1200);
+  await p.getByRole('button', { name: /Feche outubro da Metalúrgica/ }).click();
+  await p.waitForTimeout(1200); ok(await p.getByText(/pensando/).count() > 0, 'pensando antes de escrever');
+  const final = 'Dividi em duas partes: o Contábil concilia e gera o balancete; depois o Fiscal apura o ISS e o PIS/COFINS. Vou acompanhando aqui.';
+  await p.waitForTimeout(1900);
+  const parcial = await p.locator('p', { hasText: /^Dividi/ }).first().innerText().catch(() => '');
+  console.log('parcial:', parcial.length, 'de', final.length); ok(parcial.length > 0 && parcial.length < final.length, 'texto aparece sendo escrito');
+  ok(await p.getByText(/Passando para|passou para/).count() === 0, 'cartão só depois do texto');
+  await p.waitForTimeout(3500); const cheio = await p.locator('p', { hasText: /^Dividi/ }).first().innerText(); ok(cheio.trim() === final, 'texto completo no fim'); ok(await p.getByText(/Passando para|passou para/).count() > 0, 'cartão aparece depois');
+  await p.screenshot({ path: `${out}/e-fim.png` });
+  console.log('erros', JSON.stringify(errs.slice(0, 5))); await b.close();
+})();

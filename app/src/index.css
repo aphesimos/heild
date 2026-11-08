@@ -1,0 +1,285 @@
+@import 'tailwindcss';
+@import './assets/fontes/fontes.css';
+
+/* O modo escuro segue a classe .dark posta pelo ThemeProvider em <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Telas baixas (monitores antigos 1366x768, 1280x720, janelas reduzidas). */
+@custom-variant baixa (@media (max-height: 760px));
+/* Ultrawide (21:9 e maiores). */
+@custom-variant ultra (@media (min-width: 1800px));
+
+/*
+ * Valores de partida, só para o primeiro quadro antes do ThemeProvider montar.
+ * O ThemeProvider sobrescreve tudo a partir do tema do escritório.
+ */
+:root {
+  --background: #ffffff;
+  --foreground: #18181b;
+  --card: #fafafa;
+  --card-foreground: #18181b;
+  --popover: #fafafa;
+  --popover-foreground: #18181b;
+  --primary: #18181b;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --highlight: #f59e0b;
+  --warning: #b7791f;
+  --highlight-foreground: #0b0b0f;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #16a34a;
+  --success-foreground: #ffffff;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #a1a1aa;
+  --background-end: #d9d2cc;
+  --sidebar: #ece9e6;
+  --sidebar-end: #cbc6c2;
+  --surface: #f7f5f2;
+  --raised: #ffffff;
+  --sunken: #e4e0dc;
+  --sunken-end: #d6d1cc;
+  --shadow-ink: #2e2b28;
+  --radius: 0.75rem;
+  --font-heading: ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Expõe as variáveis como utilitários do Tailwind: bg-primary, text-muted-foreground... */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
+  --color-warning: var(--warning);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background-end: var(--background-end);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-end: var(--sidebar-end);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-sunken: var(--sunken);
+  --color-sunken-end: var(--sunken-end);
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+
+  /* Sombras do sistema, na tinta do tema. */
+  --shadow-contorno: 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 7%, transparent);
+  --shadow-cartao: 0 1px 2px color-mix(in oklab, var(--shadow-ink) 6%, transparent), 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 6%, transparent);
+  --shadow-painel: 0 1px 3px color-mix(in oklab, var(--shadow-ink) 8%, transparent), 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 7%, transparent);
+  --shadow-campo: 0 2px 10px color-mix(in oklab, var(--shadow-ink) 10%, transparent), 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 5%, transparent);
+  --shadow-pilula: 0 1px 3px color-mix(in oklab, var(--shadow-ink) 15%, transparent), 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 5%, transparent);
+  --shadow-sm: 0 1px 3px color-mix(in oklab, var(--shadow-ink) 10%, transparent), 0 1px 2px color-mix(in oklab, var(--shadow-ink) 6%, transparent);
+  --shadow-md: 0 4px 12px color-mix(in oklab, var(--shadow-ink) 12%, transparent);
+  --shadow-lg: 0 10px 30px color-mix(in oklab, var(--shadow-ink) 16%, transparent);
+  --shadow-2xl: 0 24px 60px color-mix(in oklab, var(--shadow-ink) 28%, transparent);
+  --inset-shadow-trilho: inset 0 1px 2px color-mix(in oklab, var(--shadow-ink) 10%, transparent);
+
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+}
+
+/* Grade de widgets: altura da célula (tamanhos são múltiplos dela). */
+:root {
+  --celula-widget: 156px;
+}
+@media (max-height: 760px) {
+  :root {
+    --celula-widget: 136px;
+  }
+}
+
+/* Modo edição dos widgets: tremor leve, alternado, como no celular. */
+@keyframes tremer {
+  0%, 100% { transform: rotate(-0.35deg); }
+  50% { transform: rotate(0.35deg); }
+}
+.widget-tremendo {
+  animation: tremer 0.32s ease-in-out infinite;
+}
+:where(div:nth-child(2n)) > .widget-tremendo {
+  animation-delay: -0.16s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .widget-tremendo {
+    animation: none;
+  }
+}
+
+/* Esconde a barra de rolagem (faixas que rolam de lado, como as abas). */
+@utility sem-barra {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * Área de rolagem sob o cabeçalho (classe .area-rolagem ou <AreaRolagem>): ao
+ * rolar, o topo do conteúdo esmaece aos poucos, guiado pela própria rolagem;
+ * parado no topo, nada é cortado. Máscara, não desfoque (desfoque pesa).
+ * Sem suporte a animação guiada por rolagem, o conteúdo só não esmaece.
+ */
+@property --esmaecer {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes esmaecer-topo {
+  to {
+    --esmaecer: 44px;
+  }
+}
+.area-rolagem {
+  mask-image: linear-gradient(to bottom, transparent 0, black var(--esmaecer));
+  animation: esmaecer-topo linear both;
+  animation-timeline: scroll(self);
+  animation-range: 0 60px;
+}
+
+/*
+ * Variante com rodapé (.area-rolagem-dupla): listas e chats cortados também
+ * embaixo (pelo campo do chat ou pela borda do painel). O fim esmaece enquanto
+ * há conteúdo abaixo e some ao chegar no fim; sem rolagem, nada esmaece.
+ */
+@property --esmaecer-fim {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes esmaecer-fim {
+  from {
+    --esmaecer-fim: 44px;
+  }
+  to {
+    --esmaecer-fim: 0px;
+  }
+}
+.area-rolagem-dupla {
+  mask-image: linear-gradient(to bottom, transparent 0, black var(--esmaecer), black calc(100% - var(--esmaecer-fim)), transparent 100%);
+  animation:
+    esmaecer-topo linear both,
+    esmaecer-fim linear both;
+  animation-timeline: scroll(self), scroll(self);
+  animation-range:
+    0 60px,
+    calc(100% - 60px) 100%;
+}
+
+@layer base {
+  /*
+   * Barra de rolagem do sistema (UI kit): trilho invisível, polegar em pílula
+   * fina na cor do texto do tema, mais forte ao passar o mouse. Sem setas.
+   * Chrome, Edge e Safari usam ::-webkit-scrollbar; o Firefox, as propriedades padrão.
+   */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklab, var(--foreground) 18%, transparent);
+    background-clip: content-box;
+    border: 4px solid transparent;
+    border-radius: 999px;
+    min-height: 40px;
+  }
+  *:hover::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklab, var(--foreground) 28%, transparent);
+  }
+  ::-webkit-scrollbar-thumb:hover,
+  ::-webkit-scrollbar-thumb:active {
+    background-color: color-mix(in oklab, var(--foreground) 45%, transparent);
+    border-width: 3px;
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in oklab, var(--foreground) 25%, transparent) transparent;
+    }
+  }
+
+  * {
+    @apply border-border;
+  }
+  html,
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+  }
+  /*
+   * Monitores grandes e altos (ultrawide 3440x1440, 2560x1440 e acima): sobe a
+   * base em 12,5%. Tudo é em rem, então a interface inteira cresce junto.
+   */
+  @media (min-width: 2400px) and (min-height: 1300px) {
+    html {
+      font-size: 112.5%;
+    }
+  }
+  /* Sombra leve para o orb não sumir quando a cor dele é próxima do fundo. */
+  orb-avatar::part(canvas) {
+    filter: drop-shadow(0 1px 2px color-mix(in oklab, var(--shadow-ink) 22%, transparent));
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+/* Cartão que chega depois do texto da resposta (escrita simulada). */
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.surgir {
+  animation: surgir 0.3s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .surgir {
+    animation: none;
+  }
+}
