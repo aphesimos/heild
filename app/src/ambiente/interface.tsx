@@ -1,4 +1,6 @@
-import { BellIcon, CalendarCheckIcon, ChatCircleDotsIcon, CheckIcon, GearSixIcon, InfoIcon, UserCircleIcon, XIcon } from '@phosphor-icons/react'
+import { BellIcon, CalendarCheckIcon, ChatCircleDotsIcon, CheckIcon, DeviceMobileIcon, EnvelopeSimpleIcon, GearSixIcon, InfoIcon, UserCircleIcon, WhatsappLogoIcon, XIcon } from '@phosphor-icons/react'
+import { AnimatePresence, motion } from 'motion/react'
+import { Avatar } from '@/components/ui/avatar'
 import { useState, type ReactNode } from 'react'
 import { Contador } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -6,38 +8,121 @@ import { Orb } from '@/components/ui/orb'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useAparencia } from '@/hooks/useAparencia'
 import { cn } from '@/lib/utils'
-import { useLoja, useNavegacao, type AvisoSistema, type Destino } from './loja'
+import { useTema } from '@/theme/ThemeProvider'
+import { useLoja, useNavegacao, type AvisoSistema, type Destino, type Toast } from './loja'
 import { useSessao } from './sessao'
 
-/** Confirmações das ações, no canto, com o link para onde a coisa foi parar. */
+/**
+ * Notificações no canto inferior direito, como no WhatsApp Web ou no Discord: a
+ * mais nova entra por baixo e empurra as outras para cima. Três desenhos:
+ * - mensagem de cliente: a foto, o nome, a empresa e o começo do texto, com o canal;
+ * - integrante: o orb no estado dele, o nome e o que fez (ou que precisa de você);
+ * - confirmação do sistema: o ícone e o texto.
+ */
 export function Toasts() {
   const loja = useLoja()
   const nav = useNavegacao()
+  const abrir = (t: Toast) => {
+    if (t.destino) nav.irPara(t.destino)
+    loja.fecharToast(t.id)
+  }
   return (
-    <div className="pointer-events-none fixed top-16 left-1/2 z-[60] flex w-[min(26rem,calc(100vw-2rem))] -translate-x-1/2 flex-col gap-2" aria-live="polite">
-      {loja.estado.toasts.map((t) => (
-        <div key={t.id} className="bg-foreground text-background pointer-events-auto flex items-start gap-3 rounded-[16px] px-4 py-3 text-sm shadow-lg">
-          <CheckIcon className="mt-0.5 size-4 shrink-0" weight="bold" />
-          <span className="min-w-0 flex-1">
-            {t.texto}
-            {t.destino && (
-              <button
-                type="button"
-                className="mt-1 block cursor-pointer font-medium underline underline-offset-2"
-                onClick={() => {
-                  nav.irPara(t.destino!)
-                  loja.fecharToast(t.id)
-                }}
-              >
-                {t.rotuloDestino ?? 'Abrir'}
-              </button>
-            )}
-          </span>
-          <button type="button" aria-label="Fechar" className="cursor-pointer opacity-70 hover:opacity-100" onClick={() => loja.fecharToast(t.id)}>
-            <XIcon className="size-4" />
-          </button>
-        </div>
-      ))}
+    <div className="pointer-events-none fixed right-4 bottom-4 left-4 z-[60] flex flex-col items-end gap-2 sm:left-auto sm:w-[22.5rem]" aria-live="polite" aria-label="Notificações">
+      <AnimatePresence initial={false}>
+        {loja.estado.toasts.map((t) => (
+          <motion.div
+            key={t.id}
+            layout
+            initial={{ opacity: 0, x: 32, scale: 0.96 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 40, transition: { duration: 0.18 } }}
+            transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+            className="pointer-events-auto w-full"
+          >
+            <Notificacao t={t} onAbrir={() => abrir(t)} onFechar={() => loja.fecharToast(t.id)} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/** "Contábil fechou a conciliação" ao lado do nome Contábil vira "Fechou a conciliação" (o nome já está em cima). */
+function semNome(texto: string, nome: ReactNode) {
+  if (typeof nome !== 'string') return texto
+  const m = texto.match(new RegExp(`^${nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[:,]?\\s+`))
+  if (!m) return texto
+  const resto = texto.slice(m[0].length)
+  return resto.charAt(0).toUpperCase() + resto.slice(1)
+}
+
+const rotuloCanal = { whatsapp: 'WhatsApp', email: 'E-mail', app: 'App' } as const
+const fraseEstado = { trabalhando: 'começou', concluido: 'terminou', precisa_de_voce: 'precisa de você' } as const
+
+function Notificacao({ t, onAbrir, onFechar }: { t: Toast; onAbrir: () => void; onFechar: () => void }) {
+  const { integrante } = useTema()
+  const q = t.quem
+  const pede = q?.tipo === 'integrante' && q.estado === 'precisa_de_voce'
+  let visual: ReactNode
+  let nome: ReactNode = null
+  let meta: string | null = null
+  if (q?.tipo === 'integrante') {
+    const i = integrante(q.setor)
+    visual = (
+      <span className="flex size-10 shrink-0 items-center justify-center">
+        <Orb cor={i.cor} corOlhos={i.corOlhos} tamanho={40} estado={q.estado ?? 'concluido'} animado extras={false} cutucavel={false} />
+      </span>
+    )
+    nome = i.nome
+    meta = fraseEstado[q.estado ?? 'concluido']
+  } else if (q?.tipo === 'contato') {
+    const Canal = q.canal === 'whatsapp' ? WhatsappLogoIcon : q.canal === 'email' ? EnvelopeSimpleIcon : DeviceMobileIcon
+    visual = (
+      <span className="relative flex size-10 shrink-0">
+        <Avatar nome={q.nome} tamanho="lg" className="size-10" />
+        <span className={cn('ring-raised absolute -right-0.5 -bottom-0.5 flex size-[18px] items-center justify-center rounded-full ring-2', q.canal === 'whatsapp' ? 'bg-[#25d366] text-white' : 'bg-foreground text-background')}>
+          <Canal className="size-[11px]" weight="fill" />
+        </span>
+      </span>
+    )
+    nome = q.nome
+    meta = [q.cliente, rotuloCanal[q.canal]].filter(Boolean).join(' · ')
+  } else {
+    visual = (
+      <span className="bg-sunken flex size-10 shrink-0 items-center justify-center rounded-full">
+        <CheckIcon className="size-4" weight="bold" />
+      </span>
+    )
+  }
+  return (
+    <div
+      role={t.destino ? 'button' : undefined}
+      tabIndex={t.destino ? 0 : undefined}
+      onClick={t.destino ? onAbrir : undefined}
+      onKeyDown={(e) => t.destino && (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onAbrir())}
+      className={cn('bg-raised shadow-campo group relative flex gap-3 rounded-[20px] p-3.5 pr-9 text-sm', t.destino && 'hover:bg-surface cursor-pointer transition-colors')}
+    >
+      {pede && <span aria-hidden className="bg-highlight absolute top-4 left-0 h-6 w-[3px] rounded-r-full" />}
+      {visual}
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        {nome && (
+          <p className="flex min-w-0 items-baseline gap-1.5">
+            <span className="max-w-[70%] shrink-0 truncate font-semibold">{nome}</span>
+            {meta && <span className={cn('min-w-0 truncate text-xs', pede ? 'text-highlight font-medium' : 'text-muted-foreground')}>{meta}</span>}
+            <span className="text-muted-foreground ml-auto shrink-0 text-xs">agora</span>
+          </p>
+        )}
+        <p className={cn('line-clamp-2 leading-snug', nome ? 'text-muted-foreground' : 'text-foreground pt-0.5')}>{semNome(t.texto, q?.tipo === 'integrante' ? nome : null)}</p>
+        {t.destino && <span className="mt-1 text-xs font-medium">{t.rotuloDestino ?? 'Abrir'}</span>}
+      </div>
+      <button
+        type="button"
+        aria-label="Fechar notificação"
+        onClick={(e) => (e.stopPropagation(), onFechar())}
+        className="text-muted-foreground hover:text-foreground hover:bg-sunken absolute top-2.5 right-2.5 flex size-6 cursor-pointer items-center justify-center rounded-full opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 max-sm:opacity-100"
+      >
+        <XIcon className="size-3.5" />
+      </button>
     </div>
   )
 }

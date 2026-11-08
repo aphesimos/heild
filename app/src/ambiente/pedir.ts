@@ -22,7 +22,7 @@ export function usePedirIntegrante() {
       fazendo,
       pedir: () => {
         loja.iniciarTrabalho(fluxoDaTarefa(t, quem.id, nome), { tarefaId: t.id })
-        loja.toast(`${nome} começou: ${t.codigo} · ${t.cliente}`, { modulo: 'inicio', aba: 'time', integrante: quem.id }, 'Acompanhar')
+        loja.toast(`Começou ${t.codigo} · ${t.cliente}.`, { modulo: 'inicio', aba: 'time', integrante: quem.id }, 'Acompanhar', { tipo: 'integrante', setor: quem.setor, estado: 'trabalhando' })
       },
     }
   }
