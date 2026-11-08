@@ -260,7 +260,6 @@ function BotaoTema({ modo, onTrocar, rotulo, className }: { modo: ModoCor; onTro
       // A onda nasce no ícone, também quando o botão tem rótulo (no menu do celular).
       onClick={(e) => onTrocar(e.currentTarget.querySelector('svg') as unknown as HTMLElement)}
       aria-label={rotulo ? undefined : escuro ? 'Mudar para o tema claro' : 'Mudar para o tema escuro'}
-      title={escuro ? 'Tema claro' : 'Tema escuro'}
       data-escuro={escuro}
       className={cn('botao-tema text-foreground hover:bg-sunken relative flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors', className)}
     >
@@ -463,7 +462,7 @@ function SecaoDemo({ escolhas, titulo, texto }: { escolhas: Plataforma[]; titulo
             </ReservaAltura>
           </div>
           {/* key: trocar de plataforma começa uma demonstração nova. */}
-          <div data-visual data-luz className="h-[620px] lg:col-span-7 lg:h-[min(700px,calc(100svh-112px))]">
+          <div data-visual data-luz className="h-[620px] rounded-[28px] lg:col-span-7 lg:h-[min(700px,calc(100svh-112px))]">
             <DemoGuiada key={p.id} roteiro={roteiros[p.id]} setores={p.demo.setores} onEtapa={setEtapa} />
           </div>
         </div>
