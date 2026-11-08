@@ -779,27 +779,24 @@ function SecaoInteiro() {
       titulo="Heild, um sistema no lugar de vinte."
       texto="Heild vem do nórdico heild, o inteiro. Prazos, conversas, horas, arquivos, cobrança e o financeiro dos clientes passam a morar no mesmo lugar, sobre o mesmo cadastro."
       grade
-      visual={
-        <div ref={caixa} data-visual data-junto={junto} data-vivo={vivo} className="junta flex min-h-[440px] flex-col items-center justify-center gap-10 rounded-[28px] py-16" style={{ color: 'var(--primary)' }}>
-          <heild-logo ref={logo} label="Heild" style={{ width: 'min(360px, 64vw)' }} />
-          <ul className="flex max-w-2xl flex-wrap justify-center gap-2.5" aria-label="O que a Heild junta" onPointerLeave={() => passar(null)}>
-            {pecasInteiro.map(([m], i) => (
-              <li
-                key={m}
-                ref={(n) => void (pecas.current[i] = n)}
-                onPointerEnter={() => vivo && passar(i)}
-                data-sobre={sobre === i || undefined}
-                className="peca rounded-full px-4 py-2 text-sm select-none"
-                style={{ ['--dx' as string]: `${soltas[i][0]}px`, ['--dy' as string]: `${soltas[i][1]}px`, ['--r' as string]: `${soltas[i][2]}deg`, ['--i' as string]: i }}
-              >
-                {m}
-              </li>
-            ))}
-          </ul>
-        </div>
-      }
     >
-      {null}
+      <div ref={caixa} data-visual data-junto={junto} data-vivo={vivo} className="junta flex min-h-[440px] flex-col items-center justify-center gap-10 rounded-[28px] py-16" style={{ color: 'var(--primary)' }}>
+        <heild-logo ref={logo} label="Heild" style={{ width: 'min(360px, 64vw)' }} />
+        <ul className="flex max-w-2xl flex-wrap justify-center gap-2.5" aria-label="O que a Heild junta" onPointerLeave={() => passar(null)}>
+          {pecasInteiro.map(([m], i) => (
+            <li
+              key={m}
+              ref={(n) => void (pecas.current[i] = n)}
+              onPointerEnter={() => vivo && passar(i)}
+              data-sobre={sobre === i || undefined}
+              className="peca rounded-full px-4 py-2 text-sm select-none"
+              style={{ ['--dx' as string]: `${soltas[i][0]}px`, ['--dy' as string]: `${soltas[i][1]}px`, ['--r' as string]: `${soltas[i][2]}deg`, ['--i' as string]: i }}
+            >
+              {m}
+            </li>
+          ))}
+        </ul>
+      </div>
     </Secao>
   )
 }
