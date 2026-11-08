@@ -6,6 +6,10 @@
  * morph(nome): leva o I, de onde ele estiver desenhado, até outra forma (ou de volta à pílula) por
  * molas por cápsula; pode ser chamado a qualquer momento, quantas vezes for, sem corte.
  * follow(nome, ligado): atalho de morph para estados (ex.: hover); desligar só volta se for a forma atual.
+ * Formas (window.Heild.animations): centralizar (grade 3x3), contabil (barras), juridico (=), bpo (check),
+ * ia (asterisco que gira), atendimento (3 pontos que pulam), orb (o I vira a esfera), financeiro ($),
+ * tempo (ampulheta que vira), arquivos (pasta), conversa (balão de fala), celular (aparelho com botão),
+ * painel (grade bento), lupa (lente com cabo, varre) e equipe (três pessoas que acenam).
  */
 (function () {
   'use strict';
@@ -33,6 +37,27 @@
     return cap((ax + bx) / 2, (ay + by) / 2, U, Math.hypot(vx, vy) + U, norm(Math.atan2(-vx, vy) * 180 / Math.PI));
   }
   function grid9() { var a = []; for (var j = -1; j <= 1; j++) for (var i = -1; i <= 1; i++) a.push(cap(CX + i * STEP, CY + j * STEP, U, U)); return a; }
+  /* atalhos relativos ao centro do I: s(ax, ay, bx, by) é um traço; R é o maior deslocamento vertical de um traço (encosta em 0 e em H) */
+  var R = H / 2 - U / 2;
+  function s(ax, ay, bx, by) { return seg(CX + ax, CY + ay, CX + bx, CY + by); }
+  function copy(c) { var o = {}; for (var k in c) o[k] = c[k]; return o; }
+  /* gira a forma inteira `deg` graus em torno do centro, encolhendo só o desenho (a espessura fica 96)
+     para caber na mesma caixa da forma parada: nunca passa da altura das letras nem empurra mais as letras */
+  function turn(base, deg) {
+    var ends = function (c, a) { var h = (c.L - c.T) / 2, t = (c.r + a) * Math.PI / 180, dx = c.x - CX, dy = c.y - CY, ca = Math.cos(a * Math.PI / 180), sa = Math.sin(a * Math.PI / 180);
+      var mx = dx * ca - dy * sa, my = dx * sa + dy * ca, ex = -Math.sin(t) * h, ey = Math.cos(t) * h; return [mx, my, ex, ey]; };
+    var box = function (a) { var bx = 0, by = 0; base.forEach(function (c) { var e = ends(c, a); bx = Math.max(bx, Math.abs(e[0]) + Math.abs(e[2])); by = Math.max(by, Math.abs(e[1]) + Math.abs(e[3])); }); return [bx, by]; };
+    var b0 = box(0), b = box(deg), k = Math.min(1, b0[0] / b[0], b0[1] / b[1]);
+    return base.map(function (c) { var e = ends(c, deg), o = copy(c); o.x = CX + e[0] * k; o.y = CY + e[1] * k; o.L = (c.L - c.T) * k + c.T; o.r = c.r + deg; return o; });
+  }
+  var AMP = [s(-120, -R, 120, -R), s(-120, R, 120, R), s(-120, -R, 120, R), s(120, -R, -120, R)];
+  /* lupa: lente octogonal (8 traços, quase um anel) e cabo a 45 graus */
+  var LUPA = (function () { var a = [], c = -36, ap = 100, rv = ap / Math.cos(Math.PI / 8);
+    for (var k = 0; k < 8; k++) { var t0 = (22.5 + 45 * k) * Math.PI / 180, t1 = (67.5 + 45 * k) * Math.PI / 180;
+      a.push(s(c + rv * Math.cos(t0), c + rv * Math.sin(t0), c + rv * Math.cos(t1), c + rv * Math.sin(t1))); }
+    a.push(s(c + ap * Math.SQRT1_2, c + ap * Math.SQRT1_2, 128, 128)); return a; })();
+  /* equipe: três pessoas (cabeça + ombros), a do meio um pouco à frente e acima */
+  var EQ = [cap(CX, CY - 110, U, U), cap(CX, CY + 10, U, 190, 90), cap(CX - 200, CY - 10, U, U), cap(CX - 200, CY + 110, U, 170, 90), cap(CX + 200, CY - 10, U, U), cap(CX + 200, CY + 110, U, 170, 90)];
 
   /* ---------- uma forma por tema: só cápsulas e círculos de 96 ---------- */
   var ANIMS = {
@@ -44,7 +69,18 @@
       holdFx: function (c, i, p) { var o = {}; for (var k in c) o[k] = c[k]; o.r = c.r + 60 * inOut(clamp((p - .15) / .7)); return o; } },
     atendimento: { label: 'Atendimento', caps: [cap(CX - STEP, CY, U, U), cap(CX, CY, U, U), cap(CX + STEP, CY, U, U)], order: [1, 0, 2], hold: 2300,
       holdFx: function (c, i, p, ms) { var o = {}; for (var k in c) o[k] = c[k]; o.y = c.y - 46 * Math.sin(Math.PI * p) * Math.max(0, Math.sin(ms / 640 * Math.PI * 2 - i * .9)); return o; } },
-    orb: { label: 'Orb', caps: [cap(CX, CY, H, H)], order: [0], hold: 3700, orb: true }
+    orb: { label: 'Orb', caps: [cap(CX, CY, H, H)], order: [0], hold: 3700, orb: true },
+    tempo: { label: 'Tempo', caps: AMP, order: [2, 3, 0, 1], hold: 2200,
+      holdFx: function (c, i, p) { return turn(AMP, 180 * inOut(clamp((p - .2) / .6)))[i]; } },
+    arquivos: { label: 'Arquivos', caps: [s(-170, -R, -170, R), s(-170, R, 170, R), s(170, R, 170, -R + 72), s(170, -R + 72, -10, -R + 72), s(-10, -R + 72, -60, -R), s(-60, -R, -170, -R)], order: [0, 1, 5, 2, 4, 3] },
+    conversa: { label: 'Conversa', caps: [s(-170, -R, 170, -R), s(170, -R, 170, 30), s(170, 30, -170, 30), s(-170, 30, -170, -R), s(-80, 30, -130, R)], order: [0, 1, 3, 2, 4] },
+    financeiro: { label: 'Financeiro', caps: [cap(CX, CY, U, H), s(-170, -95, 170, -95), s(-170, -95, 170, 95), s(-170, 95, 170, 95)], order: [0, 2, 1, 3] },
+    celular: { label: 'Celular', caps: [s(-110, -R, -110, R), s(110, -R, 110, R), s(-110, -R, 110, -R), cap(CX, CY + R, U, U)], order: [2, 0, 1, 3] },
+    painel: { label: 'Painel', caps: [cap(CX - STEP, CY, U, 2 * STEP + U), cap(CX + STEP / 2, CY - STEP, U, STEP + U, 90), cap(CX, CY + STEP / 2, U, STEP + U), cap(CX + STEP, CY, U, U), cap(CX + STEP, CY + STEP, U, U)], order: [0, 1, 2, 3, 4] },
+    lupa: { label: 'Lupa', caps: LUPA, order: [8, 0, 1, 7, 2, 6, 3, 5, 4], hold: 2200,
+      holdFx: function (c, i, p, ms) { var o = copy(c), e = Math.sin(Math.PI * p), w = ms / 1500 * Math.PI * 2; o.x = c.x + 10 * Math.sin(w) * e; o.y = c.y + 6 * (1 - Math.cos(w)) * e; return o; } },
+    equipe: { label: 'Equipe', caps: EQ, order: [0, 1, 2, 4, 3, 5], hold: 2200,
+      holdFx: function (c, i, p, ms) { var o = copy(c), who = [1, 1, 0, 0, 2, 2][i]; o.y = c.y - 14 * Math.sin(Math.PI * p) * Math.max(0, Math.sin(ms / 700 * Math.PI * 2 - who * 1.1)); return o; } }
   };
   var CYCLE_ORDER = ['centralizar', 'orb', 'contabil', 'juridico', 'bpo', 'ia', 'atendimento'];
   Object.keys(ANIMS).forEach(function (k) {

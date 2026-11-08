@@ -721,16 +721,16 @@ function SecaoLei() {
  * cursor, e passar sobre uma delas transforma o I na forma daquela área.
  */
 const pecasInteiro: [string, string][] = [
-  ['Painel', 'centralizar'],
-  ['CRM', 'atendimento'],
-  ['Timesheet', 'contabil'],
-  ['Financeiro', 'bpo'],
+  ['Painel', 'painel'],
+  ['CRM', 'conversa'],
+  ['Timesheet', 'tempo'],
+  ['Financeiro', 'financeiro'],
   ['BPO', 'bpo'],
-  ['Arquivos', 'centralizar'],
-  ['App do cliente', 'atendimento'],
+  ['Arquivos', 'arquivos'],
+  ['App do cliente', 'celular'],
   ['Assistente', 'ia'],
-  ['Consultor', 'juridico'],
-  ['Integrantes', 'ia'],
+  ['Consultor', 'lupa'],
+  ['Integrantes', 'equipe'],
 ]
 function SecaoInteiro() {
   const soltas = [
