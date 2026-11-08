@@ -46,6 +46,7 @@
   --sunken: #e4e0dc;
   --sunken-end: #d6d1cc;
   --shadow-ink: #2e2b28;
+  --contorno-ink: #2e2b28;
   --radius: 0.75rem;
   --font-heading: ui-sans-serif, system-ui, sans-serif;
   --font-body: ui-sans-serif, system-ui, sans-serif;
@@ -92,11 +93,11 @@
   --radius-2xl: calc(var(--radius) * 2);
 
   /* Sombras do sistema, na tinta do tema. */
-  --shadow-contorno: 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 7%, transparent);
-  --shadow-cartao: 0 1px 2px color-mix(in oklab, var(--shadow-ink) 6%, transparent), 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 6%, transparent);
-  --shadow-painel: 0 1px 3px color-mix(in oklab, var(--shadow-ink) 8%, transparent), 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 7%, transparent);
-  --shadow-campo: 0 2px 10px color-mix(in oklab, var(--shadow-ink) 10%, transparent), 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 5%, transparent);
-  --shadow-pilula: 0 1px 3px color-mix(in oklab, var(--shadow-ink) 15%, transparent), 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 5%, transparent);
+  --shadow-contorno: 0 0 0 1px color-mix(in oklab, var(--contorno-ink) 7%, transparent);
+  --shadow-cartao: 0 1px 2px color-mix(in oklab, var(--shadow-ink) 6%, transparent), 0 0 0 1px color-mix(in oklab, var(--contorno-ink) 6%, transparent);
+  --shadow-painel: 0 1px 3px color-mix(in oklab, var(--shadow-ink) 8%, transparent), 0 0 0 1px color-mix(in oklab, var(--contorno-ink) 7%, transparent);
+  --shadow-campo: 0 2px 10px color-mix(in oklab, var(--shadow-ink) 10%, transparent), 0 0 0 1px color-mix(in oklab, var(--contorno-ink) 5%, transparent);
+  --shadow-pilula: 0 1px 3px color-mix(in oklab, var(--shadow-ink) 15%, transparent), 0 0 0 1px color-mix(in oklab, var(--contorno-ink) 5%, transparent);
   --shadow-sm: 0 1px 3px color-mix(in oklab, var(--shadow-ink) 10%, transparent), 0 1px 2px color-mix(in oklab, var(--shadow-ink) 6%, transparent);
   --shadow-md: 0 4px 12px color-mix(in oklab, var(--shadow-ink) 12%, transparent);
   --shadow-lg: 0 10px 30px color-mix(in oklab, var(--shadow-ink) 16%, transparent);

@@ -863,6 +863,28 @@ export const conversasPorIntegrante: Record<string, Mensagem[]> = {
         'Duas coisas precisam de alguém do escritório: o Bling da Loja Bela Vista parou de sincronizar há 26 h (o caixa já está abaixo do mínimo) e a credencial do Conta Azul da AutoPeças Rota 9 venceu. Mandei o link de reautorização ao Wagner; o Bling eu religo quando você confirmar o token novo.',
     },
   ],
+  'i-bpo-receber': [
+    {
+      id: 'br1',
+      autor: { tipo: 'usuario', nome: usuario.nome },
+      hora: '08:10',
+      texto: 'Como está a carteira da Padaria esta semana?',
+    },
+    {
+      id: 'br2',
+      autor: { tipo: 'integrante', setor: 'bpo_receber' },
+      hora: '08:11',
+      texto: 'Seis boletos vencem até sexta, R$ 8.420 no total. Dois clientes estão com 12 dias de atraso: mandei o lembrete combinado pelo WhatsApp da Padaria ontem e o Mercado São Jorge já prometeu pagar na quinta. Baixa e conciliação eu faço quando o dinheiro cair no extrato.',
+    },
+  ],
+  'i-bpo-gerencial': [
+    {
+      id: 'bg1',
+      autor: { tipo: 'integrante', setor: 'bpo_gerencial' },
+      hora: '07:30',
+      texto: 'O DRE gerencial de outubro da Loja Bela Vista está pronto para você revisar antes de ir ao cliente. A margem caiu 3 pontos por causa do frete; separei os três fornecedores que mais pesaram e a projeção de caixa das próximas 4 semanas, que fica abaixo do mínimo na terceira.',
+    },
+  ],
   'i-consultor': [
     {
       id: 'k1',

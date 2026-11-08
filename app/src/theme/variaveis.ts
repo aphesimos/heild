@@ -91,6 +91,8 @@ export function variaveisCss(tema: Tema, modo: ModoCor): Record<string, string> 
     '--sidebar-end': lateralFim,
     // Tinta das sombras: o texto do tema no claro (sombra areia), preto no escuro.
     '--shadow-ink': escuro ? '#000000' : t.texto,
+    // Tinta do contorno de 1px: no escuro, preto sobre fundo escuro some; o contorno passa a ser claro.
+    '--contorno-ink': escuro ? '#ffffff' : t.texto,
     '--radius': t.raio_borda,
     '--font-heading': t.fonte_titulo,
     '--font-body': t.fonte_texto,
