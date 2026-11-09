@@ -765,22 +765,15 @@ function SecaoInteiro() {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return setJunto(true)
     const el = caixa.current
     if (!el) return
-    // A primeira vez as peças se encaixam; depois disso, voltar à seção ao rolar toca a centralização de novo.
-    let primeira = true
-    let saiu = false
+    // A primeira vez as peças se encaixam e a logo centraliza. Depois disso quem mostra as formas é a seleção
+    // automática: voltar à seção não recomeça a centralização (recomeçar a partir de outra forma cortava seco).
     const io = new IntersectionObserver(
       ([e]) => {
-        if (!e.isIntersecting) return void (saiu = true)
-        if (primeira) {
-          primeira = false
-          setJunto(true)
-          window.setTimeout(() => tocarUmaVez(logo.current, 'centralizar', tocandoInteiro), 500)
-          window.setTimeout(() => setVivo(true), 1900)
-        } else if (saiu) {
-          saiu = false
-          setSobre(null)
-          window.setTimeout(() => tocarUmaVez(logo.current, 'centralizar', tocandoInteiro), 250)
-        }
+        if (!e.isIntersecting) return
+        setJunto(true)
+        window.setTimeout(() => tocarUmaVez(logo.current, 'centralizar', tocandoInteiro), 500)
+        window.setTimeout(() => setVivo(true), 1900)
+        io.disconnect()
       },
       { threshold: 0.45 },
     )
@@ -843,7 +836,8 @@ function SecaoInteiro() {
   useEffect(() => {
     if (!vivo || !naTela || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
     const id = window.setInterval(() => {
-      if (performance.now() - ultimaMao.current < 6000) return
+      // Espera a mão da pessoa (6 s parada) e qualquer animação inteira da logo que ainda esteja tocando.
+      if (performance.now() - ultimaMao.current < 6000 || tocandoInteiro.current) return
       let i = Math.floor(Math.random() * pecasInteiro.length)
       if (i === atual.current) i = (i + 1 + Math.floor(Math.random() * (pecasInteiro.length - 1))) % pecasInteiro.length
       passar(i)
