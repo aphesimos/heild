@@ -187,16 +187,29 @@
   var prox = null;
   function iniciarProximidade() {
     var el = q('[data-proximidade]'); if (!el || !FINO || parado) return;
-    prox = { el: el, letras: dividirLetras(el, true), ativo: false };
+    var linhas = qa('.linha', el), letras = [];
+    if (linhas.length) linhas.forEach(function (ln) { letras = letras.concat(dividirLetras(ln, true)); ln.removeAttribute('aria-label'); });
+    else letras = dividirLetras(el, true);
+    el.setAttribute('aria-label', el.getAttribute('aria-label') || el.textContent.trim());
+    prox = { el: el, letras: letras, centros: null, ativo: false };
+    window.addEventListener('resize', function () { prox.centros = null; }, { passive: true });
+  }
+  function medirCentros() {
+    // Posição de cada letra relativa ao título, medida com todas no mesmo peso.
+    prox.letras.forEach(function (l) { l.style.fontWeight = ''; });
+    var base = prox.el.getBoundingClientRect();
+    prox.centros = prox.letras.map(function (l) { var r = l.getBoundingClientRect(); return [r.left + r.width / 2 - base.left, r.top + r.height / 2 - base.top]; });
+    prox.pesoMedido = getComputedStyle(prox.el).fontWeight;
   }
   function quadroProximidade(p) {
     if (!prox) return;
     var vivo = performance.now() - ponteiro.t < 2500 && p > 0.6;
-    if (!vivo) { if (prox.ativo) { prox.letras.forEach(function (l) { l.style.fontWeight = ''; }); prox.ativo = false; } return; }
+    if (!vivo) { if (prox.ativo) { prox.letras.forEach(function (l) { l.style.fontWeight = ''; }); prox.ativo = false; prox.centros = null; } return; }
     var base = 100 + 800 * clamp((p - 0.6) / 0.3, 0, 1);
-    var rs = prox.letras.map(function (l) { return l.getBoundingClientRect(); });
+    if (!prox.centros || Math.abs(parseFloat(prox.pesoMedido) - base) > 60) medirCentros();
+    var r = prox.el.getBoundingClientRect();
     prox.letras.forEach(function (l, i) {
-      var r = rs[i], d = Math.hypot(r.left + r.width / 2 - ponteiro.x, r.top + r.height / 2 - ponteiro.y), w = Math.max(0, 1 - d / 240);
+      var c = prox.centros[i], d = Math.hypot(r.left + c[0] - ponteiro.x, r.top + c[1] - ponteiro.y), w = Math.max(0, 1 - d / 240);
       l.style.fontWeight = Math.round(base + (900 - base) * w * w * (3 - 2 * w));
     });
     prox.ativo = true;

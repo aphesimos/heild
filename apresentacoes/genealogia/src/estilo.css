@@ -174,15 +174,19 @@ html.no-escuro .cursor { color: var(--areia-100); }
 /* ---------- 2. a parte e o todo ---------- */
 .cap-partes .palco, .cap-pilula .palco { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 4vw; }
 .figura-pilula { grid-column: 2; grid-row: 1 / span 3; }
-.texto-partes { grid-column: 1; grid-row: 1 / span 3; display: grid; align-items: center; }
+.texto-partes { grid-column: 1; grid-row: 1 / span 3; display: grid; align-items: center; container-type: inline-size; }
 .texto-partes .beat { grid-area: 1 / 1; }
 .cap-partes .beat-a { --ent: 0.07; --sai: 0.5; }
 .cap-partes .beat-b { --ent: 0.66; }
+/* O título engorda do peso 100 ao 900 enquanto as partes se fundem. A quebra é fixa (duas linhas, sem
+   quebra automática) e o tamanho sai da largura da coluna, com folga para a linha mais larga no peso 900
+   (6,28 vezes o tamanho da fonte): mudar o peso nunca muda a quebra nem a altura, então nada pula. */
 .titulo-fusao {
   --fusao: clamp(0, calc((var(--p) - 0.6) / 0.3), 1);
-  font-family: var(--font-titulo); font-size: clamp(46px, min(7.2vw, 12vh), 136px); line-height: 0.92; letter-spacing: -0.04em;
-  font-weight: calc(100 + 800 * var(--fusao)); text-wrap: balance; margin-bottom: 0.3em; max-width: 9ch;
+  font-family: var(--font-titulo); font-size: min(136px, 12vh, calc(100cqi / 6.5)); line-height: 0.92; letter-spacing: -0.04em;
+  font-weight: calc(100 + 800 * var(--fusao)); margin-bottom: 0.3em; max-width: none;
 }
+.titulo-fusao .linha { display: block; white-space: nowrap; }
 .titulo-fusao .letra { font-weight: inherit; }
 .beat-b p:not(.titulo-fusao) { max-width: 34ch; }
 
@@ -327,7 +331,7 @@ html.no-escuro .cursor { color: var(--areia-100); }
   .cap-partes .palco { grid-template-rows: minmax(0, 0.9fr) auto; }
   .figura-pilula { grid-column: 1; grid-row: 1; }
   .texto-partes { grid-column: 1; grid-row: 2; align-items: end; }
-  .texto .titulo-fusao { font-size: clamp(40px, 12.5vw, 58px); line-height: 0.94; max-width: none; }
+  .texto .titulo-fusao { font-size: min(58px, calc(100cqi / 6.5)); line-height: 0.94; max-width: none; }
   .dica-rolar { display: none; }
 
   .cap-pilula .palco { grid-template-rows: minmax(0, 1fr) auto auto; }
