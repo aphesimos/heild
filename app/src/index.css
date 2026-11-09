@@ -195,6 +195,13 @@
     calc(100% - 60px) 100%;
 }
 
+/* Sem animação guiada por rolagem (navegadores mais antigos): o fim esmaece sempre, para nada parecer cortado na borda. */
+@supports not (animation-timeline: scroll()) {
+  .area-rolagem-dupla {
+    mask-image: linear-gradient(to bottom, black calc(100% - 36px), transparent 100%);
+  }
+}
+
 @layer base {
   /*
    * Barra de rolagem do sistema (UI kit): trilho invisível, polegar em pílula
