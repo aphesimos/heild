@@ -803,14 +803,17 @@ html.parado .controles { opacity: 0; transform: translateY(6px); pointer-events:
 .s-passagem .cena { display: grid; grid-template-columns: 300px 1fr; gap: 28px; width: 100%; height: 100%; align-items: stretch; }
 .retrato .s-passagem .cena { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
 .s-passagem .cadeia { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 34px; padding: 8px 0; }
-.retrato .s-passagem .cadeia { flex-direction: row; justify-content: space-around; gap: 8px; }
+.retrato .s-passagem .cadeia { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); align-items: start; gap: 8px; }
 .s-passagem .elo { position: relative; display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: center; z-index: 1; }
 .retrato .s-passagem .elo { grid-template-columns: 1fr; justify-items: center; text-align: center; }
 .s-passagem .elo .nome { font-size: 14px; font-weight: 600; }
-.s-passagem .elo .estado { font-size: 12px; line-height: 16px; color: var(--texto-suave); min-height: 32px; }
-.s-passagem .fio-cadeia { position: absolute; left: 28px; top: 40px; bottom: 40px; width: 0; border-left: 1.5px dashed var(--borda); z-index: 0; }
-.retrato .s-passagem .fio-cadeia { display: none; }
-.s-passagem .viajante { position: absolute; left: 0; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--texto); z-index: 2; opacity: 0; transition: transform 1600ms var(--vai-volta), opacity 300ms; }
+.s-passagem .elo > div { min-width: 0; }
+.s-passagem .elo .estado { height: 32px; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: 12px; line-height: 16px; color: var(--texto-suave); }
+.s-passagem .fios-cadeia { position: absolute; left: 0; top: 0; z-index: 0; overflow: visible; pointer-events: none; }
+.s-passagem .fio-base { stroke: var(--borda); stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 1 6; }
+.s-passagem .fio-cheio { stroke: var(--texto-suave); stroke-width: 1.5; stroke-linecap: round; }
+.s-passagem .ficha-viagem { fill: var(--texto); }
+.s-passagem .rastro { fill: var(--texto); }
 .s-passagem .conversa {
   position: relative;
   display: flex;
@@ -823,11 +826,11 @@ html.parado .controles { opacity: 0; transform: translateY(6px); pointer-events:
   box-shadow: var(--sombra-painel);
   overflow: hidden;
 }
-.s-passagem .rolo { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; overflow: hidden; -webkit-mask-image: var(--mascara-esmaecer); mask-image: var(--mascara-esmaecer); }
+.s-passagem .rolo { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; overflow: hidden; padding: 4px 4px 3px; margin: -4px -4px 0; -webkit-mask-image: var(--mascara-esmaecer); mask-image: var(--mascara-esmaecer); }
 .s-passagem .campo-pedido { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 8px 0 16px; border-radius: var(--raio-campo); background: var(--elevada); box-shadow: var(--sombra-campo); font-size: 14px; }
 .s-passagem .campo-pedido .texto-campo { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .s-passagem .campo-pedido .enviar { width: 32px; height: 32px; border-radius: 50%; background: var(--primaria); flex: none; }
-.bolha { align-self: flex-end; max-width: 78%; padding: 8px 14px; border-radius: var(--raio-lg); background: var(--rebaixada); font-size: 14px; line-height: 20px; }
+.bolha { align-self: flex-end; width: fit-content; margin-left: auto; max-width: 78%; padding: 8px 14px; border-radius: var(--raio-lg); background: var(--rebaixada); font-size: 14px; line-height: 20px; }
 .fala { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; font-size: 14px; line-height: 22.75px; }
 .fala .autor { font-weight: 600; margin-right: 6px; }
 .fala .etapa { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--texto-suave); }

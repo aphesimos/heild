@@ -485,7 +485,7 @@
   T.passagem = {
     html: function (d) {
       var elos = ['assistente'].concat(d.cadeia.map(function (c) { return c.quem; }));
-      var cadeia = '<div class="cadeia"><span class="fio-cadeia"></span><span class="viajante"></span>' + elos.map(function (id, i) {
+      var cadeia = '<div class="cadeia" style="--n:' + elos.length + '">' + elos.map(function (id, i) {
         return '<div class="elo" data-i="' + i + '">' + orb(id, { tamanho: 56 }) + '<div><div class="nome">' + h(I[id].nome) + '</div><div class="estado">disponível</div></div></div>';
       }).join('') + '</div>';
       return '<div class="dividido dividido--estreito">' + cab({ titulo: 'Um pedido, o time inteiro.', frase: 'O Assistente recebe, divide e acompanha. Cada integrante faz a sua parte e passa adiante; o que tem efeito fora volta como cartão.' },
@@ -493,27 +493,66 @@
         encaixe(740, 480, '<div class="cena">' + cadeia + '<div class="conversa"><div class="rolo" aria-live="polite"></div><div class="campo-pedido"><span class="texto-campo suave">Peça ao Assistente…</span><span class="enviar"></span></div></div></div>') + '</div>';
     },
     entrar: function (el, d, api) {
-      var rolo = q(el, '.rolo'), campo = q(el, '.texto-campo'), elos = qa(el, '.elo'), viaj = q(el, '.viajante'), cadeia = q(el, '.cadeia');
+      var rolo = q(el, '.rolo'), campo = q(el, '.texto-campo'), elos = qa(el, '.elo'), cadeia = q(el, '.cadeia');
       api.ouvir(q(el, '.repetir-cena'), 'click', function () { api.repetir(); });
       rolo.innerHTML = ''; campo.textContent = 'Peça ao Assistente…'; campo.classList.add('suave');
       elos.forEach(function (e) { estado(e, 'disponivel'); });
       function estado(e, est, txt) { q(e, 'orb-avatar').setAttribute('reaction', REACAO[est]); q(e, '.estado').textContent = txt || ESTADO_PALAVRA[est]; }
       function add(html) { var w = document.createElement('div'); w.className = 'entra-msg'; w.innerHTML = html; rolo.appendChild(w); api.colorir(w); while (rolo.children.length > 8) rolo.removeChild(rolo.firstChild); return w; }
       function fala(id, extra) { return add('<div class="fala">' + orb(id, { tamanho: 26, estatico: true, extras: false }) + '<div><span class="autor">' + h(I[id].nome) + '</span><span class="t"></span>' + (extra || '') + '</div></div>'); }
-      function centro(e) { var r = e.getBoundingClientRect(), rc = cadeia.getBoundingClientRect(), k = rc.width / cadeia.offsetWidth || 1; return { x: (r.left - rc.left + r.width / 2) / k - 6, y: (r.top - rc.top + r.height / 2) / k - 6 }; }
+      /* A passagem: um fio pontilhado liga os orbs; na vez de passar, uma cápsula (o material da logo) sai da
+         borda de um orb, anda pelo fio em 1,6 s com um rastro curto e deixa o fio preenchido atrás de si. */
+      var NS = 'http://www.w3.org/2000/svg', fios = document.createElementNS(NS, 'svg'), trechos = [];
+      fios.setAttribute('class', 'fios-cadeia'); fios.setAttribute('aria-hidden', 'true'); cadeia.insertBefore(fios, cadeia.firstChild);
+      function local(o) { var r = o.getBoundingClientRect(), rc = cadeia.getBoundingClientRect(), k = rc.width / cadeia.offsetWidth || 1; return { x: (r.left - rc.left + r.width / 2) / k, y: (r.top - rc.top + r.height / 2) / k, r: r.width / 2 / k }; }
+      function desenharFios() {
+        var w = cadeia.offsetWidth, hh = cadeia.offsetHeight;
+        fios.setAttribute('viewBox', '0 0 ' + w + ' ' + hh); fios.setAttribute('width', w); fios.setAttribute('height', hh);
+        fios.innerHTML = ''; trechos = [];
+        for (var i = 0; i < elos.length - 1; i++) {
+          var A = local(q(elos[i], 'orb-avatar')), B = local(q(elos[i + 1], 'orb-avatar'));
+          var dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+          var x1 = A.x + ux * (A.r + 8), y1 = A.y + uy * (A.r + 8), x2 = B.x - ux * (B.r + 8), y2 = B.y - uy * (B.r + 8), len = Math.hypot(x2 - x1, y2 - y1);
+          var base = document.createElementNS(NS, 'line'), cheio = document.createElementNS(NS, 'line');
+          [base, cheio].forEach(function (l) { l.setAttribute('x1', x1.toFixed(1)); l.setAttribute('y1', y1.toFixed(1)); l.setAttribute('x2', x2.toFixed(1)); l.setAttribute('y2', y2.toFixed(1)); fios.appendChild(l); });
+          base.setAttribute('class', 'fio-base'); cheio.setAttribute('class', 'fio-cheio');
+          cheio.style.strokeDasharray = len.toFixed(1); cheio.style.strokeDashoffset = len.toFixed(1);
+          trechos.push({ x1: x1, y1: y1, x2: x2, y2: y2, len: len, ang: Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI, cheio: cheio });
+        }
+      }
       function viajar(a, b) {
-        var p = centro(q(elos[a], 'orb-avatar')), q2 = centro(q(elos[b], 'orb-avatar'));
-        viaj.style.transition = 'none'; viaj.style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)'; viaj.style.opacity = '1';
-        void viaj.offsetWidth; viaj.style.transition = '';
-        viaj.style.transform = 'translate(' + q2.x + 'px,' + q2.y + 'px)';
-        return api.esperar(1600).then(function () { viaj.style.opacity = '0'; });
+        var t = trechos[a], oa = q(elos[a], 'orb-avatar'), ob = q(elos[b], 'orb-avatar');
+        if (!t) return api.esperar(1600);
+        if (oa.poke) oa.poke(0.45, { react: false });
+        if (api.parado) { t.cheio.style.strokeDashoffset = '0'; return api.esperar(300); }
+        var g = document.createElementNS(NS, 'g'), rastro = [];
+        for (var k = 3; k >= 1; k--) { var c = document.createElementNS(NS, 'circle'); c.setAttribute('r', (3.2 - k * 0.6).toFixed(1)); c.setAttribute('class', 'rastro'); g.appendChild(c); rastro.push([c, k]); }
+        var ficha = document.createElementNS(NS, 'rect');
+        ficha.setAttribute('x', '-9'); ficha.setAttribute('y', '-4.5'); ficha.setAttribute('width', '18'); ficha.setAttribute('height', '9'); ficha.setAttribute('rx', '4.5'); ficha.setAttribute('class', 'ficha-viagem');
+        g.appendChild(ficha); fios.appendChild(g);
+        var ease = function (x) { x = Math.max(0, Math.min(1, x)); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+        var ponto = function (e) { return [t.x1 + (t.x2 - t.x1) * e, t.y1 + (t.y2 - t.y1) * e]; };
+        return new Promise(function (res) {
+          var t0 = performance.now(), D = 1600;
+          api.quadro(function (agora) {
+            var u = Math.min(1, (agora - t0) / D), e = ease(u), p = ponto(e);
+            var esc = 0.7 + 0.3 * Math.sin(Math.PI * u), alfa = Math.min(1, u * 8, (1 - u) * 8);
+            ficha.setAttribute('transform', 'translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ') rotate(' + t.ang.toFixed(1) + ') scale(' + esc.toFixed(3) + ' 1)');
+            ficha.style.opacity = alfa.toFixed(3);
+            rastro.forEach(function (r) { var q2 = ponto(ease(u - r[1] * 0.035)); r[0].setAttribute('cx', q2[0].toFixed(1)); r[0].setAttribute('cy', q2[1].toFixed(1)); r[0].style.opacity = (alfa * (0.5 - r[1] * 0.12)).toFixed(3); });
+            t.cheio.style.strokeDashoffset = (t.len * (1 - e)).toFixed(1);
+            if (u >= 1) { g.remove(); if (ob.poke) ob.poke(0.7, { react: false }); res(); return false; }
+            return true;
+          });
+        });
       }
       var e0 = elos[0];
       (async function () {
        for (;;) {
-        rolo.innerHTML = ''; campo.textContent = 'Peça ao Assistente…'; campo.classList.add('suave'); viaj.style.opacity = '0';
+        rolo.innerHTML = ''; campo.textContent = 'Peça ao Assistente…'; campo.classList.add('suave');
         elos.forEach(function (e) { estado(e, 'disponivel'); });
         await api.esperar(900);
+        desenharFios();
         campo.classList.remove('suave'); campo.textContent = '';
         await api.digitar(campo, d.pedido, 32, true);
         await api.esperar(350);
