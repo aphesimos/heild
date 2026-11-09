@@ -1,0 +1,344 @@
+/* Do inteiro — o estilo.
+   Dois modos: o códice parado (padrão: movimento reduzido ou sem JavaScript), em que os fólios se leem
+   em sequência, e o vivo (html.vivo), em que cada fólio é uma câmara de tela cheia.
+   Cores, fontes, raios e sombras vêm dos tokens (../comum/tokens.css). Os fólios i a iii são da noite
+   (.forca-escuro) e os fólios iv a vi, do dia (.forca-claro). */
+
+[hidden] { display: none !important; }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --margem-w: clamp(188px, 15.5vw, 252px);
+  --gutter: 32px;
+  --cabeca-h: 64px;
+  --tempo-folha: 900ms;
+}
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--font-texto);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+::selection { background: color-mix(in srgb, var(--destaque) 25%, transparent); color: var(--texto); }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--texto); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--anel-foco); outline-offset: 2px; border-radius: 4px; }
+i, cite { font-style: italic; }
+cite { font-style: italic; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+.so-leitor {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- o cabeçalho: o título corrente e o número do fólio, como num manuscrito ---------- */
+.cabeca {
+  position: fixed; z-index: 6; left: 0; right: 0; top: 0;
+  height: var(--cabeca-h);
+  display: flex; align-items: center; gap: 24px;
+  padding: 0 var(--gutter);
+  padding-top: env(safe-area-inset-top);
+  font-size: 13px; line-height: 16px;
+  color: var(--texto-suave);
+  pointer-events: none;
+}
+.cabeca > * { pointer-events: auto; }
+.cabeca-titulo { font-family: var(--font-titulo); font-size: 14px; letter-spacing: 0; color: var(--texto); }
+.cabeca-folio { font-style: italic; min-width: 3ch; }
+.cabeca-acoes { margin-left: auto; display: flex; gap: 20px; }
+.botao-texto {
+  font-family: var(--font-texto); font-size: 13px; line-height: 16px;
+  color: var(--texto-suave); padding: 8px 2px; border-radius: 4px;
+  transition: color 200ms var(--sai);
+}
+.botao-texto:hover, .botao-texto[aria-pressed="true"], .botao-texto[aria-expanded="true"] { color: var(--texto); }
+.botao-texto[aria-pressed="true"]::after {
+  content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 9999px;
+  background: var(--destaque); margin-left: 6px; vertical-align: 2px;
+}
+html:not(.vivo) .cabeca { position: absolute; }
+html:not(.vivo) [data-acao="som"] { display: none; }
+
+/* ---------- o texto das câmaras ---------- */
+.folio-nome {
+  font-family: var(--font-titulo); font-weight: 300; font-size: 24px; line-height: 32px;
+  letter-spacing: -0.025em; margin: 0; color: var(--texto);
+}
+.folio-nome .num { font-style: italic; color: var(--texto-suave); margin-right: 0.35em; }
+
+.fala {
+  font-family: var(--font-titulo); font-weight: 300;
+  font-size: clamp(24px, 2.6vw, 36px); line-height: 1.2;
+  letter-spacing: -0.025em; text-wrap: balance;
+  margin: 0; color: var(--texto);
+}
+.fala-incipit {
+  font-family: var(--font-texto); font-style: italic; font-size: 15px; line-height: 22px;
+  letter-spacing: 0; color: var(--texto-suave);
+}
+.fala-tabula { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.45; letter-spacing: -0.01em; }
+.fala-tabula-pt { font-family: var(--font-texto); font-size: 14px; line-height: 21px; letter-spacing: 0; color: var(--texto-suave); margin-top: 12px; }
+
+/* glosas: a voz dos comentadores, nas margens */
+.margem { font-size: 13px; line-height: 20px; color: var(--texto-suave); }
+.glosa { margin: 0 0 18px; text-wrap: pretty; }
+.glosa::before { content: '¶'; margin-right: 0.4em; color: var(--texto-suave); font-style: normal; }
+.glosa.pista { color: var(--texto); }
+.glosa.pista::before { color: var(--destaque-texto); }
+.glosa sup { font-size: 10px; line-height: 0; margin-left: 2px; }
+.glosa sup a { color: var(--texto-suave); text-decoration: none; padding: 0 1px; }
+.glosa sup a:hover { color: var(--texto); text-decoration: underline; }
+
+/* ---------- o códice parado ---------- */
+html:not(.vivo) .codice { padding-top: var(--cabeca-h); }
+html:not(.vivo) .folio {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--margem-w) minmax(0, 1fr) var(--margem-w);
+  grid-template-areas: "esq nome dir" "esq fig dir" "esq falas dir";
+  grid-template-rows: auto auto 1fr;
+  column-gap: 48px;
+  padding: 72px var(--gutter) 88px;
+  background: var(--gradiente-fundo);
+  color: var(--texto);
+}
+html:not(.vivo) .folio-nome { grid-area: nome; margin-bottom: 32px; }
+html:not(.vivo) .estatico, html:not(.vivo) .estratos { grid-area: fig; margin: 0 0 32px; }
+html:not(.vivo) .falas { grid-area: falas; display: grid; gap: 16px; align-content: start; max-width: 40em; }
+html:not(.vivo) .margem.esq { grid-area: esq; }
+html:not(.vivo) .margem.dir { grid-area: dir; }
+html:not(.vivo) .palco { display: none; }
+html:not(.vivo) .estatico svg { display: block; width: 100%; height: auto; max-height: 72vh; }
+html:not(.vivo) .colofao { display: grid; gap: 16px; margin-top: 16px; }
+
+/* os estratos, parados: a palavra de cima a baixo */
+.estratos { list-style: none; padding: 0; }
+html.vivo .estratos { display: none; }
+.estratos li { display: grid; grid-template-columns: minmax(0, 12rem) 1fr; gap: 4px 24px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--borda); }
+.estratos b { font-family: var(--font-titulo); font-weight: 200; font-size: 40px; line-height: 44px; letter-spacing: -0.03em; color: var(--texto); }
+.estratos li:nth-child(n+2) b { color: var(--texto-suave); }
+.estratos li:last-child b { color: var(--texto); }
+.estratos span { font-size: 13px; line-height: 20px; color: var(--texto-suave); font-style: italic; }
+
+@media (max-width: 860px) {
+  html:not(.vivo) .folio {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "nome" "fig" "falas" "esq" "dir";
+    grid-template-rows: auto;
+    padding: 56px 16px 64px;
+  }
+  html:not(.vivo) .margem { margin-top: 24px; }
+  .estratos li { grid-template-columns: 1fr; }
+  .estratos b { font-size: 32px; line-height: 36px; }
+}
+
+/* ---------- fontes ---------- */
+.fontes { background: var(--fundo); color: var(--texto); }
+.fontes-caixa { max-width: 720px; margin: 0 auto; padding: 96px var(--gutter) 96px; }
+.fontes-titulo { font-family: var(--font-titulo); font-weight: 300; font-size: 30px; line-height: 36px; letter-spacing: -0.025em; margin: 0 0 16px; }
+.fontes-nota, .fontes-fim { font-size: 14px; line-height: 21px; color: var(--texto-suave); margin: 0 0 32px; }
+.fontes-fim { margin: 40px 0 0; }
+.fontes-lista { margin: 0; padding-left: 2.2em; font-size: 14px; line-height: 21px; color: var(--texto); }
+.fontes-lista li { margin-bottom: 12px; padding-left: 4px; scroll-margin-top: 96px; }
+.fontes-lista li::marker { color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+.fontes-lista li:target { background: color-mix(in srgb, var(--destaque) 12%, transparent); border-radius: 4px; }
+.fontes .fechar { margin-top: 24px; }
+html:not(.vivo) .fontes .fechar { display: none; }
+
+/* ---------- o índice ---------- */
+.indice { position: fixed; inset: 0; z-index: 20; background: var(--fundo); color: var(--texto); display: grid; place-items: center; overflow-y: auto; }
+.indice-caixa { padding: 96px var(--gutter); width: min(560px, 100%); }
+.indice ol { list-style: none; margin: 0 0 40px; padding: 0; }
+.indice ol a {
+  display: flex; gap: 0.6em; align-items: baseline; padding: 6px 0;
+  font-family: var(--font-titulo); font-weight: 300; font-size: clamp(24px, 3vw, 30px); line-height: 1.25; letter-spacing: -0.025em;
+  text-decoration: none; color: var(--texto-suave);
+}
+.indice ol a:hover, .indice ol a[aria-current="true"] { color: var(--texto); }
+.indice .num { font-style: italic; min-width: 2.2em; font-size: 0.7em; }
+.indice-mais { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 14px; line-height: 21px; margin: 0 0 24px; }
+.indice-mais a { color: var(--texto-suave); }
+.indice-mais a:hover { color: var(--texto); }
+html:not(.vivo) .indice-mais [data-acao="codice"] { display: none; }
+
+/* ---------- o vivo: câmaras de tela cheia ---------- */
+html.vivo, html.vivo body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+html.vivo body { background: var(--gradiente-fundo); touch-action: none; -webkit-user-select: none; user-select: none; }
+html.vivo .glosa, html.vivo .fontes, html.vivo .indice { -webkit-user-select: text; user-select: text; }
+
+#campo { display: none; }
+html.vivo #campo { display: block; position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; z-index: 1; pointer-events: none; }
+
+/* a luz: a camada do dia, que entra em círculo a partir da roda (fólio iii para o iv) */
+.luz { display: none; }
+html.vivo .luz {
+  display: block; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg, var(--areia-50) 0%, var(--areia-300) 100%);
+  clip-path: circle(0px at 50% 50%);
+  visibility: hidden;
+}
+
+html.vivo .codice { position: fixed; inset: 0; z-index: 2; }
+html.vivo .folio { position: absolute; inset: 0; display: none; background: none; color: var(--texto); }
+html.vivo .folio.ativo { display: block; }
+html.vivo .folio-nome { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html.vivo .estatico { display: none; }
+html.vivo .palco { position: absolute; inset: 0; }
+
+/* as margens: duas colunas de glosas, que crescem com o tempo de leitura */
+html.vivo .margem { position: absolute; top: calc(var(--cabeca-h) + 40px); width: var(--margem-w); z-index: 3; }
+html.vivo .margem.esq { left: var(--gutter); }
+html.vivo .margem.dir { right: var(--gutter); }
+html.vivo .glosa { display: none; }
+html.vivo .glosa.visivel { display: block; animation: glosa-entra 700ms var(--sai) both; }
+html.vivo .glosa .ainda { color: transparent; }
+@keyframes glosa-entra { from { transform: translateY(4px); } to { transform: none; } }
+
+html.vivo .fala, html.vivo .colofao { opacity: 0; transition: opacity 900ms var(--sai), transform 900ms var(--sai); transform: translateY(4px); pointer-events: none; }
+html.vivo .fala.visivel, html.vivo .colofao.visivel { opacity: 1; transform: none; pointer-events: auto; }
+html.vivo .falas { position: absolute; left: 0; right: 0; z-index: 3; display: grid; justify-items: center; text-align: center; padding: 0 calc(var(--margem-w) + var(--gutter) * 2); }
+
+/* posições das falas, por câmara */
+html.vivo #limiar .falas { bottom: 14vh; }
+html.vivo #i .falas { bottom: 12vh; }
+html.vivo #ii .falas { bottom: 10vh; }
+html.vivo #iii .falas { top: 50%; transform: translateY(42px); }
+html.vivo #v .falas { bottom: 9vh; }
+html.vivo #v .falas .fala { max-width: 36em; }
+html.vivo #vi .falas { top: calc(50% + var(--selo-meia, 60px) + 48px); }
+html.vivo #vi .fala-hegel { max-width: 24em; font-size: clamp(20px, 2vw, 28px); transition-duration: 700ms; }
+html.vivo #vi .fala-hegel.saindo { opacity: 0; }
+html.vivo #vi .colofao { position: absolute; top: 0; left: 0; right: 0; display: grid; justify-items: center; gap: 14px; }
+.havamal { font-family: var(--font-titulo); font-weight: 300; font-style: italic; font-size: clamp(19px, 1.8vw, 24px); line-height: 1.35; letter-spacing: -0.01em; margin: 0; }
+.havamal-pt { font-size: 14px; line-height: 21px; color: var(--texto-suave); margin: 0; max-width: 34em; }
+.explicit { font-size: 14px; line-height: 21px; margin: 4px 0 0; color: var(--texto); }
+.saidas { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; font-size: 14px; line-height: 21px; margin: 8px 0 0; }
+.saidas a { color: var(--texto-suave); }
+.saidas a:hover { color: var(--texto); }
+
+/* alvos invisíveis para teclado e leitor de tela (o gesto mesmo é no campo) */
+.alvo { position: absolute; border-radius: 9999px; background: none; z-index: 2; }
+html:not(.vivo) .alvo { display: none; }
+
+/* ii: as palavras, dentro das cápsulas do campo */
+html.vivo .palavra {
+  position: absolute; left: 0; top: 0; z-index: 2;
+  font-family: var(--font-titulo); font-weight: 300; font-size: 18px; line-height: 24px; letter-spacing: -0.01em;
+  color: var(--texto); white-space: nowrap; padding: 6px 14px; border-radius: 9999px;
+  will-change: transform; cursor: grab; touch-action: none;
+}
+html.vivo .palavra.raiz { font-style: italic; color: var(--texto-suave); }
+html.vivo .palavra:active { cursor: grabbing; }
+.sentidos { list-style: none; margin: 0; padding: 0; }
+html.vivo .sentidos li {
+  position: absolute; left: 0; top: 0; z-index: 2;
+  font-size: 12px; line-height: 16px; font-style: italic; color: var(--texto-suave); white-space: nowrap;
+  opacity: 0; transition: opacity 700ms var(--sai);
+}
+html.vivo .sentidos li.visivel { opacity: 1; }
+html:not(.vivo) .familia { display: none; }
+
+/* iii: a roda */
+html.vivo .roda { position: absolute; inset: 0; }
+.anel { list-style: none; margin: 0; padding: 0; }
+html.vivo .anel li {
+  position: absolute; left: 0; top: 0; z-index: 2;
+  font-family: var(--font-titulo); font-weight: 300; font-size: 15px; line-height: 20px; letter-spacing: 0;
+  color: var(--texto); white-space: nowrap; will-change: transform; pointer-events: none;
+  transition: opacity 600ms var(--sai);
+}
+html.vivo .roda.fundindo .anel li { opacity: 0; }
+html.vivo .frase {
+  position: absolute; left: 0; right: 0; z-index: 3; margin: 0; text-align: center;
+  font-family: var(--font-titulo); font-weight: 300; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.2; letter-spacing: -0.025em;
+  color: var(--texto); transition: opacity 400ms var(--sai);
+}
+html.vivo .frase.girando { opacity: 0; }
+html.vivo .hen {
+  position: absolute; left: 0; right: 0; z-index: 3; margin: 0; text-align: center;
+  display: grid; justify-items: center; gap: 6px; opacity: 0; transition: opacity 1200ms var(--sai);
+}
+html.vivo .hen.visivel { opacity: 1; }
+.hen span:first-child { font-family: var(--font-titulo); font-weight: 200; font-size: clamp(40px, 5vw, 64px); line-height: 1; letter-spacing: -0.02em; color: var(--texto); }
+.hen-trans { font-style: italic; font-size: 14px; line-height: 20px; color: var(--texto-suave); }
+html:not(.vivo) .roda, html:not(.vivo) .frase, html:not(.vivo) .hen { display: none; }
+
+/* iv: os brancos */
+html.vivo .brancos { position: absolute; inset: 0; }
+html.vivo .b {
+  position: absolute; left: 0; top: 0; z-index: 2; white-space: nowrap;
+  font-family: var(--font-titulo); font-weight: 200; letter-spacing: -0.03em; color: var(--texto);
+  will-change: transform, opacity; opacity: 0;
+}
+html.vivo .dobra { position: absolute; z-index: 1; background: var(--borda); }
+
+/* v: as substâncias */
+html.vivo .substancia {
+  position: absolute; left: 0; top: 0; z-index: 2; margin: 0; white-space: nowrap;
+  font-size: 13px; line-height: 18px; color: var(--texto-suave); transition: opacity 600ms var(--sai);
+}
+html.vivo .substancia i { color: var(--texto); }
+html.vivo .substancia.some { opacity: 0; }
+html:not(.vivo) .substancia { display: none; }
+
+/* vi: o selo */
+html.vivo .selo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; color: var(--primaria); visibility: hidden; }
+html.vivo .logo-selo { width: min(58vw, 440px); display: block; }
+html.vivo .selo.visivel { visibility: visible; }
+html:not(.vivo) .selo { display: none; }
+
+/* seguir: a pista final, discreta */
+.seguir {
+  position: fixed; z-index: 6; right: var(--gutter); bottom: calc(24px + env(safe-area-inset-bottom));
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 13px; line-height: 16px; color: var(--texto-suave); text-decoration: none;
+  padding: 8px 2px; animation: glosa-entra 900ms var(--sai) both;
+}
+.seguir::after { content: ''; width: 18px; height: 6px; border-radius: 9999px; background: currentColor; transition: width 300ms var(--sai); }
+.seguir:hover { color: var(--texto); }
+.seguir:hover::after { width: 26px; }
+html:not(.vivo) .seguir { display: none; }
+
+/* o cursor: uma pequena cápsula (só em ponteiro fino) */
+.cursor { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; opacity: 0; transition: opacity 200ms; }
+.cursor.visivel { opacity: 1; }
+.cursor i { position: absolute; left: 0; top: 0; width: 10px; height: 10px; border-radius: 9999px; background: var(--texto); transform: translate(-50%, -50%); }
+html.cursor-proprio.vivo, html.cursor-proprio.vivo * { cursor: none !important; }
+html.cursor-proprio.vivo .indice, html.cursor-proprio.vivo .indice *, html.cursor-proprio.vivo .fontes, html.cursor-proprio.vivo .fontes * { cursor: auto !important; }
+html.cursor-proprio.vivo .indice a, html.cursor-proprio.vivo .fontes a, html.cursor-proprio.vivo .indice button, html.cursor-proprio.vivo .fontes button { cursor: pointer !important; }
+
+/* as fontes, no vivo: uma página à parte, por cima */
+html.vivo .fontes { position: fixed; inset: 0; z-index: 20; overflow-y: auto; display: none; touch-action: pan-y; overscroll-behavior: contain; }
+html.vivo .fontes.aberta { display: block; }
+
+/* ---------- celular: as margens viram uma faixa de glosas embaixo ---------- */
+@media (max-width: 860px) {
+  :root { --gutter: 16px; --cabeca-h: 52px; }
+  .cabeca { gap: 14px; }
+  .cabeca-acoes { gap: 14px; }
+  html.vivo .margem { top: auto; bottom: calc(64px + env(safe-area-inset-bottom)); left: var(--gutter) !important; right: var(--gutter) !important; width: auto; }
+  html.vivo .glosa { margin: 0; }
+  html.vivo .glosa.visivel:not(.ultima) { display: none; }
+  html.vivo .falas { padding: 0 var(--gutter); }
+  html.vivo #limiar .falas { bottom: 30vh; }
+  html.vivo #i .falas, html.vivo #ii .falas { bottom: auto; top: calc(var(--cabeca-h) + 24px); }
+  html.vivo #v .falas { bottom: auto; top: calc(var(--cabeca-h) + 16px); }
+  html.vivo .fala { font-size: 22px; }
+  html.vivo .fala-tabula { font-size: 15px; }
+  html.vivo .fala-tabula-pt { font-size: 13px; line-height: 19px; margin-top: 8px; }
+  html.vivo .palavra { font-size: 15px; line-height: 20px; padding: 4px 10px; }
+  html.vivo .anel li { font-size: 12px; line-height: 16px; }
+  html.vivo .logo-selo { width: min(64vw, 300px); }
+  html.vivo .seguir { bottom: calc(18px + env(safe-area-inset-bottom)); }
+}

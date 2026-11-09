@@ -45,6 +45,8 @@
   function evitar(capId) {
     var r = qa('#' + capId + ' [data-evitar]').map(noPalco);
     r.push({ x: 0, y: 0, w: vw, h: parseFloat(getComputedStyle(raiz).getPropertyValue('--topo-h')) || 64 });
+    // a linhagem, à direita: as cápsulas não passam por baixo dos pontos
+    var ln = q('.linhagem'); if (ln && ln.offsetParent !== null) { var rl = ln.getBoundingClientRect(); r.push({ x: rl.left - 160, y: rl.top, w: vw - rl.left + 160, h: rl.height }); }
     return r;
   }
 
@@ -335,11 +337,11 @@
    */
   var RESPIROS = [
     // pausa e afastamento máximo de HE e LD (unidades do viewBox) vêm das formas do componente
-    { forma: 'centralizar', desc: 'nove pontos que voltam a ser uma peça só', pausa: 1900, afasta: 94 },
-    { forma: 'ia', desc: 'três cópias do I, em leque, que giram', pausa: 2000, afasta: 100 },
+    { forma: 'centralizar', desc: 'Centralizar: grade de 9 pontos que volta a ser uma peça só. Pausa de 1900 ms.', pausa: 1900, afasta: 94 },
+    { forma: 'ia', desc: 'IA: três cópias do I em leque que giram 60°. Pausa de 2000 ms.', pausa: 2000, afasta: 100 },
     // orbs: no componente, a mitose em três ocupa os primeiros 1600 ms da pausa e a fusão os últimos 1200 ms
     // (ORBS_DIV e ORBS_FUSE): a palavra diz divisão e retorno quando é isso que se vê
-    { forma: 'orbs', desc: 'um orb que se divide como uma célula, em três', pausa: 5400, afasta: 232, divideNaPausa: 1600, juntaNaPausa: 1200 }
+    { forma: 'orbs', desc: 'Orbs: o orb se divide como uma célula em três e, na volta, se funde.', pausa: 5400, afasta: 232, divideNaPausa: 1600, juntaNaPausa: 1200 }
   ];
   var CONTRAI = 160, DIVIDE = 1000, VOLTA = 900, REPOUSO = 1100, ANTECIPA = 900;
   var NOMES_FASE = ['contracao', 'divisao', 'pausa', 'retorno'];
@@ -481,17 +483,18 @@
   function quadroLuz(p, agora) {
     if (!luz) return;
     var W = luz.pal.clientWidth, Hh = luz.pal.clientHeight, cel = W < 720;
-    var cx = cel ? W * 0.5 : W * 0.64, cy = cel ? Hh * 0.6 : Hh * 0.52, t = parado ? 0 : (agora - luz.t0) / 1000;
+    var cx = cel ? W * 0.5 : W * 0.66, cy = cel ? Hh * 0.6 : Hh * 0.52, t = parado ? 0 : (agora - luz.t0) / 1000;
     // espalhadas → faixa (0,18 a 0,42) → treze orbs em roda (0,62 a 0,82)
     var junta = suave(faixa(p, 0.16, 0.42)), presenca = suave(faixa(p, 0.62, 0.82));
     if (parado) { junta = 1; presenca = 1; }
     if (parado && cel) { var tx = q('.texto-luz', luz.pal); if (tx) cy = Math.max(cy, tx.offsetTop + tx.offsetHeight + Hh * 0.2 + 40); }
-    var rx = cel ? W * 0.38 : Math.min(W * 0.27, Hh * 0.46), ry = cel ? Hh * 0.2 : Hh * 0.3, faixaL = Math.min(W * (cel ? 0.9 : 0.62), 1100);
-    var base = Math.min(W, Hh), tam = lerp(lerp(0.5, 0.36, junta), cel ? 0.3 : 0.22, presenca) * base;
+    var rx = cel ? W * 0.38 : Math.min(W * 0.2, Hh * 0.42), ry = cel ? Hh * 0.2 : Hh * 0.3, faixaL = Math.min(W * (cel ? 0.9 : 0.62), 1100);
+    var base = Math.min(W, Hh), tam = lerp(lerp(0.4, 0.36, junta), cel ? 0.3 : 0.22, presenca) * base;
     var n = RODA.length;
     for (var i = 0; i < n; i++) {
       // espalhadas pela tela, numa elipse larga
-      var ang = i / n * Math.PI * 2 + 0.6, sx = cx + Math.cos(ang) * W * 0.42, sy = cy + Math.sin(ang) * Hh * 0.42;
+      // (no desktop, a elipse fica à direita do texto: a luz não passa por baixo do título)
+      var ang = i / n * Math.PI * 2 + 0.6, sx = cx + Math.cos(ang) * W * (cel ? 0.42 : 0.24), sy = cy + Math.sin(ang) * Hh * (cel ? 0.42 : 0.36);
       // a faixa, como no hero do site; a do Assistente fica no meio
       var bx = cx + ((i === n - 1 ? (n - 2) / 2 : i) / (n - 2) - 0.5) * faixaL, by = cy;
       // a roda: doze em volta, a clara no meio
@@ -539,6 +542,9 @@
       if (M.ativoAntes) G.Som.nota(CAPS.indexOf(ativo), 0.45);
       M.ativoAntes = ativo;
     }
+    // sobre uma seção de leitura, o topo fica sólido, com a borda embaixo (marca-e-site: a barra fixa não cobre o conteúdo)
+    var sobTopo = null; CAPS.forEach(function (c) { if (y + 40 >= c.topo) sobTopo = c; });
+    topo.classList.toggle('solido', !!(sobTopo && sobTopo.fluxo));
     // sobre o mundo escuro da luz, o topo e o cursor trocam de tinta
     var lz = CAP.orbs, cobreTopo = lz && y + 32 >= lz.topo && y + 32 <= lz.topo + lz.altura;
     topo.classList.toggle('forca-escuro', !!cobreTopo); linhagem.classList.toggle('forca-escuro', !!(lz && meio >= lz.topo && meio <= lz.topo + lz.altura));
@@ -633,7 +639,10 @@
     item('.cap-partes .figura-pilula canvas', function (b) { return F.pilulaCheia(b, 1400); });
     var g9 = item('.cap-pilula .figura-pilula canvas', function (b) { return F.grade9(b, 40); });
     var cot = q('.cotas'); if (cot && g9 && g9.mapa) cot.style.setProperty('--S', g9.mapa.S.toFixed(4));
-    item('.cap-grade .figura-tela canvas', function (b) { return F.grade(b, 5000, []); }, COR.suave);
+    // parada, a grade também abre uma área lisa sob o texto
+    var cvg = q('.cap-grade .figura-tela canvas'), txg = q('.cap-grade .texto-grade'), ev = [];
+    if (cvg && txg) { var rc = cvg.getBoundingClientRect(), rt = txg.getBoundingClientRect(); ev.push({ x: rt.left - rc.left, y: rt.top - rc.top, w: rt.width, h: rt.height }); }
+    item('.cap-grade .figura-tela canvas', function (b) { return F.grade(b, 5000, ev); }, COR.suave);
     // o respiro: as três formas paradas
     var box = q('.estatico-respiros');
     if (box && !box.children.length) {

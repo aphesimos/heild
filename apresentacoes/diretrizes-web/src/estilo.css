@@ -751,3 +751,31 @@ html.no-escuro .cursor { color: var(--areia-100); }
 .parado .cap-respiro .palco { grid-template-columns: minmax(0, 1fr); }
 .parado .cap-respiro .tabela-tempos, .parado .cap-respiro .logo-caixa, .parado .cap-respiro .estatico-respiros { grid-column: 1; grid-row: auto; }
 .parado .cap-fluxo .palco { padding: 12vh var(--margem) 8vh; }
+
+/* o topo sólido sobre as seções de leitura */
+.topo { transition: color 0.4s var(--sai), background-color 0.3s var(--sai), box-shadow 0.3s var(--sai); }
+.topo.solido { background: var(--fundo); box-shadow: 0 1px 0 var(--borda); }
+
+/* espaço para a linhagem à direita (desktop): o conteúdo do palco não passa por baixo dos pontos */
+@media (min-width: 900px) { .palco { padding-right: max(var(--margem), 132px); } .cap-fluxo .palco { padding-right: max(var(--margem), 132px); } }
+/* a logo e a palavra da fase cabem com HE e LD afastados ao máximo (a forma orbs afasta 18% para cada lado) */
+.cap-respiro .logo-caixa { width: min(36vw, 520px, 80vh); }
+.cap-respiro .fase { font-size: clamp(56px, min(9vw, 17vh), 170px); }
+.cap-respiro .fases { padding-bottom: 3vh; }
+.logo-caixa-formas { width: min(32vw, 480px, 72vh); }
+.cap-logo .logo-caixa { width: min(46vw, 620px, 90vh); }
+/* o material: as quatro regras entram no lugar das medidas (as duas no mesmo lugar, uma de cada vez) */
+.cap-pilula .medidas { opacity: clamp(0, calc((0.8 - var(--p)) * 12), 1); }
+.cap-pilula .regras-quatro { grid-column: 1; grid-row: 2; align-self: start; margin-top: 4vh; --ent: 0.83; }
+@media (max-width: 720px) { .cap-pilula .regras-quatro { grid-row: 2 / span 2; margin-top: 0; font-size: 13px; line-height: 18px; } .cap-pilula .regras-quatro b { min-width: 64px; } }
+.parado .cap-pilula .medidas { opacity: 1; }
+.parado .cap-pilula .regras-quatro { grid-row: 4; margin-top: 4vh; }
+/* as seções de leitura são folhas opacas: cobrem o campo ao chegar, e nada do campo passa sob o texto delas */
+.cap-fluxo { background: var(--fundo); z-index: 2; }
+/* o texto dos palcos novos também se apaga quando o palco solta e sobe */
+.palco > .texto-logo-abre, .palco > .legendas-logo, .palco > .tabela-tempos, .palco > .texto-formas, .palco > .legenda-formas, .palco > .fatos-molas, .palco > .legenda-time {
+  filter: opacity(calc(1 - var(--saida)));
+}
+@media (max-width: 720px) { .anot-construcao text { display: none; } }
+/* o título dos tempos fica na coluna da esquerda: ao subir, não passa por cima da pílula que o campo deixa à direita */
+@media (min-width: 721px) { .cap-respiro .texto-respiro { grid-column: 1; max-width: 42vw; } .cap-respiro .texto-respiro p { max-width: 34ch; } }

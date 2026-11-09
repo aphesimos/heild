@@ -1,0 +1,321 @@
+<title>Do inteiro</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Do inteiro: a filosofia da Heild como um livro de câmaras. O nome sob o nome, as duas raízes, a roda de Llull, os brancos, a obra de corpo, alma e espírito, e o inteiro.">
+<meta name="color-scheme" content="dark light">
+<style>
+/*{{FONTES}}*/
+/*{{ARQ:../comum/tokens.css}}*/
+/*{{ARQ:src/estilo.css}}*/
+</style>
+
+<!--
+  Do inteiro: uma experiência filosófica da marca Heild, em câmaras (fólios), não em seções.
+  Cada fólio é um estado com um gesto que se descobre (raspar, aproximar, girar, parar, segurar, tocar).
+  As glosas crescem nas margens com o tempo de leitura; as últimas são pistas; depois de um tempo aparece
+  "seguir". O índice (no alto, à direita) é a saída: leva a qualquer fólio, às fontes e às diretrizes.
+  O mundo começa escuro (a obra em negro) e amanhece no fólio iv (a obra em branco).
+  Sem movimento reduzido, tudo roda no motor (src/motor.js); com movimento reduzido, ou sem JavaScript,
+  a página é o códice inteiro, parado e legível, com as mesmas palavras e as mesmas glosas.
+-->
+
+<div class="luz" aria-hidden="true"></div>
+<canvas id="campo" aria-hidden="true"></canvas>
+
+<header class="cabeca">
+  <span class="cabeca-titulo">Do inteiro</span>
+  <span class="cabeca-folio" aria-hidden="true"></span>
+  <nav class="cabeca-acoes" aria-label="Ações">
+    <button type="button" class="botao-texto" data-acao="som" aria-pressed="false">som</button>
+    <button type="button" class="botao-texto" data-acao="indice" aria-expanded="false" aria-controls="indice">índice</button>
+  </nav>
+</header>
+
+<main class="codice" id="codice">
+
+  <!-- limiar: a pílula sozinha, no escuro -->
+  <section class="folio" id="limiar" data-mundo="noite" aria-labelledby="t-limiar">
+    <h2 class="folio-nome" id="t-limiar"><span class="num">limiar</span></h2>
+    <div class="palco"><button type="button" class="alvo alvo-pilula" aria-label="A pílula. Toque para dissolver"></button></div>
+    <figure class="estatico" data-figura="pilula" aria-hidden="true"></figure>
+    <div class="falas">
+      <p class="fala fala-incipit" data-quando="t:2.5">Aqui começa o livro do inteiro.</p>
+    </div>
+    <aside class="margem dir">
+      <p class="glosa" data-quando="t:5">Toda obra começa por dissolver.</p>
+      <p class="glosa pista" data-quando="t:13">O que está inteiro parece fechado. Mas a pílula espera um gesto.</p>
+    </aside>
+  </section>
+
+  <!-- i: o palimpsesto. A palavra raspada até a raiz -->
+  <section class="folio" id="i" data-mundo="noite" aria-labelledby="t-i">
+    <h2 class="folio-nome" id="t-i"><span class="num">i</span> o nome sob o nome</h2>
+    <div class="palco"></div>
+    <ol class="estratos" aria-label="Os estratos da palavra, de cima para baixo">
+      <li data-giro="0"><b lang="pt">inteiro</b> <span>o que não foi tocado · o que não se partiu · o que ainda está são</span></li>
+      <li data-giro="-90"><b lang="is">heild</b> <span lang="is">heild · heildin · heildar · heildir</span></li>
+      <li data-giro="0"><b lang="non">heill</b> <span lang="non">heill sá, er kvað · heill sá, er kann</span></li>
+      <li data-giro="-90"><b lang="ang">hāl</b> <span lang="ang">hál wes þú</span></li>
+      <li data-giro="0"><b lang="gem">*hailaz</b> <span lang="gem">*hailagaz · *hailijaną</span></li>
+      <li data-giro="0"><b lang="ine">*kailo-</b> <span>inteiro · ileso</span></li>
+    </ol>
+    <div class="falas">
+      <p class="fala fala-achado" data-quando="fim">A palavra mais funda é a que ninguém ouviu.</p>
+    </div>
+    <aside class="margem esq">
+      <p class="glosa" data-quando="e:estrato-0" data-fonte="1"><i>inteiro</i>, do latim <i>integer</i>: o intocado.</p>
+      <p class="glosa" data-quando="e:estrato-1" data-fonte="2"><i lang="is">heild</i>, islandês: a totalidade. Cleasby e Vigfusson, em 1874, marcam a palavra como moderna.</p>
+      <p class="glosa" data-quando="e:estrato-2" data-fonte="2"><i lang="non">heill</i>, nórdico antigo: são; inteiro, que o dicionário põe em latim, <i>integer</i>; salvo. Como substantivo, o agouro: <i lang="non">góðu heilli</i>, em boa hora.</p>
+      <p class="glosa" data-quando="e:estrato-3" data-fonte="4"><i lang="ang">hāl</i>, inglês antigo: inteiro, ileso, são. Dele vêm <i lang="en">whole</i>, <i lang="en">hale</i>, <i lang="en">heal</i>, que é tornar inteiro, e <i lang="en">holy</i>, o que deve ficar intacto.</p>
+      <p class="glosa" data-quando="e:estrato-4" data-fonte="5"><i lang="gem">*hailaz</i>, germânico reconstruído: inteiro, intacto, são, e também presságio. <i lang="gem">*hailagaz</i>, sagrado.</p>
+      <p class="glosa" data-quando="e:estrato-5" data-fonte="4"><i lang="ine">*kailo-</i>, indo-europeu reconstruído: inteiro, ileso. O asterisco quer dizer que ninguém nunca leu esta palavra. Ela foi achada para trás, a partir das filhas.</p>
+    </aside>
+    <aside class="margem dir">
+      <p class="glosa" data-quando="t:4" data-fonte="7">Uma nota num códice dá a data de 14 de abril de 1229 e o nome de Ioannes Myronas. Por esse tempo, um livro de Arquimedes foi raspado e coberto de orações. O que estava embaixo não sumiu.</p>
+      <p class="glosa" data-quando="t:11" data-fonte="8">Pappo, citado por Pólya: na análise, supomos o que se procura como já achado, e andamos para trás.</p>
+      <p class="glosa pista" data-quando="t:19">O que foi coberto se lê com a mão.</p>
+    </aside>
+  </section>
+
+  <!-- ii: as duas raízes. Duas famílias de palavras que se reconhecem -->
+  <section class="folio" id="ii" data-mundo="noite" aria-labelledby="t-ii">
+    <h2 class="folio-nome" id="t-ii"><span class="num">ii</span> as duas raízes</h2>
+    <div class="palco">
+      <div class="familia" data-familia="a" role="group" aria-label="A família germânica, da raiz *kailo-">
+        <button type="button" class="palavra raiz" lang="ine">*kailo-</button>
+        <button type="button" class="palavra" lang="en" data-par="0">whole</button>
+        <button type="button" class="palavra" lang="en" data-par="1">hale</button>
+        <button type="button" class="palavra" lang="en" data-par="2">heal</button>
+        <button type="button" class="palavra" lang="en" data-par="3">hail</button>
+        <button type="button" class="palavra" lang="en" data-par="4">holy</button>
+      </div>
+      <div class="familia" data-familia="b" role="group" aria-label="A família grega e latina, da raiz *solh₂-">
+        <button type="button" class="palavra raiz" lang="ine">*solh₂-</button>
+        <button type="button" class="palavra" lang="grc-Latn" data-par="0">hólos</button>
+        <button type="button" class="palavra" lang="la" data-par="1">salvus</button>
+        <button type="button" class="palavra" lang="la" data-par="2">salūs</button>
+        <button type="button" class="palavra" lang="la" data-par="3">salvē</button>
+        <button type="button" class="palavra" lang="la" data-par="4">sollemnis</button>
+      </div>
+      <ol class="sentidos" aria-label="Os sentidos que as duas famílias dividem">
+        <li data-par="0">inteiro</li>
+        <li data-par="1">são, salvo</li>
+        <li data-par="2">cura, saúde</li>
+        <li data-par="3">salve</li>
+        <li data-par="4">sagrado, solene</li>
+      </ol>
+    </div>
+    <figure class="estatico" data-figura="raizes" aria-hidden="true"></figure>
+    <div class="falas">
+      <p class="fala fala-duas" data-quando="fim">Duas raízes que nunca se tocaram disseram a mesma coisa cinco vezes.</p>
+    </div>
+    <aside class="margem esq">
+      <p class="glosa" data-quando="fim:2.5" data-fonte="9">Mas <i lang="en">whole</i> e <i lang="grc-Latn">hólos</i> não são parentes. Parecem. O dicionário chama isso de falso cognato.</p>
+      <p class="glosa" data-quando="fim:6" data-fonte="11">Tversky e Kahneman, 1974: julgamos pelo parecido. A heurística da representatividade quase sempre serve, e às vezes erra de um jeito previsível.</p>
+    </aside>
+    <aside class="margem dir">
+      <p class="glosa" data-quando="t:3" data-fonte="9">Outra raiz, <i lang="ine">*solh₂-</i>, inteiro, deu ao grego <i lang="grc-Latn">hólos</i> e ao latim <i lang="la">salvus</i>, <i lang="la">salūs</i>, <i lang="la">salvē</i> e <i lang="la">sollemnis</i>.</p>
+      <p class="glosa" data-quando="t:9" data-fonte="10">Do mesmo <i lang="grc-Latn">hólos</i>, Jan Smuts tirou em 1926 a palavra holismo.</p>
+      <p class="glosa pista" data-quando="t:16">Duas famílias que nunca se viram. Ponha uma diante da outra.</p>
+    </aside>
+  </section>
+
+  <!-- iii: a roda. Três anéis de cápsulas que se giram, como a quarta figura de Llull -->
+  <section class="folio" id="iii" data-mundo="noite" aria-labelledby="t-iii">
+    <h2 class="folio-nome" id="t-iii"><span class="num">iii</span> a roda</h2>
+    <div class="palco">
+      <div class="roda" role="group" aria-label="A roda: três anéis de palavras. Setas para girar">
+        <ol class="anel" data-anel="0" aria-label="O anel de fora">
+          <li data-art="o">um</li><li data-art="o">todo</li><li data-art="a">parte</li><li data-art="o">inteiro</li><li data-art="o">nome</li><li data-art="o">corpo</li><li data-art="o">sagrado</li><li data-art="o">achado</li><li data-art="o">agouro</li>
+        </ol>
+        <ol class="anel" data-anel="1" aria-label="O anel do meio">
+          <li>é</li><li>cura</li><li>liga</li><li>contém</li><li>guarda</li><li>acha</li><li>divide</li><li>nomeia</li><li>salva</li>
+        </ol>
+        <ol class="anel" data-anel="2" aria-label="O anel de dentro">
+          <li data-art="o">um</li><li data-art="o">todo</li><li data-art="a">parte</li><li data-art="o">inteiro</li><li data-art="o">nome</li><li data-art="o">corpo</li><li data-art="o">sagrado</li><li data-art="o">achado</li><li data-art="o">agouro</li>
+        </ol>
+      </div>
+      <p class="frase" aria-live="polite"></p>
+      <p class="hen" aria-label="hèn tò pân, um é o todo"><span lang="el">εν το παν</span><span class="hen-trans" lang="grc-Latn">hèn tò pân</span></p>
+    </div>
+    <figure class="estatico" data-figura="roda" aria-hidden="true"></figure>
+    <div class="falas">
+      <p class="fala fala-hen" data-quando="fim">um é o todo</p>
+    </div>
+    <aside class="margem esq">
+      <p class="glosa" data-quando="fim:1.5" data-fonte="15">Julius Evola: o primeiro princípio do ensinamento hermético é a unidade, e a fórmula que o exprime está na Crisopeia de Cleópatra, “um, o todo”.</p>
+      <p class="glosa" data-quando="fim:5" data-fonte="15">No anel de fora, lê Evola: “um é o todo, fonte de tudo e remate de tudo: se o todo não contivesse o todo, não seria nada”. O ideograma é o círculo, uma linha que encerra em si o seu fim e o seu começo.</p>
+      <p class="glosa" data-quando="fim:9" data-fonte="16"><i lang="la">Deus est sphaera infinita cuius centrum est ubique, circumferentia nusquam.</i> Uma esfera infinita, com o centro em toda parte e a circunferência em parte nenhuma: o Livro dos vinte e quatro filósofos, que a Idade Média dava a Hermes.</p>
+    </aside>
+    <aside class="margem dir">
+      <p class="glosa" data-quando="t:3" data-fonte="12">Ramon Llull desenhou, por volta de 1308, uma figura de três círculos concêntricos que se giram para formar combinações. Uma arte de achar a verdade.</p>
+      <p class="glosa" data-quando="t:9" data-fonte="13">Em 1666, Leibniz escreveu a sua arte combinatória lendo Llull.</p>
+      <p class="glosa" data-quando="t:15" data-fonte="8">Pólya: se não consegue resolver o problema proposto, tente primeiro resolver algum problema relacionado.</p>
+      <p class="glosa pista" data-quando="t:22" data-fonte="14">Num códice de Veneza, uma serpente morde a própria cauda em volta de três palavras gregas: <i lang="grc-Latn">hèn tò pân</i>.</p>
+      <p class="glosa pista" data-quando="t:32"><i lang="grc-Latn">hèn</i>, um. <i lang="grc-Latn">tò pân</i>, o todo.</p>
+    </aside>
+  </section>
+
+  <!-- iv: os brancos. O dia. Aqui o gesto é não fazer nada -->
+  <section class="folio" id="iv" data-mundo="dia" aria-labelledby="t-iv">
+    <h2 class="folio-nome" id="t-iv"><span class="num">iv</span> os brancos</h2>
+    <div class="palco">
+      <div class="brancos" aria-hidden="true">
+        <span class="b" data-f="1" data-k="nada">nada</span>
+        <span class="b" data-f="1" data-k="tido">terá tido lugar</span>
+        <span class="b" data-f="1" data-k="senao">senão</span>
+        <span class="b" data-f="1" data-k="o">o</span>
+        <span class="b pivo" data-f="12" data-k="lugar">lugar</span>
+        <span class="b" data-f="2" data-k="tudo">tudo,</span>
+        <span class="b" data-f="2" data-k="num">num</span>
+        <span class="b" data-f="2" data-k="so">só.</span>
+      </div>
+      <p class="so-leitor">Nada terá tido lugar senão o lugar. Tudo, num lugar só.</p>
+    </div>
+    <figure class="estatico" data-figura="brancos" aria-hidden="true"></figure>
+    <aside class="margem esq">
+      <p class="glosa" data-quando="t:0.6" data-fonte="3"><i lang="non">Heill dagr! Heilir dags synir!</i> Salve, dia! Salve, filhos do dia! Assim acorda a valquíria no <i>Sigrdrífumál</i>.</p>
+      <p class="glosa" data-quando="t:4" data-fonte="17">Vitrúvio: Arquimedes saltou do banho e foi para casa nu, gritando em grego, uma vez e outra, <i lang="grc-Latn">heúrēka</i>.</p>
+      <p class="glosa" data-quando="t:9" data-fonte="4"><i lang="grc-Latn">heúrēka</i>: achei. Do mesmo verbo, <i lang="grc-Latn">heúrema</i>: o que se acha sem esperar.</p>
+      <p class="glosa" data-quando="fim:2" data-fonte="20">Nicolau de Cusa, 1440: no máximo absoluto, o mínimo coincide.</p>
+    </aside>
+    <aside class="margem dir">
+      <p class="glosa" data-quando="t:6" data-fonte="18">Mallarmé, sobre o poema de 1897: os brancos, com efeito, assumem a importância. A frase de cima é dele: <i lang="fr">rien n'aura eu lieu que le lieu</i>.</p>
+      <p class="glosa" data-quando="t:12" data-fonte="27">Em 1958, os poetas concretos de São Paulo deram o verso por encerrado e tomaram o espaço gráfico como agente estrutural.</p>
+      <p class="glosa" data-quando="t:17" data-fonte="19">Gigerenzer e Gaissmaier: heurísticas são processos que ignoram parte da informação. Às vezes acertam mais por isso.</p>
+      <p class="glosa pista" data-quando="t:23">Aqui não há nada a fazer.</p>
+    </aside>
+  </section>
+
+  <!-- v: a obra. Sal, mercúrio e enxofre; corpo, espírito e alma. Só se ligam com insistência -->
+  <section class="folio" id="v" data-mundo="dia" aria-labelledby="t-v">
+    <h2 class="folio-nome" id="t-v"><span class="num">v</span> a obra</h2>
+    <div class="palco">
+      <button type="button" class="alvo alvo-obra" aria-label="A obra: segure para ligar as três substâncias"></button>
+      <p class="substancia" data-s="sal"><i>sal</i>, o corpo</p>
+      <p class="substancia" data-s="mercurio"><i>mercúrio</i>, o espírito</p>
+      <p class="substancia" data-s="enxofre"><i>enxofre</i>, a alma</p>
+    </div>
+    <figure class="estatico" data-figura="obra" aria-hidden="true"></figure>
+    <div class="falas">
+      <p class="fala fala-tabula" data-quando="fim"><i lang="la">Sicut res omnes ab una fuerunt meditatione unius, et sic sunt nate res omnes ab hac re una aptatione.</i></p>
+      <p class="fala fala-tabula-pt" data-quando="fim:1.2">Assim como todas as coisas vieram do um, pela meditação do um, assim todas as coisas nasceram desta coisa única, por adaptação.</p>
+    </div>
+    <aside class="margem esq">
+      <p class="glosa" data-quando="t:2" data-fonte="21">Paracelso, por volta de 1530: o sal é o corpo; o mercúrio, o espírito; o enxofre, a alma.</p>
+      <p class="glosa" data-quando="t:8" data-fonte="15">Julius Evola, lendo a tradição hermética: tudo o que existe no macrocosmo, o homem também possui. Na alma, uma força solar e áurea; no espírito, uma força lunar e mercurial; no corpo, o sal.</p>
+      <p class="glosa" data-quando="fim:1" data-fonte="24">A Tábua de Esmeralda, na versão latina que corria na Europa desde o fim do século XII.</p>
+      <p class="glosa" data-quando="fim:5" data-fonte="15">“A nossa Obra é a conversão e a mudança de um ser em outro ser”, diz Flamel, citado por Evola.</p>
+    </aside>
+    <aside class="margem dir">
+      <p class="glosa" data-quando="t:5" data-fonte="22">Paulo aos tessalonicenses: que o vosso espírito, a alma e o corpo sejam guardados inteiros. Em grego, <i lang="grc-Latn">holóklēron</i>; na Vulgata, <i lang="la">integer</i>.</p>
+      <p class="glosa" data-quando="t:11" data-fonte="23">Heráclito: o que se junta e o que se separa, o que soa junto e o que soa à parte; de todas as coisas, um, e do um, todas.</p>
+      <p class="glosa pista" data-quando="t:17"><i lang="la">Solve et coagula</i>: dissolve e liga. Ligar pede insistência.</p>
+      <p class="glosa" data-quando="fim:8" data-fonte="28">Michael Maier, 1617: faz do homem e da mulher um círculo; dele, um quadrado; deste, um triângulo; faz um círculo, e terás a pedra dos filósofos.</p>
+    </aside>
+  </section>
+
+  <!-- vi: o inteiro. A pílula sozinha e, uma única vez, o selo -->
+  <section class="folio" id="vi" data-mundo="dia" aria-labelledby="t-vi">
+    <h2 class="folio-nome" id="t-vi"><span class="num">vi</span> o inteiro</h2>
+    <div class="palco">
+      <div class="selo"><heild-logo class="logo-selo" label="Heild"></heild-logo></div>
+      <button type="button" class="alvo alvo-selo" aria-label="A pílula. Toque para selar"></button>
+    </div>
+    <figure class="estatico" data-figura="selo" aria-hidden="true"></figure>
+    <div class="falas">
+      <p class="fala fala-hegel" data-quando="t:1.5">O verdadeiro é o todo. Mas o todo é só a essência que se completa pelo seu desenvolvimento.</p>
+      <div class="colofao" data-quando="fim:1.4">
+        <p class="havamal" lang="non">Heill sá, er kvað,<br>heill sá, er kann,<br>njóti sá, er nam,<br>heilir, þeirs hlýddu.</p>
+        <p class="havamal-pt">Salve quem falou, salve quem sabe, proveito a quem aprendeu, salve os que ouviram.</p>
+        <p class="explicit">Aqui acaba o livro do inteiro. <i lang="non">Ves heill</i>: sê inteiro.</p>
+        <p class="saidas"><a href="#fontes" data-acao="fontes">fontes</a> <a class="link-diretrizes" href="#" target="_blank" rel="noopener">diretrizes da marca</a> <a href="#limiar" data-acao="recomecar">recomeçar</a></p>
+      </div>
+    </div>
+    <aside class="margem esq">
+      <p class="glosa" data-quando="t:2.5" data-fonte="25">Hegel, no prefácio da <i>Fenomenologia do espírito</i>, 1807: <i lang="de">Das Wahre ist das Ganze.</i></p>
+      <p class="glosa" data-quando="t:8" data-fonte="16"><i lang="la">Deus est totus in quolibet sui</i>: inteiro em cada coisa sua.</p>
+      <p class="glosa" data-quando="fim:2" data-fonte="3">Assim acaba o <i>Hávamál</i>, na estrofe 164: abençoando quem disse e quem ouviu, com a mesma palavra que quer dizer inteiro.</p>
+    </aside>
+    <aside class="margem dir">
+      <p class="glosa" data-quando="t:5" data-fonte="26">David Bohm, 1980: totalidade indivisa em movimento fluente.</p>
+      <p class="glosa pista" data-quando="t:11">Falta o selo.</p>
+      <p class="glosa" data-quando="fim:4" data-fonte="6"><i lang="non">Ves heill</i>, sê são, foi a saudação nórdica que deu ao inglês a palavra <i lang="en">wassail</i>.</p>
+    </aside>
+  </section>
+
+</main>
+
+<a class="seguir" href="#" hidden>seguir</a>
+
+<!-- o índice: a saída discreta -->
+<div class="indice" id="indice" hidden>
+  <div class="indice-caixa" role="dialog" aria-modal="true" aria-label="Índice">
+    <ol>
+      <li><a href="#limiar" data-ir="limiar"><span class="num">·</span> limiar</a></li>
+      <li><a href="#i" data-ir="i"><span class="num">i</span> o nome sob o nome</a></li>
+      <li><a href="#ii" data-ir="ii"><span class="num">ii</span> as duas raízes</a></li>
+      <li><a href="#iii" data-ir="iii"><span class="num">iii</span> a roda</a></li>
+      <li><a href="#iv" data-ir="iv"><span class="num">iv</span> os brancos</a></li>
+      <li><a href="#v" data-ir="v"><span class="num">v</span> a obra</a></li>
+      <li><a href="#vi" data-ir="vi"><span class="num">vi</span> o inteiro</a></li>
+    </ol>
+    <p class="indice-mais">
+      <a href="#fontes" data-acao="fontes">fontes</a>
+      <a href="#codice" data-acao="codice">ler como códice</a>
+      <a class="link-diretrizes" href="#" target="_blank" rel="noopener">diretrizes da marca</a>
+    </p>
+    <button type="button" class="botao-texto fechar" data-acao="fechar">fechar</button>
+  </div>
+</div>
+
+<!-- as fontes: discretas, à parte -->
+<section class="fontes" id="fontes" aria-labelledby="t-fontes">
+  <div class="fontes-caixa">
+    <h2 id="t-fontes" class="fontes-titulo">Fontes</h2>
+    <p class="fontes-nota">As citações em língua estrangeira foram traduzidas por nós, a partir do original ou da edição indicada. As etimologias seguem os dicionários citados; formas com asterisco são reconstruídas.</p>
+    <ol class="fontes-lista">
+      <li id="fonte-1">Wiktionary, <a href="https://en.wiktionary.org/wiki/integer">integer</a>: latim <i>integer</i>, do proto-itálico <i>*n̥tagros</i>, intocado; o português <i>inteiro</i> descende dele.</li>
+      <li id="fonte-2">Richard Cleasby e Guðbrandur Vigfússon, <cite>An Icelandic-English Dictionary</cite> (Oxford: Clarendon, 1874), verbetes <i>heild</i> (“wholeness, totality”, mod.), <i>heill</i> adj. (“hale, sound”; “whole, entire, Lat. integer”; “safe”) e <i>heill</i> subst. (“an omen, auspice”; <i>góðu heilli</i>, “bono augurio”). Consultado em <a href="https://old-norse.net/html/h.php">old-norse.net</a>.</li>
+      <li id="fonte-3"><cite>Hávamál</cite>, estrofe 164, e <cite>Sigrdrífumál</cite>, estrofe 3, no texto nórdico de <a href="https://heimskringla.no/wiki/H%C3%A1vam%C3%A1l">heimskringla.no</a>.</li>
+      <li id="fonte-4">Online Etymology Dictionary, <a href="https://www.etymonline.com/word/whole">whole</a>, <a href="https://www.etymonline.com/word/heal">heal</a>, <a href="https://www.etymonline.com/word/heligoland">holy (em Heligoland)</a>, <a href="https://www.etymonline.com/word/hail">hail</a>, <a href="https://www.etymonline.com/word/amalgam">amalgam</a>, <a href="https://www.etymonline.com/word/heuristic">heuristic</a> e <a href="https://www.etymonline.com/word/eureka">eureka</a>.</li>
+      <li id="fonte-5">Wiktionary, <a href="https://en.wiktionary.org/wiki/Reconstruction:Proto-Germanic/hailaz">*hailaz</a> e <a href="https://en.wiktionary.org/wiki/Reconstruction:Proto-Germanic/hailagaz">*hailagaz</a>, com Guus Kroonen, <cite>Etymological Dictionary of Proto-Germanic</cite> (Brill, 2013), p. 200, e Vladimir Orel, <cite>A Handbook of Germanic Etymology</cite> (Brill, 2003), p. 151.</li>
+      <li id="fonte-6"><cite>Oxford English Dictionary</cite>, citado em Wikipedia, <a href="https://en.wikipedia.org/wiki/Wassail">Wassail</a>: do nórdico antigo <i>ves heill</i>, que corresponde ao inglês antigo <i>hál wes þú</i>. Wiktionary, <a href="https://en.wiktionary.org/wiki/wassail">wassail</a>.</li>
+      <li id="fonte-7">O palimpsesto de Arquimedes: Cambridge University Library, <a href="https://cudl.lib.cam.ac.uk/view/MS-ADD-01879-00023">MS Add. 1879.23</a> (a nota com a data de 14 de abril de 1229 e o nome de Ioannes Myronas); The Archimedes Palimpsest Project, Walters Art Museum.</li>
+      <li id="fonte-8">George Pólya, <cite>How to Solve It</cite> (Princeton University Press, 1945; 2ª ed., 1957), verbetes “Heuristic”, “Pappus” e “Auxiliary problem” do <cite>Short Dictionary of Heuristic</cite>.</li>
+      <li id="fonte-9">Wiktionary, <a href="https://en.wiktionary.org/wiki/Reconstruction:Proto-Indo-European/solh%E2%82%82-">*solh₂-</a> (com Pronk, 2011; De Vaan, 2008; Weiss, 2009), <a href="https://en.wiktionary.org/wiki/%E1%BD%85%CE%BB%CE%BF%CF%82">hólos</a> (“English whole: unrelated false cognate”) e <a href="https://en.wiktionary.org/wiki/salve">salve</a>.</li>
+      <li id="fonte-10">Jan Christiaan Smuts, <cite>Holism and Evolution</cite> (Londres: Macmillan, 1926); Wikipedia, <a href="https://en.wikipedia.org/wiki/Holism_and_Evolution">Holism and Evolution</a>.</li>
+      <li id="fonte-11">Amos Tversky e Daniel Kahneman, “Judgment under Uncertainty: Heuristics and Biases”, <cite>Science</cite> 185, n. 4157 (1974), p. 1124–1131.</li>
+      <li id="fonte-12">Ernesto Priani, <a href="https://plato.stanford.edu/entries/llull/">Ramon Llull</a>, <cite>Stanford Encyclopedia of Philosophy</cite>: a Arte como “sistema lógico combinatório para descobrir a verdade”; a quarta figura, “formada por três círculos concêntricos”, que se gira; <cite>Ars brevis</cite>, 1308.</li>
+      <li id="fonte-13">G. W. Leibniz, <cite>Dissertatio de arte combinatoria</cite> (Leipzig, 1666); Wikipedia, <a href="https://en.wikipedia.org/wiki/De_Arte_Combinatoria">De Arte Combinatoria</a>.</li>
+      <li id="fonte-14">A Crisopeia de Cleópatra, Veneza, Biblioteca Marciana, <a href="https://commons.wikimedia.org/wiki/File:Chrysopoea_of_Cleopatra_1.png">Codex Marcianus graecus 299, fól. 188v</a> (séculos X e XI): o ouroboros com <i lang="grc-Latn">hèn tò pân</i>, que aqui se escreve sem os acentos antigos: <span lang="el">εν το παν</span>.</li>
+      <li id="fonte-15">Julius Evola, <cite>La tradizione ermetica</cite> (Bari: Laterza, 1931; Roma: Edizioni Mediterranee, 1971); edição inglesa <cite>The Hermetic Tradition: Symbols and Teachings of the Royal Art</cite>, trad. E. E. Rehmus (Rochester: Inner Traditions, 1995): cap. 4, ““One the All” and the Dragon Ouroboros”; cap. 12, “Soul, Spirit, and Body”; introdução à parte II, “The Reality of Palingenesis”. Traduções nossas, a partir da edição inglesa.</li>
+      <li id="fonte-16"><cite>Liber XXIV philosophorum</cite>, proposições II e III; ed. crítica de Françoise Hudry (Corpus Christianorum, Continuatio Mediaevalis 143A, 1997); texto em The Matheson Trust, <cite>editio minima</cite> (2015); Wikipedia, <a href="https://en.wikipedia.org/wiki/Book_of_the_24_Philosophers">Book of the 24 Philosophers</a>.</li>
+      <li id="fonte-17">Vitrúvio, <cite>De architectura</cite>, livro IX, prefácio, 10, no texto latino de <a href="https://penelope.uchicago.edu/Thayer/L/Roman/Texts/Vitruvius/9*.html">LacusCurtius</a>.</li>
+      <li id="fonte-18">Stéphane Mallarmé, <cite>Un coup de dés jamais n'abolira le hasard</cite> (<cite>Cosmopolis</cite>, maio de 1897; em livro, 1914), e “Observation relative au poème”, <cite>Cosmopolis</cite>, maio de 1897, p. 412: “les “ blancs ”, en effet, assument l'importance”.</li>
+      <li id="fonte-19">Gerd Gigerenzer e Wolfgang Gaissmaier, “Heuristic Decision Making”, <cite>Annual Review of Psychology</cite> 62 (2011), p. 451–482.</li>
+      <li id="fonte-20">Nicolau de Cusa, <cite>De docta ignorantia</cite> (1440), livro I, cap. 4, na tradução inglesa de Jasper Hopkins (1985).</li>
+      <li id="fonte-21">Paracelso, <cite>Opus paramirum</cite> (c. 1530); Charles Webster, <cite>Paracelsus: Medicine, Magic and Mission at the End of Time</cite> (Yale, 2008), citado em Wikipedia, <a href="https://en.wikipedia.org/wiki/Paracelsus">Paracelsus</a>.</li>
+      <li id="fonte-22">1 Tessalonicenses 5:23, no grego de Nestle (1904): <i lang="grc-Latn">holóklēron hymôn tò pneûma kaì hē psychē kaì tò sôma</i>; na Vulgata, <i lang="la">integer spiritus vester, et anima, et corpus</i>.</li>
+      <li id="fonte-23">Heráclito, fragmento 22 B10 Diels-Kranz, conservado no tratado <cite>Sobre o mundo</cite>, atribuído a Aristóteles: <i lang="grc-Latn">synápsies hóla kaì ouch hóla, sympherómenon diapherómenon, synâidon diâidon, kaì ek pántōn hèn kaì ex henòs pánta</i>. Tradução inglesa de Daniel W. Graham, <a href="https://plato.stanford.edu/entries/heraclitus/">Heraclitus</a>, SEP.</li>
+      <li id="fonte-24">A Tábua de Esmeralda, versão latina vulgata, em Robert Steele e Dorothea Waley Singer, “The Emerald Table”, <cite>Proceedings of the Royal Society of Medicine</cite> 21 (1928); Wikipedia, <a href="https://en.wikipedia.org/wiki/Emerald_Tablet">Emerald Tablet</a>.</li>
+      <li id="fonte-25">G. W. F. Hegel, <cite>Phänomenologie des Geistes</cite> (1807), Vorrede: “Das Wahre ist das Ganze. Das Ganze aber ist nur das durch seine Entwicklung sich vollendende Wesen.” Texto em <a href="https://www.marxists.org/deutsch/philosophie/hegel/phaenom/vorrede.htm">marxists.org</a>.</li>
+      <li id="fonte-26">David Bohm, <cite>Wholeness and the Implicate Order</cite> (Londres: Routledge, 1980), p. 11: “Undivided Wholeness in Flowing Movement”.</li>
+      <li id="fonte-27">Augusto de Campos, Haroldo de Campos e Décio Pignatari, “plano-piloto para poesia concreta”, <cite>Noigandres</cite> 4 (1958); na tradução inglesa dos autores, “graphic space as structural agent”.</li>
+      <li id="fonte-28">Michael Maier, <cite>Atalanta fugiens</cite> (Oppenheim: Johann Theodor de Bry, 1617; 2ª ed., 1618), emblema XXI: “Fac ex mare & fœmina circulum, inde quadrangulum, hinc triangulum, fac circulum & habebis lap. Philosophorum”. Science History Institute.</li>
+    </ol>
+    <p class="fontes-fim">Do inteiro, uma peça da marca Heild, em PP Neue Montreal. A palavra <i lang="is">heild</i> vem do islandês: a totalidade.</p>
+    <button type="button" class="botao-texto fechar" data-acao="fechar-fontes">voltar</button>
+  </div>
+</section>
+
+<script>
+/* O link para as diretrizes da marca (a outra aba). Preenchido ao publicar. */
+var LINK_DIRETRIZES = '#';
+</script>
+<script>/*{{HEILD_LOGO}}*/</script>
+<script>/*{{ARQ:src/campo.js}}*/</script>
+<script>/*{{ARQ:src/som.js}}*/</script>
+<script>/*{{ARQ:src/camaras.js}}*/</script>
+<script>/*{{ARQ:src/estatico.js}}*/</script>
+<script>/*{{ARQ:src/motor.js}}*/</script>

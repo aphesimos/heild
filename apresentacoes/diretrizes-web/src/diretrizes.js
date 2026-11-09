@@ -82,7 +82,10 @@ var LINK_FILOSOFIA = '#';
     cs.forEach(function (c) {
       c.addEventListener('pointerenter', function () { sobre = c; corrigir(c, true); });
       c.addEventListener('pointerleave', function () { sobre = null; corrigir(c, false); });
-      c.addEventListener('click', function () { var on = !c.classList.contains('corrigido'); sobre = on ? c : null; corrigir(c, on); });
+      // no toque não há hover: o toque alterna; com o mouse, o hover já corrige e o clique não desfaz
+      var tipo = 'mouse';
+      c.addEventListener('pointerdown', function (e) { tipo = e.pointerType; });
+      c.addEventListener('click', function () { if (tipo === 'mouse') return; var on = !c.classList.contains('corrigido'); sobre = on ? c : null; corrigir(c, on); });
     });
     if (parado) return;
     var i = 0;

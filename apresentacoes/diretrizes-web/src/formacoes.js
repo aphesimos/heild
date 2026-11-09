@@ -194,7 +194,7 @@
     var area = tela.w * tela.h, quantas = Math.min(n, Math.max(60, Math.round(area / 2600)));
     var s = Math.sqrt(area / quantas), cols = Math.ceil(tela.w / s), lins = Math.ceil(tela.h / s);
     var fora = function (x, y) {
-      for (var i = 0; i < evitar.length; i++) { var r = evitar[i]; if (x > r.x - 24 && x < r.x + r.w + 24 && y > r.y - 24 && y < r.y + r.h + 24) return false; }
+      for (var i = 0; i < evitar.length; i++) { var r = evitar[i]; if (x > r.x - 48 && x < r.x + r.w + 32 && y > r.y - 28 && y < r.y + r.h + 28) return false; }
       return x > margem && x < tela.w - margem && y > margem * 1.6 && y < tela.h - margem;
     };
     for (var j = 0; j < lins; j++) for (var i = 0; i < cols; i++) {
