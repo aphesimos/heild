@@ -1,7 +1,7 @@
-<title>Genealogia do inteiro</title>
+<title>Diretrizes da marca Heild</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Uma genealogia da marca Heild: a palavra heild, o inteiro; a parte e o todo; a pílula que se divide e volta a ser uma; a areia, a grade, a luz e as presenças.">
+<meta name="description" content="As diretrizes da marca Heild numa página de rolagem: o nome, a ideia, a logo, o sistema de movimento, a cor, os orbs, a tipografia, a forma, a voz e as aplicações.">
 <meta name="color-scheme" content="light dark">
 <style>
 /*{{FONTES}}*/
@@ -10,21 +10,23 @@
 </style>
 
 <!--
-  Genealogia do inteiro: a marca Heild como ideia, num microsite de rolagem.
-  Oito capítulos (a palavra, a parte e o todo, a pílula, o respiro, a areia, a grade, a luz, o inteiro).
-  Cada capítulo é um <section class="cap"> alto com um palco preso (sticky); o progresso do capítulo
-  (--p, de 0 a 1) vem da rolagem: em CSS (animation-timeline: view()) quando o navegador tem, e do
-  motor em JS quando não tem. Atrás de tudo, o campo de cápsulas (#campo) muda de formação com a
-  rolagem. Para portar ao site (React), cada <section> vira um componente; o motor e o campo são
-  módulos sem dependência.
+  Diretrizes da marca Heild, numa página de rolagem para o site.
+  Dois tipos de capítulo:
+    - presos (.cap): um palco sticky com o progresso --p (0 a 1) vindo da rolagem, em CSS
+      (animation-timeline: view()) ou escrito pelo motor em JS; é onde o campo de cápsulas (#campo),
+      feito do material da logo, muda de formação, e onde o <heild-logo> entra no lugar exato da pílula;
+    - de leitura (.cap.cap-fluxo): seções que rolam normalmente, com o conteúdo denso das diretrizes.
+  Fonte da verdade: o design system (branch design-system). Para portar ao site (React), cada <section>
+  vira um componente; o motor, o campo e as formações são módulos sem dependência.
 -->
 
 <canvas id="campo" aria-hidden="true"></canvas>
 
 <header class="topo">
-  <a class="topo-logo" href="#palavra" aria-label="Heild, voltar ao começo"><heild-logo label="Heild"></heild-logo></a>
-  <span class="topo-titulo">Genealogia do inteiro</span>
+  <a class="topo-logo" href="#nome" aria-label="Heild, voltar ao começo"><heild-logo label="Heild"></heild-logo></a>
+  <span class="topo-titulo">Diretrizes da marca</span>
   <div class="topo-acoes">
+    <a class="link-outra-aba" data-link-filosofia href="#">O inteiro, a ideia da marca</a>
     <button type="button" class="botao-icone" data-acao="som" aria-pressed="false" aria-label="Ligar o som">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path class="onda-1" d="M8 9.5v5"/><path class="onda-2" d="M12 7v10"/><path class="onda-3" d="M16 9.5v5"/></svg>
       <span class="botao-rotulo">Som</span>
@@ -37,62 +39,138 @@
 
 <nav class="linhagem" aria-label="Capítulos">
   <ol>
-    <li><a href="#palavra"><span class="no"></span><span class="rotulo">a palavra</span></a></li>
-    <li><a href="#partes"><span class="no"></span><span class="rotulo">a parte e o todo</span></a></li>
-    <li><a href="#pilula"><span class="no"></span><span class="rotulo">a pílula</span></a></li>
-    <li><a href="#respiro"><span class="no"></span><span class="rotulo">o respiro</span></a></li>
-    <li><a href="#areia"><span class="no"></span><span class="rotulo">a areia</span></a></li>
-    <li><a href="#grade"><span class="no"></span><span class="rotulo">a grade</span></a></li>
-    <li><a href="#luz"><span class="no"></span><span class="rotulo">a luz</span></a></li>
-    <li><a href="#inteiro"><span class="no"></span><span class="rotulo">o inteiro</span></a></li>
+    <li><a href="#nome" data-grupo="nome ideia"><span class="no"></span><span class="rotulo">o nome e a ideia</span></a></li>
+    <li><a href="#logo" data-grupo="logo uso"><span class="no"></span><span class="rotulo">a logo</span></a></li>
+    <li><a href="#material" data-grupo="material tempos formas"><span class="no"></span><span class="rotulo">o movimento</span></a></li>
+    <li><a href="#cor" data-grupo="cor cores"><span class="no"></span><span class="rotulo">a cor</span></a></li>
+    <li><a href="#orbs" data-grupo="orbs orbs-uso"><span class="no"></span><span class="rotulo">os orbs</span></a></li>
+    <li><a href="#tipografia" data-grupo="tipografia"><span class="no"></span><span class="rotulo">a tipografia</span></a></li>
+    <li><a href="#grade" data-grupo="grade forma"><span class="no"></span><span class="rotulo">a forma</span></a></li>
+    <li><a href="#voz" data-grupo="voz"><span class="no"></span><span class="rotulo">a voz</span></a></li>
+    <li><a href="#aplicacoes" data-grupo="aplicacoes"><span class="no"></span><span class="rotulo">as aplicações</span></a></li>
+    <li><a href="#fecho" data-grupo="fecho"><span class="no"></span><span class="rotulo">o fecho</span></a></li>
   </ol>
 </nav>
 <div class="progresso" aria-hidden="true"><i></i></div>
 
 <main class="peca">
 
-  <!-- 1. A palavra: heild, feita de cápsulas, do peso 100 ao 900 -->
-  <section class="cap cap-palavra" id="palavra" aria-labelledby="t-palavra">
+  <!-- 1. O nome: heild, feita de cápsulas, do peso 100 ao 900 -->
+  <section class="cap cap-palavra" id="nome" aria-labelledby="t-nome">
     <div class="palco">
       <div class="figura figura-palavra" data-figura="palavra"><canvas class="estatico" aria-hidden="true"></canvas></div>
       <div class="abre">
-        <h1 id="t-palavra" class="titulo-peca">Genealogia do inteiro</h1>
-        <p class="sub">De onde vem a Heild e o que ela quer dizer.</p>
+        <h1 id="t-nome" class="titulo-peca">Diretrizes da marca Heild</h1>
+        <p class="sub">A identidade numa página: o nome, a logo, o movimento, a cor, os orbs, a tipografia, a forma e a voz.</p>
       </div>
       <dl class="verbete">
         <dt><i lang="is">heild</i></dt>
-        <dd>Em islandês, o inteiro: o todo sem partes separadas. A raiz vem do nórdico antigo <i lang="non">heill</i>, inteiro, são.</dd>
+        <dd>Do islandês: o inteiro, o todo sem partes separadas. A raiz é o nórdico antigo <i lang="non">heill</i>, inteiro.</dd>
       </dl>
-      <p class="beat beat-palavra">Antes de ser marca, foi palavra.</p>
+      <p class="beat beat-palavra">O nome diz o que o sistema faz: junta as ferramentas de uma empresa num lugar só.</p>
       <div class="dica-rolar" aria-hidden="true"><span>Role</span><i></i></div>
     </div>
   </section>
 
-  <!-- 2. A parte e o todo: a palavra se desfaz no múltiplo e o múltiplo se funde no um -->
-  <section class="cap cap-partes" id="partes" aria-labelledby="t-partes">
+  <!-- 2. A ideia: as partes soltas viram uma peça só -->
+  <section class="cap cap-partes" id="ideia" aria-labelledby="t-ideia">
     <div class="palco">
       <div class="figura figura-tela" data-figura="tela"></div>
       <div class="figura figura-pilula" data-figura="pilula-partes"><canvas class="estatico" aria-hidden="true"></canvas></div>
       <div class="texto texto-partes">
         <div class="beat beat-a" data-evitar>
-          <h2 id="t-partes" class="titulo">A parte e o todo.</h2>
-          <p>Toda coisa inteira tem partes. Mas um punhado de partes ainda não é um todo.</p>
-          <blockquote class="citacao">
-            <p>“A totalidade não é como um monte; o todo é algo além das partes.”</p>
-            <footer>Aristóteles, <cite>Metafísica</cite>, livro VIII, 1045a</footer>
-          </blockquote>
-          <p class="nota">A filosofia chama de mereologia, do grego <i lang="grc-Latn">méros</i>, parte, o estudo de como as partes fazem um todo.</p>
+          <h2 id="t-ideia" class="titulo">Tudo, num lugar só.</h2>
+          <p>A ideia que define a marca. Toda peça nova repete pelo menos uma das três formas em que ela aparece.</p>
+          <ol class="tres-formas">
+            <li><b>A logo é modular.</b> O I fica sozinho no centro, se transforma em cada coisa e volta a ser um traço.</li>
+            <li><b>A interface é feita de camadas.</b> Areia que se empilha e vira uma superfície só.</li>
+            <li><b>O time trabalha dentro dela.</b> Cada integrante tem o seu orb de cor; o resto da tela é neutro.</li>
+          </ol>
         </div>
         <div class="beat beat-b">
-          <p class="titulo-fusao" data-proximidade aria-label="Muitas partes, um corpo só."><span class="linha">Muitas partes,</span> <span class="linha">um corpo só.</span></p>
-          <p>Quando as partes se fundem, deixam de ser vistas como partes. É isso que a palavra quer dizer.</p>
+          <p class="titulo-fusao" data-proximidade aria-label="Muitas partes, uma peça só."><span class="linha">Muitas partes,</span> <span class="linha">uma peça só.</span></p>
+          <p>O título engorda do peso 100 ao 900 enquanto as cápsulas se fundem: é o mesmo gesto da marca, com a fonte e com a forma.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 3. A pílula: o I sozinho entre HE e LD, a matéria e as medidas -->
-  <section class="cap cap-pilula" id="pilula" aria-labelledby="t-pilula">
+  <!-- 3. A logo: a pílula do campo vira o I do <heild-logo>; a construção e a área de proteção que acompanha -->
+  <section class="cap cap-logo" id="logo" aria-labelledby="t-logo">
+    <div class="palco">
+      <div class="texto texto-logo-abre">
+        <h2 id="t-logo" class="titulo">A pílula é a marca.</h2>
+        <p>O wordmark é HE · I · LD, numa cor só: a primária sobre o fundo.</p>
+      </div>
+      <div class="logo-caixa logo-caixa-construcao" data-figura="logo">
+        <svg class="anot-logo" viewBox="-200 -160 1659 707" preserveAspectRatio="none" aria-hidden="true">
+          <g class="anot anot-construcao">
+            <path d="M560.70 -22 H707.99 M560.70 -30 V-14 M707.99 -30 V-14"/>
+            <text x="634.344" y="-38">x</text>
+            <path d="M258 20 V-70"/><circle cx="258" cy="20" r="5"/>
+            <text x="258" y="-84">H e E dividem a haste</text>
+            <path d="M900 352 V456"/><circle cx="900" cy="352" r="5"/>
+            <text x="900" y="486">L e D dividem a base</text>
+            <path d="M634.344 356 V456"/>
+            <text x="634.344" y="486">o I fica sozinho</text>
+          </g>
+          <g class="anot anot-protecao">
+            <rect class="area" x="-147.297" y="-147.297" width="1553.594" height="681.594" rx="22"/>
+            <rect class="modulo modulo-e" x="-147.297" y="119.907" width="147.297" height="147.297" rx="73.648"/>
+            <rect class="modulo modulo-d" x="1259" y="119.907" width="147.297" height="147.297" rx="73.648"/>
+            <text class="rot-area" x="1406.297" y="-160">área de proteção: x, a largura da pílula</text>
+          </g>
+        </svg>
+        <heild-logo class="logo-construcao" label="Heild"></heild-logo>
+      </div>
+      <div class="legendas-logo">
+        <div class="beat beat-construcao">
+          <p class="destaque-linha">H e E dividem a mesma haste; L e D, a mesma base. O I fica sozinho no centro: mais grosso que os outros traços, com as pontas totalmente redondas.</p>
+          <p class="nota">Uma cor só: nada de gradiente, sombra, contorno ou segunda cor, nem no I. As cores dos orbs são dos integrantes, nunca da logo.</p>
+        </div>
+        <div class="beat beat-protecao">
+          <p class="destaque-linha">Em volta da logo fica livre pelo menos a largura da pílula, cerca de 12% da logo.</p>
+          <p class="nota">Quando a logo anima, HE e LD se afastam até cerca de 9% da largura para cada lado, e a área abre junto. O componente não muda de tamanho: deixe o espaço livre e não corte com overflow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. O uso da logo: tamanho mínimo, ícones e o que não fazer -->
+  <section class="cap cap-fluxo cap-uso" id="uso" aria-labelledby="t-uso">
+    <div class="palco">
+      <div class="bloco">
+        <div class="bloco-cab">
+          <h2 id="t-uso" class="titulo">72 px, no mínimo.</h2>
+          <p>Abaixo disso, a pílula sozinha vira o ícone. Na aba do navegador, o ícone é o HE da logo, com um contorno leve para ler em 16 px, que segue o tema do navegador.</p>
+        </div>
+        <div class="tamanhos revela">
+          <div class="tamanho"><heild-logo label="Heild, 240 px" style="width:240px"></heild-logo><span>240 px</span></div>
+          <div class="tamanho"><heild-logo label="Heild, 120 px" style="width:120px"></heild-logo><span>120 px</span></div>
+          <div class="tamanho"><heild-logo label="Heild, 72 px" style="width:72px"></heild-logo><span>72 px, o mínimo</span></div>
+          <div class="tamanho tamanho-icone"><span class="pilula-ico" style="height:40px"></span><span class="pilula-ico" style="height:24px"></span><span class="pilula-ico" style="height:16px"></span><span>abaixo: a pílula</span></div>
+          <div class="tamanho tamanho-icone"><svg class="favicon" viewBox="-26 -77 541 541" width="32" height="32" aria-hidden="true"><path data-traco="HE"/></svg><svg class="favicon" viewBox="-26 -77 541 541" width="16" height="16" aria-hidden="true"><path data-traco="HE"/></svg><span>na aba: o HE</span></div>
+        </div>
+      </div>
+      <div class="bloco">
+        <div class="bloco-cab">
+          <h2 class="titulo">O que não fazer.</h2>
+          <p>Passe o cursor (ou toque) num erro para ver a logo voltar ao certo.</p>
+        </div>
+        <div class="erros revela">
+          <figure class="erro-cartao" data-erro="esticar"><div class="erro-palco"><heild-logo label="Heild esticada, errado"></heild-logo></div><figcaption><span class="marca-x" aria-hidden="true"></span>Não estique.</figcaption></figure>
+          <figure class="erro-cartao" data-erro="inclinar"><div class="erro-palco"><heild-logo label="Heild inclinada, errado"></heild-logo></div><figcaption><span class="marca-x" aria-hidden="true"></span>Não incline.</figcaption></figure>
+          <figure class="erro-cartao" data-erro="colorir"><div class="erro-palco"><heild-logo label="Heild com o I pintado, errado"></heild-logo></div><figcaption><span class="marca-x" aria-hidden="true"></span>Não pinte o I.</figcaption></figure>
+          <figure class="erro-cartao" data-erro="sombra"><div class="erro-palco"><heild-logo label="Heild com sombra, errado"></heild-logo></div><figcaption><span class="marca-x" aria-hidden="true"></span>Sem sombra nem contorno.</figcaption></figure>
+          <figure class="erro-cartao" data-erro="fundo"><div class="erro-palco"><heild-logo label="Heild sobre fundo agitado, errado"></heild-logo></div><figcaption><span class="marca-x" aria-hidden="true"></span>Não ponha sobre fundo agitado.</figcaption></figure>
+          <figure class="erro-cartao certo"><div class="erro-palco"><heild-logo label="Heild numa cor, sobre fundo liso, certo"></heild-logo></div><figcaption><span class="marca-ok" aria-hidden="true"></span>Uma cor, sobre fundo liso.</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. O material: a pílula, as cápsulas e as quatro regras -->
+  <section class="cap cap-pilula" id="material" aria-labelledby="t-material">
     <div class="palco">
       <div class="figura figura-pilula" data-figura="pilula">
         <canvas class="estatico" aria-hidden="true"></canvas>
@@ -112,8 +190,8 @@
         </svg>
       </div>
       <div class="texto texto-pilula">
-        <h2 id="t-pilula" class="titulo">O I fica sozinho.</h2>
-        <p>Entre HE e LD, o I é uma pílula: mais grossa que os outros traços, com as pontas totalmente redondas. Tudo o que se move na marca sai dela e volta para ela.</p>
+        <h2 id="t-material" class="titulo">O I é feito de cápsulas.</h2>
+        <p>Só cápsulas e círculos, com as pontas totalmente redondas. Quando se dividem e voltam, elas se fundem como líquido. A forma nunca passa da altura das letras.</p>
       </div>
       <dl class="medidas">
         <div><dt>147</dt><dd>a largura da pílula, nas unidades do desenho</dd></div>
@@ -121,43 +199,72 @@
         <div><dt>24</dt><dd>o vão entre duas cápsulas</dd></div>
         <div><dt>387</dt><dd>a altura do desenho: nenhuma forma passa dela</dd></div>
       </dl>
-      <p class="beat beat-materia">A matéria é uma só: cápsulas e círculos, nada mais.</p>
+      <ol class="beat beat-materia regras-quatro">
+        <li><b>Material</b> só cápsulas e círculos; a exceção é o orb, o I inteiro virando esfera.</li>
+        <li><b>Limite</b> a forma nunca passa da altura das letras; só cresce para os lados.</li>
+        <li><b>Espaço</b> HE e LD se afastam na medida exata da forma e voltam quando o I se fecha.</li>
+        <li><b>Ritmo</b> contração, divisão em cascata, pausa e retorno com um leve assentamento.</li>
+      </ol>
     </div>
   </section>
 
-  <!-- 4. O respiro: o <heild-logo> de verdade, levado pela rolagem por contração, divisão, pausa e retorno -->
-  <section class="cap cap-respiro" id="respiro" aria-labelledby="t-respiro">
+  <!-- 6. Os tempos: o <heild-logo> respira sozinho; a palavra e a tabela acompanham a fase real -->
+  <section class="cap cap-respiro" id="tempos" aria-labelledby="t-tempos">
     <div class="palco">
+      <div class="texto texto-respiro">
+        <h2 id="t-tempos" class="titulo">Contração, divisão, pausa, retorno.</h2>
+        <p>Os tempos exatos do sistema de movimento. O componente já aplica; esta tabela acende junto com a logo.</p>
+      </div>
+      <ol class="tabela-tempos" aria-label="Os tempos do sistema de movimento">
+        <li data-fase="contracao"><b>Contração</b><span class="ms">160 ms</span><span class="d">a pílula engorda 7% e encolhe 5%</span></li>
+        <li data-fase="divisao"><b>Divisão</b><span class="ms">1000 ms</span><span class="d">cápsulas em cascata de 55 ms, back-out 1,25; as letras começam aos 90 ms e levam 720 ms</span></li>
+        <li data-fase="pausa"><b>Pausa</b><span class="ms">1600 a 3700 ms</span><span class="d">depende da forma</span></li>
+        <li data-fase="retorno"><b>Retorno</b><span class="ms">900 ms</span><span class="d">cascata invertida de 40 ms, back-out 1,1; as letras assentam com back-out 0,9</span></li>
+        <li data-fase="fusao"><b>Fusão</b><span class="ms">na divisão e no retorno</span><span class="d">as cápsulas se fundem como líquido: desfoque de até 11 e limiar de alfa</span></li>
+        <li data-fase="repouso"><b>Repouso</b><span class="ms">1300 ms</span><span class="d">entre um loop e outro, só com loop</span></li>
+      </ol>
       <div class="fases" aria-hidden="true">
         <p class="fase" data-fase="contracao">contração</p>
         <p class="fase" data-fase="divisao">divisão</p>
         <p class="fase" data-fase="pausa">pausa</p>
         <p class="fase" data-fase="retorno">retorno</p>
       </div>
-      <div class="texto texto-respiro">
-        <h2 id="t-respiro" class="titulo">O sinal respira.</h2>
-        <p>Contração, divisão, pausa e retorno. A pílula se abre em muitas e volta a ser uma, como quem inspira e solta o ar.</p>
-        <p class="tempos"><span>160 ms</span><span>1000 ms</span><span>pausa</span><span>900 ms</span></p>
-      </div>
       <div class="logo-caixa" data-figura="marca"><heild-logo class="logo-respiro" label="Heild"></heild-logo></div>
-      <p class="legenda-respiro" aria-hidden="true"><span class="n">1</span><span class="desc">nove pontos que voltam a ser uma peça só</span></p>
+      <p class="legenda-respiro" aria-hidden="true"><span class="n">1</span><span class="desc">grade de 9 pontos que volta a ser uma peça só</span></p>
       <ol class="respiros" aria-hidden="true"><li></li><li></li><li></li></ol>
       <ul class="so-leitor">
-        <li>Primeiro respiro: a pílula vira uma grade de nove pontos e volta a ser uma peça só.</li>
-        <li>Segundo respiro: três cópias do I, em leque, que giram e voltam a ser uma.</li>
-        <li>Terceiro respiro: o I vira um orb, que se divide como uma célula em três e se funde de novo.</li>
+        <li>A logo toca centralizar, ia e orbs, uma de cada vez, com os tempos do sistema de movimento.</li>
       </ul>
       <div class="estatico-respiros" aria-hidden="true"></div>
     </div>
   </section>
 
-  <!-- 5. A areia: grãos que viram camadas, camadas que viram superfície -->
-  <section class="cap cap-areia" id="areia" aria-labelledby="t-areia">
+  <!-- 7. As formas: uma por tema; a logo vai até cada uma por molas -->
+  <section class="cap cap-formas" id="formas" aria-labelledby="t-formas">
+    <div class="palco">
+      <div class="texto texto-formas">
+        <h2 id="t-formas" class="titulo">Dezesseis formas, uma por tema.</h2>
+        <p>Passe o cursor, toque ou use o teclado numa forma. Cada cápsula é uma mola: trocar de forma só troca o alvo, e o I nunca corta.</p>
+        <div class="chips chips-formas" role="group" aria-label="As formas do I"></div>
+      </div>
+      <div class="logo-caixa-formas"><heild-logo class="logo-formas" label="Heild"></heild-logo></div>
+      <div class="legenda-formas" aria-live="polite"><b class="nome-forma">Centralizar</b><span class="forma-desc"></span><span class="forma-uso"></span></div>
+      <ul class="fatos-molas">
+        <li><b>150</b><span>rigidez de cada mola</span></li>
+        <li><b>58%</b><span>do amortecimento crítico: passa do ponto e assenta</span></li>
+        <li><b>160 ms</b><span>para recolher rumo à pílula</span></li>
+        <li><b>55 ms</b><span>de cascata para abrir</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 8. A areia: grãos que viram camadas; a escala em profundidade -->
+  <section class="cap cap-areia" id="cor" aria-labelledby="t-cor">
     <div class="palco">
       <div class="texto texto-areia">
-        <h2 id="t-areia" class="titulo">Areia.</h2>
-        <p>Cada grão é uma parte. Assentados, os grãos viram chão: uma superfície só.</p>
-        <p class="nota">Todo neutro da marca sai de uma escala de areia, do 50 ao 950. As camadas se empilham e viram uma.</p>
+        <h2 id="t-cor" class="titulo">Todo neutro sai de uma escala só.</h2>
+        <p>A areia vai do 50 ao 950, quente, num matiz só. Um cinza frio não pertence à Heild.</p>
+        <p class="nota">A tela é feita de camadas dessa areia, que se empilham e viram uma superfície só.</p>
       </div>
       <div class="pilha" aria-hidden="true">
         <div class="plano" style="--i:0;--c:var(--areia-50)"><span>50</span></div>
@@ -168,61 +275,275 @@
         <div class="plano" style="--i:5;--c:var(--areia-800)"><span>800</span></div>
         <div class="plano" style="--i:6;--c:var(--areia-950)"><span>950</span></div>
       </div>
-      <p class="beat beat-superficie">Grão, camada, superfície.</p>
+      <p class="beat beat-superficie">Fundo embaixo, superfície por cima, elevada no topo.</p>
     </div>
   </section>
 
-  <!-- 6. A grade: o chão de pontos, que responde ao cursor -->
+  <!-- 9. A cor em detalhe: a escala, as camadas nos dois modos, o destaque, os estados e o contraste -->
+  <section class="cap cap-fluxo cap-cores" id="cores" aria-labelledby="t-cores">
+    <div class="palco">
+      <div class="bloco">
+        <div class="bloco-cab">
+          <h2 id="t-cores" class="titulo">A escala de areia.</h2>
+          <p>Não use o passo direto na tela: use a camada que aponta para ele. O 500 fica para ilustração e gráficos.</p>
+        </div>
+        <ol class="escala revela" aria-label="A escala de areia, do 50 ao 950"></ol>
+      </div>
+      <div class="bloco">
+        <div class="bloco-cab">
+          <h2 class="titulo">Camadas de areia, nos dois modos.</h2>
+          <p>Fundo embaixo, superfície por cima, elevada no topo. No escuro, o que sobe fica mais claro, nunca mais escuro. Claro e escuro valem o mesmo.</p>
+        </div>
+        <div class="modos revela">
+          <div class="modo forca-claro" data-modo="claro"><p class="modo-nome">Claro</p><div class="camadas-demo"></div></div>
+          <div class="modo forca-escuro" data-modo="escuro"><p class="modo-nome">Escuro</p><div class="camadas-demo"></div></div>
+        </div>
+      </div>
+      <div class="bloco bloco-duplo">
+        <div>
+          <h2 class="titulo">Um destaque, em pontos pequenos.</h2>
+          <p>O índigo é a única cor de marca fora da areia: a barra de limite de IA, o ponto de novidade, o marcador de seleção, o progresso de uma etapa. Como texto ou link, use o destaque de texto. Nunca em área grande, em gradiente ou junto de uma cor de orb.</p>
+          <div class="destaque-demo revela">
+            <span class="ponto-novo" aria-hidden="true"></span><span>Novo</span>
+            <span class="barra-limite" aria-hidden="true"><i></i></span><span>Limite de IA</span>
+            <a class="link-destaque" href="#cores">Ver o cartão</a>
+          </div>
+        </div>
+        <div>
+          <h2 class="titulo">Estado com palavra, sempre.</h2>
+          <p>Erro, sucesso e atenção vão sempre com a palavra ou o ícone. Selo: o fundo do estado a 15%, o texto em texto e o ícone na cor do estado.</p>
+          <div class="selos revela">
+            <span class="selo" data-estado="sucesso"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Concluído</span>
+            <span class="selo" data-estado="atencao"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>Aguardando cliente</span>
+            <span class="selo" data-estado="erro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>Recusado</span>
+          </div>
+        </div>
+      </div>
+      <div class="bloco">
+        <div class="bloco-cab">
+          <h2 class="titulo">Contraste conferido.</h2>
+          <p>Cada cor de texto sobre cada camada, calculada aqui com a fórmula do WCAG a partir dos tokens. A meta é 4,5:1. No claro, o texto suave não vai sobre o fim do fundo nem o fim da lateral: o pé da página leva texto.</p>
+        </div>
+        <div class="contrastes revela"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Os orbs: a luz do time e os treze integrantes (um mundo escuro: a luz se soma no escuro) -->
+  <section class="cap cap-luz forca-escuro" id="orbs" aria-labelledby="t-orbs">
+    <div class="palco">
+      <div class="luzes" aria-hidden="true"></div>
+      <div class="texto texto-luz">
+        <div class="beat beat-a">
+          <h2 id="t-orbs" class="titulo">A luz é das cores do time.</h2>
+          <p>O único gradiente de cor da marca: uma mancha por integrante, espalhadas, que se juntam numa faixa, como no hero do site.</p>
+        </div>
+        <div class="beat beat-b">
+          <h3 class="titulo">Treze integrantes, uma cor cada.</h3>
+          <p>A cor do orb é do integrante e só aparece no orb e nos marcadores dele. O Assistente usa o contraste do tema.</p>
+          <div class="chips chips-estados" role="group" aria-label="Os sete estados"></div>
+        </div>
+      </div>
+      <div class="presencas" role="group" aria-label="Os treze integrantes"></div>
+      <p class="legenda-time" aria-live="polite"><b class="quem">Assistente</b><span class="token"></span><span class="faz"></span></p>
+    </div>
+  </section>
+
+  <!-- 11. Os orbs, na prática -->
+  <section class="cap cap-fluxo cap-orbs-uso" id="orbs-uso" aria-labelledby="t-orbs-uso">
+    <div class="palco">
+      <div class="bloco bloco-duplo">
+        <div>
+          <h2 id="t-orbs-uso" class="titulo">A cor fica no orb.</h2>
+          <ul class="regras-lista">
+            <li>A cor aparece no orb e nos marcadores pequenos do mesmo integrante: o ponto antes do setor no calendário, a linha do avatar na lista. Nada além disso.</li>
+            <li>O orb nunca carrega texto por cima. O olho é escuro em orb claro e claro em orb escuro.</li>
+            <li>No claro, os orbs claros (Notas, Fiscal, Contábil, Atendimento, Financeiro) dependem da sombra do orb para não sumir. Não tire a sombra.</li>
+            <li>Integrante criado pelo usuário escolhe a cor numa paleta curta; a cor nova difere em claridade das que já estão na tela, não só no matiz.</li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="titulo">Sete estados, sempre com a palavra.</h2>
+          <ul class="estados-lista revela"></ul>
+          <p class="nota">No produto, o orb é o único elemento sempre animado. Com movimento reduzido, ele fica parado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. A tipografia: uma família, dois cortes, uma escala -->
+  <section class="cap cap-fluxo cap-tipo" id="tipografia" aria-labelledby="t-tipo">
+    <div class="palco">
+      <div class="bloco">
+        <div class="bloco-cab">
+          <h2 id="t-tipo" class="titulo">Uma família, dois cortes.</h2>
+          <p>A PP Neue Montreal nos títulos de 24 px para cima e no nome. A Neue Montreal Text, feita para tamanhos pequenos, em toda a interface: todo texto até 18 px usa a Text.</p>
+        </div>
+        <div class="especimes revela">
+          <div class="especime" data-proximidade-peso="100,900">
+            <p class="esp-aa" aria-hidden="true"><span class="letra">A</span><span class="letra">a</span></p>
+            <p class="esp-nome">PP Neue Montreal</p><p class="nota">Títulos, números grandes e o nome. Pesos de 100 a 900.</p>
+          </div>
+          <div class="especime especime-texto" data-proximidade-peso="200,700">
+            <p class="esp-aa" aria-hidden="true"><span class="letra">A</span><span class="letra">a</span></p>
+            <p class="esp-nome">PP Neue Montreal Text</p><p class="nota">Toda a interface. Pesos de 200 a 700.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bloco">
+        <div class="bloco-cab">
+          <h2 class="titulo">Uma escala, leve no alto.</h2>
+          <p>Títulos grandes são leves: de 24 px para cima, peso 300 e espaçamento -0,025em. No site, o hero é 500 com -0,04em. Ênfase é 500.</p>
+        </div>
+        <ol class="escala-tipo revela"></ol>
+      </div>
+      <div class="bloco">
+        <ul class="regras-lista regras-colunas revela">
+          <li><b>Caixa normal.</b> Só a primeira letra maiúscula em títulos, botões e abas. Nenhum rótulo em caixa alta ou versalete.</li>
+          <li><b>Duas cores de texto.</b> Texto e texto suave. Hierarquia se faz com tamanho e peso, não com mais cores nem opacidade.</li>
+          <li><b>Nada abaixo de 11 px,</b> e 11 px só para a hora. Metadado tem 12 px.</li>
+          <li><b>Números que se comparam</b> usam algarismos tabulares. Moeda e data no padrão brasileiro: R$ 13.940,00; 18/11.</li>
+          <li><b>Itálico</b> só para citação e nome de obra, nunca para ênfase. <b>Mono</b> só para código e dado.</li>
+          <li><b>Título quebra equilibrado.</b> Linha de leitura com até cerca de 70 caracteres; texto corrido não justifica.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. A grade de pontos: o chão do material de marca, que responde ao cursor -->
   <section class="cap cap-grade" id="grade" aria-labelledby="t-grade">
     <div class="palco">
       <div class="figura figura-tela" data-figura="grade"><canvas class="estatico" aria-hidden="true"></canvas></div>
       <div class="texto texto-grade" data-evitar>
-        <h2 id="t-grade" class="titulo">A grade é o chão.</h2>
-        <p>Uma grade de pontos, a cada 24. Ninguém vê os pontos um a um: o olho os junta e vê um plano.</p>
-        <blockquote class="citacao">
-          <p>“O todo é outra coisa que não a soma das partes.”</p>
-          <footer>Kurt Koffka, <cite>Princípios da psicologia da Gestalt</cite>, 1935</footer>
-        </blockquote>
+        <h2 id="t-grade" class="titulo">Tudo anda de 4 em 4.</h2>
+        <p>O espaço tem base de 4 px. A grade de pontos, de 1 px a cada 24, é o chão do material de marca: fica sob o desenho e as áreas vazias.</p>
+        <p class="nota">Sob texto pequeno, deixe uma área lisa de fundo. No produto, o fundo continua o gradiente de areia; a grade é só do site e do material de marca.</p>
       </div>
       <p class="dica-grade" aria-hidden="true">Passe o cursor pelo chão.</p>
     </div>
   </section>
 
-  <!-- 7. A luz: as cores dos orbs somadas viram luz; na luz, as presenças. Um mundo escuro, como a câmara de Newton -->
-  <section class="cap cap-luz forca-escuro" id="luz" aria-labelledby="t-luz">
+  <!-- 14. A forma: raios, sombras, espaço, gradiente de luz, máscara e hachura -->
+  <section class="cap cap-fluxo cap-forma-uso" id="forma" aria-labelledby="t-forma">
     <div class="palco">
-      <div class="luzes" aria-hidden="true"></div>
-      <div class="texto texto-luz">
-        <div class="beat beat-a">
-          <h2 id="t-luz" class="titulo">A luz é a soma das cores.</h2>
-          <p>Com prismas, Isaac Newton mostrou que a luz branca se abre em cores, e que as cores, juntas, voltam a ser branca.</p>
-          <p class="nota"><cite>Opticks</cite>, 1704</p>
+      <div class="bloco bloco-duplo">
+        <div>
+          <h2 id="t-forma" class="titulo">Quanto maior a peça, maior o raio.</h2>
+          <p>Nenhum canto vivo. Elemento dentro de outro tem raio menor que o de fora. Botão de ação principal e sugestão são pílulas; campos e cartões, retângulos arredondados.</p>
+          <div class="raios revela"></div>
         </div>
-        <div class="beat beat-b">
-          <h3 class="titulo">Na luz, presenças.</h3>
-          <p>Cada orb tem uma cor só, e só ele a usa. Olha, pisca e olha de volta.</p>
+        <div>
+          <h2 class="titulo">Uma sombra só, quente.</h2>
+          <p>A sombra usa a tinta do modo: areia 850 no claro, nunca cinza; preto no escuro, onde ela quase some e a camada mais clara separa. Não escreva sombra à mão.</p>
+          <div class="sombras revela"></div>
         </div>
       </div>
-      <div class="presencas" role="group" aria-label="As presenças: treze orbs"></div>
-      <p class="dica-luz" aria-hidden="true">Clique num orb.</p>
+      <div class="bloco">
+        <div class="bloco-cab">
+          <h2 class="titulo">O espaço, de 4 em 4.</h2>
+          <p>Espaço entre irmãos vem de gap, não de margem. Margem lateral mínima de 16 px em qualquer largura; o conteúdo vai até 1152 px.</p>
+        </div>
+        <ol class="espacos revela"></ol>
+      </div>
+      <div class="bloco bloco-triplo">
+        <div>
+          <h2 class="titulo">Gradiente é luz, não cor.</h2>
+          <p>Sempre vertical, de cima para baixo, dentro da mesma camada. O que fica por cima é chapado.</p>
+          <div class="gradientes revela">
+            <div class="grad forca-claro"><i style="background:var(--gradiente-fundo)"></i><i style="background:var(--gradiente-lateral)"></i><i style="background:var(--gradiente-rebaixada)"></i></div>
+            <div class="grad forca-escuro"><i style="background:var(--gradiente-fundo)"></i><i style="background:var(--gradiente-lateral)"></i><i style="background:var(--gradiente-rebaixada)"></i></div>
+          </div>
+          <p class="nota">Fundo, lateral e rebaixada, no claro e no escuro.</p>
+        </div>
+        <div>
+          <h2 class="titulo">A máscara de esmaecer.</h2>
+          <p>O conteúdo que rola some em 24 px sob um topo fixo. É uma máscara, não uma cor: funciona em qualquer camada.</p>
+          <div class="mascara-demo revela" tabindex="0" aria-label="Exemplo de lista que rola sob um topo fixo">
+            <div class="mascara-topo">Conversa</div>
+            <div class="mascara-lista"><p>O Contábil terminou a primeira parte do fechamento.</p><p>Conciliei 211 de 214 lançamentos.</p><p>Faltam três, que precisam de uma pessoa.</p><p>Deixei o balancete para você revisar.</p><p>As guias de outubro estão prontas para você aprovar.</p><p>Montei o lote de sexta: 4 contas.</p></div>
+          </div>
+        </div>
+        <div>
+          <h2 class="titulo">A hachura de estimado.</h2>
+          <p>Listras finas a 135°, de 4 px: valor estimado, previsto ou ainda não confirmado. É padrão de dado, não enfeite.</p>
+          <div class="hachura-demo revela" aria-hidden="true"><i style="--h:62%"></i><i style="--h:80%" class="est"></i><i style="--h:48%"></i><i style="--h:70%" class="est"></i><i style="--h:34%"></i></div>
+          <p class="nota">As barras listradas são horas ainda não confirmadas.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 8. O inteiro: tudo volta para a pílula, e a pílula é a logo -->
-  <section class="cap cap-inteiro" id="inteiro" aria-labelledby="t-inteiro">
+  <!-- 15. A voz -->
+  <section class="cap cap-fluxo cap-voz" id="voz" aria-labelledby="t-voz">
     <div class="palco">
-      <h2 id="t-inteiro" class="so-leitor">O inteiro</h2>
+      <div class="bloco bloco-duplo">
+        <div>
+          <h2 id="t-voz" class="titulo">Fala como um colega do escritório.</h2>
+          <p>Português do Brasil, frases curtas, voz ativa. Os integrantes falam na primeira pessoa e dizem o que fizeram e o que falta.</p>
+          <div class="falas revela" aria-live="off"></div>
+        </div>
+        <div>
+          <ol class="pares revela">
+            <li><s>A conciliação foi processada.</s><b>Conciliei 41 de 44 lançamentos.</b><span>O sistema fala como um colega, na primeira pessoa.</span></li>
+            <li><s>Job de transmissão executado com sucesso.</s><b>Deixei a DCTFWeb na fila de transmissão.</b><span>Termos do ofício, sem jargão de sistema.</span></li>
+            <li><s>Clique aqui para prosseguir</s><b>Aprovar</b><span>O botão diz o que acontece.</span></li>
+            <li><s>Webhook recebido.</s><b>A Rita baixou as guias de outubro. O registro está em Arquivos.</b><span>O aviso diz o que mudou e onde ver.</span></li>
+          </ol>
+          <p class="nota">Sem emoji. Ícones da família Phosphor, no peso regular. Nada inventado: a Heild ainda não foi lançada, então não há clientes, depoimentos nem números de uso para mostrar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16. As aplicações -->
+  <section class="cap cap-fluxo cap-aplicacoes" id="aplicacoes" aria-labelledby="t-aplicacoes">
+    <div class="palco">
+      <div class="bloco-cab">
+        <h2 id="t-aplicacoes" class="titulo">A mesma marca, em cada lugar.</h2>
+        <p>No produto, a marca é a superfície; no site, a mesma voz para fora; por dentro, o escritório pode trocar a marca. Os escritórios e clientes dos exemplos são fictícios.</p>
+      </div>
+      <div class="aplicacoes revela">
+        <figure class="app app-produto">
+          <div class="mini-produto">
+            <div class="mini-lateral"><svg class="mini-he" viewBox="0 0 489 387" aria-hidden="true"><path data-traco="HE"/></svg><i></i><i></i><i></i><i></i></div>
+            <div class="mini-painel">
+              <p class="mini-titulo">Hoje</p>
+              <div class="mini-msg"><span class="mini-orb" data-cor="--orb-contabil"></span><p><b>Contábil</b>Conciliei 211 de 214 lançamentos da Metalúrgica. Faltam três, que precisam de você.</p></div>
+              <div class="mini-cartao"><p><b>Lote de pagamentos</b>Montei o lote de sexta: 4 contas.</p><span class="mini-botao">Aprovar</span></div>
+            </div>
+          </div>
+          <figcaption><b>No produto, a marca é a superfície.</b> Camadas de areia, um destaque em pontos pequenos e a cor só nos orbs. Transmitir, pagar, assinar e enviar ao cliente passam por um cartão de aprovação.</figcaption>
+        </figure>
+        <figure class="app app-site">
+          <div class="mini-site">
+            <div class="mini-nav"><heild-logo label="Heild" style="width:64px"></heild-logo><span></span><span></span><span class="mini-acao"></span></div>
+            <div class="mini-hero"><p class="mini-hero-t">Tudo, num lugar só.</p><p class="mini-hero-f">Uma frase, em texto suave.</p><span class="mini-botao">Uma ação</span></div>
+          </div>
+          <figcaption><b>No site, a mesma voz para fora.</b> O hero diz uma ideia só: título no estilo hero, uma frase e uma ação, sobre o fundo com a grade de pontos.</figcaption>
+        </figure>
+        <figure class="app app-marca-branca">
+          <div class="mini-marcas">
+            <p class="mini-marca" style="--raio:var(--raio-lg)"><span class="mini-sigla">HE</span>Heild, de fábrica</p>
+            <p class="mini-marca mini-marca-serif"><span class="mini-sigla">H</span>Horizonte Contábil</p>
+            <p class="mini-marca mini-marca-redonda"><span class="mini-sigla">VC</span>Verde Campo Assessoria</p>
+          </div>
+          <figcaption><b>Por dentro, a marca do escritório.</b> No sistema e no app do cliente, cada escritório troca nome, sigla, cores e fontes. Sem personalização, vale a Heild. Fora do produto, é sempre Heild.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17. O fecho: tudo volta para a pílula, e a pílula é a logo -->
+  <section class="cap cap-inteiro" id="fecho" aria-labelledby="t-fecho">
+    <div class="palco">
       <div class="logo-caixa-fim" data-figura="fim"><heild-logo class="logo-fim" label="Heild" data-cursor="anel" tabindex="0" role="button" aria-label="Heild. Toque para ver o I se dividir e voltar"></heild-logo></div>
-      <blockquote class="citacao citacao-fim">
-        <p>“É pela unidade que os seres são seres.”</p>
-        <footer>Plotino, <cite>Enéadas</cite> VI.9, 1</footer>
-      </blockquote>
-      <p class="eco"><i lang="is">heild</i>: o todo sem partes separadas.</p>
-      <a class="voltar" href="#palavra">Voltar ao começo</a>
+      <h2 id="t-fecho" class="fecho-linha">O inteiro: todos os sistemas da empresa em um só lugar.</h2>
+      <p class="eco">A ideia da marca, em outra página: <a class="link-filosofia" data-link-filosofia href="#">o inteiro</a>.</p>
+      <a class="voltar" href="#nome">Voltar ao começo</a>
     </div>
     <footer class="rodape">
-      <p>Genealogia do inteiro, uma peça da marca Heild. Em PP Neue Montreal.</p>
-      <p>As citações foram traduzidas a partir de: Aristóteles, <cite>Metafísica</cite> VIII, 1045a, na tradução inglesa de W. D. Ross; Kurt Koffka, <cite>Principles of Gestalt Psychology</cite>, 1935, p. 176; Plotino, <cite>Enéadas</cite> VI.9, 1, na tradução inglesa de Stephen MacKenna. Newton descreve a luz branca como mistura de cores em <cite>Opticks</cite>, 1704. A palavra <i lang="is">heild</i> e a raiz <i lang="non">heill</i>: Cleasby e Vigfusson, <cite>An Icelandic-English Dictionary</cite>.</p>
+      <p>Diretrizes da marca Heild. Fonte da verdade: o design system (branch design-system), os tokens e o componente &lt;heild-logo&gt;. Em PP Neue Montreal.</p>
+      <p>A palavra <i lang="is">heild</i> e a raiz <i lang="non">heill</i>: Cleasby e Vigfusson, <cite>An Icelandic-English Dictionary</cite>.</p>
     </footer>
   </section>
 
@@ -234,4 +555,6 @@
 <script>/*{{ARQ:src/campo.js}}*/</script>
 <script>/*{{ARQ:src/som.js}}*/</script>
 <script>/*{{ARQ:src/cursor.js}}*/</script>
+<script>/*{{ARQ:src/dados.js}}*/</script>
 <script>/*{{ARQ:src/motor.js}}*/</script>
+<script>/*{{ARQ:src/diretrizes.js}}*/</script>
