@@ -1,12 +1,12 @@
-# Plano da Base de Legislação Municipal (e dos módulos de base legal)
+# Plano da Base de Legislação Municipal (e dos blocos e pacotes de base legal)
 
-**Versão 0.3 · 9 de novembro de 2026 · incorpora as duas rodadas de decisões do dono do produto de 9/11/2026.**
+**Versão 0.4 · 9 de novembro de 2026 · incorpora as três rodadas de decisões do dono do produto de 9/11/2026.**
 
-Este plano diz como a base legal da Heild cobre a legislação **municipal** com a mesma promessa do resto da base: redação vigente na data do fato, trecho citado, grau de segurança e abstenção quando não há base. Também organiza a **base estadual dos 27 entes**, os **módulos de base legal** em que o Assistente e o Consultor serão vendidos (seção 6) e a **revisão pela IA** que vale para toda a ingestão (seção 13). Ele valida, corrige e substitui o plano municipal anexado ao pedido (seção 23) e se encaixa nos planos do repositório de trabalho `DGM-RAG-Contabil`, sem reescrevê-los:
+Este plano diz como a base legal da Heild cobre a legislação **municipal** com a mesma promessa do resto da base: redação vigente na data do fato, trecho citado, grau de segurança e abstenção quando não há base. Também organiza a **base estadual dos 27 entes**, os **blocos e pacotes de base legal** em que o Assistente e o Consultor serão vendidos (seção 6) e a **revisão pela IA** que vale para toda a ingestão (seção 13). Ele valida, corrige e substitui o plano municipal anexado ao pedido (seção 23) e se encaixa nos planos do repositório de trabalho `DGM-RAG-Contabil`, sem reescrevê-los:
 
 - [Plano de Ingestão da Base Legal](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/docs/Plano_de_Ingestao_da_Base_Legal.md): fichas, princípios, agentes, portões. Este plano mantém as fichas e os princípios e troca o papel humano pela revisão pela IA (seções 13 e 25).
 - [Plano do Assistente](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/docs/Plano_Assistente_de_IA_para_Contadores.md) e [Subplano 07 · Motores e Consultor](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/docs/subplanos/07-Motores-e-Consultor.md): cascata do M1 Legal, `legal.consultar`, verificação e abstenção.
-- [JU-04 · Motor jurídico e base de leis](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/docs/subplanos/juridico/JU-04-Motor-Juridico-e-Base-de-Leis.md) e as pesquisas J3, J6 e [J9 · Ordem dos módulos](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/pesquisa/juridico/J9-ordem-dos-modulos-de-base.md): os módulos jurídicos e a sua ordem.
+- [JU-04 · Motor jurídico e base de leis](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/docs/subplanos/juridico/JU-04-Motor-Juridico-e-Base-de-Leis.md) e as pesquisas J3, J6 e [J9 · Ordem dos módulos de base](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/pesquisa/juridico/J9-ordem-dos-modulos-de-base.md): os módulos jurídicos e a sua ordem.
 
 As notas brutas, com cada fonte e o que foi testado, estão em [`pesquisa-base-municipal/notas-de-pesquisa.md`](pesquisa-base-municipal/notas-de-pesquisa.md). Todo número tem fonte e data. O que é conta minha vem marcado como **estimativa**, com a conta ao lado.
 
@@ -22,6 +22,7 @@ As notas brutas, com cada fonte e o que foi testado, estão em [`pesquisa-base-m
 | 0.1 | Plano municipal: fontes, técnica, custo, comparação com o plano anexado |
 | 0.2 | **[Dono]** Contábil e BPO primeiro. Também nesta versão: <ul><li>módulos de base legal;</li><li>estadual dos 27 entes;</li><li>municipal só o fácil, o resto sob demanda;</li><li>texto atual sem histórico (C2) rotulado;</li><li>10 anos no federal e 5 no local;</li><li>LAI, convênios e CAPTCHA como reserva.</li></ul> Níveis renomeados de N0–N4 para **C0–C4**, para não colidir com o JU-04 |
 | **0.3** | **[Dono]** **Revisão pela IA como padrão** em toda a ingestão: famílias de modelos diferentes, reconciliação, rodadas de revisão e revisor final de outra família (seção 13). Consequências: <ul><li>divergência persistente rebaixa a certeza, sem ir para pessoa;</li><li>taxa de erro medida contra conjuntos-ouro automáticos e reportes confirmados, sem auditoria humana obrigatória;</li><li>pessoa só em CAPTCHA, papelada de LAI e convênios e reunião de parceria, com as horas;</li><li>custo refeito com a revisão múltipla.</li></ul> **[Dono]** **Leis Ltda como trilha adicional**, da licença até uma eventual parceria societária (seção 18). Referências de seção corrigidas |
+| **0.4** | **[Dono]** Textos dos rótulos C0 a C4 aprovados (seção 8.2). **[Dono]** A base deixa de ser dividida em módulos estanques: passa a ser feita de **blocos** de lei construídos uma vez e vendida em **pacotes que se sobrepõem** (Contábil, BPO e cada área jurídica). A seção 6 traz matriz bloco × pacote (inteiro ou fatia), ordem de construção dos blocos e quanto do jurídico sai pronto do lançamento |
 
 ---
 
@@ -37,7 +38,7 @@ No estadual a situação é melhor, mas não é a do federal: o LexML padroniza 
 
 **O escopo decidido pelo dono:**
 
-1. **[Dono]** Lançamento para **contábil e BPO**, com o **núcleo tributário** como primeiro domínio local. A advocacia vem depois, em **módulos de base legal**, do mais comum ao menos comum (seção 6).
+1. **[Dono]** Lançamento para **contábil e BPO**, com o **núcleo tributário** como primeiro domínio local. A advocacia vem depois. **[Dono]** A base é feita de **30 blocos** de lei (notas fiscais, retenções, ICMS, ISS, DP, processo civil...), cada um construído uma vez, e vendida em **pacotes que se sobrepõem**: notas fiscais está no Contábil, no BPO, no Tributário e no Empresarial. Do lançamento contábil e BPO, Tributário e Empresarial saem quase prontos, e Trabalhista e Previdenciário saem com a parte material pronta; juntos, são cerca de 30% dos advogados (seção 6).
 2. **[Dono]** **Estadual: os 27 entes.** São cerca de 100 coletores (**estimativa**) e US$ 10 mil a 19 mil em modelo para 5 anos de histórico (**estimativa**, seção 21).
 3. **[Dono]** **Municipal: só o que é fácil de puxar** (DOM/SC, SIGPub, SAPL, BLM do TCE-RS se houver acesso, classes do Querido Diário). O resto entra **sob demanda e pelo feedback dos usuários**.
 4. **[Dono]** Janela de **10 anos no federal** e de **5 anos no estadual e no municipal**.
@@ -48,7 +49,7 @@ No estadual a situação é melhor, mas não é a do federal: o LexML padroniza 
    - limiares de consenso, consolidação por código e validação automática.
 
    Divergência que persiste roda de novo com mais contexto ou **rebaixa a certeza**, que aparece no rótulo. O erro é medido contra **conjuntos-ouro automáticos** e contra reportes confirmados dos usuários.
-6. **[Dono]** O texto atual sem histórico (**C2**) pode ser lançado, rotulado "Texto atual · sem histórico" (seção 8).
+6. **[Dono]** O texto atual sem histórico (**C2**) pode ser lançado, rotulado "Texto atual · sem histórico". **[Dono]** Os textos dos rótulos C0 a C4 estão aprovados (seção 8.2).
 7. **[Dono]** A **Leis Ltda** (Leis Municipais) entra como **trilha adicional**: uma reunião que pode ir de licença de dados a parceria societária. Acelera, mas o plano funciona sem ela (seção 18).
 
 **O limite, dito com franqueza.** Modelos diferentes erram juntos com frequência. Num estudo do ICML 2025 com mais de 350 modelos, quando dois modelos erravam, davam a mesma resposta errada em 60% dos casos num dos conjuntos. Por isso a concordância entre famílias não basta. O plano exige ainda evidência literal, consolidação por código, conferência contra ouro externo, reportes e certeza visível (seção 13.6).
@@ -137,7 +138,7 @@ Três consequências:
   - nos municípios: ISS (alíquota por item da LC 116, retenção, local de incidência, sociedades uniprofissionais), IPTU, ITBI, taxas, COSIP, unidade fiscal, parcelamentos;
   - no DP: feriados municipais e pisos estaduais.
 - **BPO financeiro:** ISS retido nas notas de fornecedores, substituição tributária e diferencial de alíquota nas compras, taxas e alvarás.
-- **Advocacia (seção 6):** IPTU, ITBI e plano diretor no Imobiliário; servidores, licitações e posturas no Administrativo; ITCMD na Família; custas e calendário forense no Civil.
+- **Advocacia (pacotes jurídicos, seção 6):** IPTU, ITBI e plano diretor no Imobiliário; servidores, licitações e posturas no Administrativo; ITCMD na Família; custas e calendário forense no Civil.
 
 ---
 
@@ -310,82 +311,186 @@ A LAI manda os sites oficiais "possibilitar o acesso automatizado por sistemas e
 
 ---
 
-## 6. Módulos de base legal
+## 6. Blocos e pacotes de base legal
 
-**[Dono]** O Assistente e o Consultor serão vendidos com bases de leis em **módulos menores**. Contábil e BPO vêm no lançamento; os jurídicos seguem do mais comum ao menos comum.
+**[Dono]** O Assistente e o Consultor serão vendidos com bases de leis menores. A divisão **não é binária**: as áreas se sobrepõem. Nas palavras do dono, "contábil sem as partes referentes a NFs não faz sentido". Por isso a base é feita de **blocos**, e o que se vende são **pacotes** que reúnem blocos e podem compartilhar o mesmo bloco.
 
 ### 6.1 De onde vem cada parte
 
-- **Ranking e ordem dos módulos jurídicos:** [J9](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/pesquisa/juridico/J9-ordem-dos-modulos-de-base.md) (8/11/2026). O critério é o percentual de advogados por área principal (Perfil ADV, CFOAB e FGV, n = 20.885), com desempate pelo volume de casos novos do CNJ (Justiça em Números 2024 e 2025).
-- **Corpus mínimo, fontes, camadas (L0 a L5) e níveis de maturidade:** JU-04, seções 3.1 a 3.4.
-- **Atividades por área:** J3 (234 atividades em 12 áreas; o prazo é o centro de gravidade).
-- **Próximo pacote:** J6 põe o jurídico em 1º lugar entre os pacotes candidatos.
-- **Decisão do JU-04 (9/11/2026):** na onda 2, Família antes de Trabalhista.
-- **Novo aqui:** as camadas estadual e municipal de cada módulo. O que não estava em J9 ou no JU-04 vem marcado **[acréscimo]**.
+- **Ranking dos pacotes jurídicos:** [J9](https://github.com/sundenlast/DGM-RAG-Contabil/blob/main/pesquisa/juridico/J9-ordem-dos-modulos-de-base.md) (8/11/2026), pelo percentual de advogados por área principal (Perfil ADV, CFOAB e FGV, n = 20.885), com desempate pelo volume do CNJ.
+- **Corpus, fontes e camadas:** JU-04, seção 3.1 (L0 normas, L1 súmulas e teses, L2 jurisprudência, L3 doutrina e modelos, L4 tabelas, L5 território) e seção 3.2 (corpus mínimo por área).
+- **Regra da fatia:** JU-04, seção 3.3 ("módulo dependente inclui, só para leitura e citação, a fatia do módulo-base de que precisa").
+- **Atividades por área:** J3 (234 atividades em 12 áreas). **Próximo pacote:** J6 (o jurídico em 1º lugar). **Onda 2:** Família antes de Trabalhista (decisão de 9/11/2026 no JU-04).
+- **Conteúdo do contábil e do BPO:** Plano de Ingestão (seções 3, 5 e 6), Plano do Assistente (Camada 1) e subplano 10.
+- **Novo aqui:** os blocos, as camadas estadual e municipal de cada um e a matriz. O que não estava em J9 nem no JU-04 vem marcado **[acréscimo]**.
 
-### 6.2 Módulos do lançamento: contábil e BPO
+### 6.2 O modelo
 
-**[Proposta]** A divisão em módulos é nova. O conteúdo vem do Plano de Ingestão (seções 3, 5 e 6) e do Plano do Assistente (Camada 1).
+- **Bloco.** Corpus atômico de lei, construído, revisado pela IA e mantido **uma vez só**. Cada bloco tem as suas camadas federal (10 anos), estadual (5 anos) e municipal (5 anos), quando houver. Também tem o seu coletor, a sua cobertura (seção 8) e a sua vigilância.
+- **Pacote.** Composição de blocos vendida a um público: Contábil, BPO e cada área jurídica. Os pacotes **se sobrepõem**. Notas fiscais está no Contábil, no BPO, no Tributário e no Empresarial; IPTU e ITBI, no Contábil, no Tributário e no Imobiliário.
+- **Inteiro ou fatia** ([Proposta]):
+  - **inteiro**: o pacote usa o bloco todo, com as camadas L0, L1 e L4 e o território quando houver; o escritório recebe os avisos de mudança do bloco;
+  - **fatia**: só os dispositivos que o pacote cita, para leitura e citação, sem vigilância própria. É a regra do JU-04, 3.3. Ativar o pacote em que o bloco é inteiro faz a fatia virar inteiro.
+- **Um bloco pronto destrava todos os pacotes que o usam.** O custo de construção e de manutenção é pago uma vez, e o escritório com dois pacotes que dividem um bloco não paga o bloco duas vezes ([Proposta]; a regra de preço fica no Estudo de Precificação, como o subplano 10 já faz no BPO).
+- **Camada L1 sob demanda.** A camada de súmulas e teses de um bloco entra quando o primeiro pacote que precisa dela é construído. Por exemplo, as súmulas do TST no bloco de DP chegam com o pacote Trabalhista.
 
-| Módulo | Federal (10 anos) | Estadual (27 UFs, 5 anos) | Municipal (5 anos) | Reuso |
-|---|---|---|---|---|
-| **T1 · Tributário federal** | CTN; LC 123 e CGSN; LC 214 e LC 227; PIS/Cofins, IRPJ/CSLL, IPI; RIR e RIPI; INs da RFB; COSIT; CARF; temas do STF e do STJ | — | — | Jurídico 8 |
-| **T2 · Tributos estaduais** | LC 87/1996, LC 24/1975, CONFAZ, resoluções do Senado sobre alíquotas interestaduais, normas gerais do ITCMD (LC 227) | RICMS e anexos (ST, MVA), leis e decretos de ICMS, ITCMD e IPVA, respostas a consultas, tribunal administrativo | — | Jurídico 8; ITCMD no 2 |
-| **T3 · Tributos municipais** | LC 116 (mínimo de 2%), CF arts. 156 e 156-A, normas gerais do ITBI (LC 227), LC 214 | — | Código tributário, ISS, IPTU, ITBI, taxas, COSIP, UFM, REFIS, regulamentos, alíquota do IBS; fácil (C1) e sob demanda (C2/C3) | Jurídico 8 e 9 |
-| **D1 · Trabalhista e previdenciário do DP** | CLT, legislação previdenciária, eSocial, FGTS, Portaria MTE 671/2021; convenções e acordos (Mediador) | Pisos salariais estaduais onde instituídos **[acréscimo]** | Feriados municipais (Lei 9.093/1995) **[acréscimo]** | Jurídico 3 e 4 |
-| **S1 · Societário e registro** | CC Livro II, Lei 6.404, Lei 8.934, Decreto 1.800, INs do DREI, Lei 13.874, Redesim | Atos das 27 Juntas Comerciais | Alvará e licença de funcionamento **[acréscimo]**, sob demanda | Jurídico 7 |
-| **K1 · Normas contábeis** | NBC, CPC e ITG do CFC | — | — | — |
-| **B1 · BPO financeiro** | Retenções na fonte (IRRF; CSRF, Lei 10.833/2003, art. 30; INSS, Lei 8.212, art. 31), NF-e e NFS-e, normas do Banco Central sobre Pix e boleto, duplicata (Leis 5.474/1968 e 13.775/2018), protesto (Lei 9.492/1997), juros e multa (CC e Lei 14.905/2024), LGPD, split payment (LC 214) | Fatia do T2: ST e diferencial de alíquota | Fatia do T3: ISS retido pelo tomador (LC 116, art. 6º, e lei municipal) | **[acréscimo]**; validar com o subplano 10 |
+### 6.3 Os blocos e as suas camadas
 
-**[Proposta] Venda:** um pacote Contábil (T1, T2, T3, D1, S1, K1) e um pacote BPO (B1 com as fatias de T2 e T3 só para leitura e citação, pela regra de "fatia" do JU-04, 3.3). Preço no Estudo de Precificação.
+[Proposta] Corpus das áreas jurídicas tirado do JU-04, 3.2, e de J9; do contábil e do BPO, dos planos citados em 6.1.
 
-### 6.3 Módulos jurídicos, do mais comum ao menos comum
+| Bloco | Federal (10 anos) | Estadual (5 anos) | Municipal (5 anos) |
+|---|---|---|---|
+| **B01 · Fundamentos e prazos** | CF, LINDB, Estatuto e Ética da OAB, súmulas vinculantes, repercussão geral, índices (SGS do BC) | Calendário forense por tribunal (JU-03) | Feriados locais, via calendário dos tribunais |
+| **B02 · Documentos fiscais eletrônicos** (NF-e, NFC-e, NFS-e, CT-e, MDF-e) | Ajustes SINIEF e convênios do CONFAZ, notas técnicas, NFS-e Nacional (LC 214, leiaute, Res. CGSN 189/2026), campos de IBS e CBS | Regras de emissão e escrituração de cada UF (capítulos de documentos fiscais dos RICMS) | Decretos de NFS-e, regimes de emissão, parâmetros da NFS-e Nacional |
+| **B03 · Retenções na fonte** | IRRF (RIR, INs), CSRF (Lei 10.833/2003, art. 30), INSS retido (Lei 8.212, art. 31), LC 116, art. 6º | — | Responsáveis e substitutos do ISS: vem do B09, sem coleta própria |
+| **B04 · Simples Nacional e MEI** | LC 123, resoluções do CGSN | Sublimites e ICMS no Simples (ST, antecipação), nos RICMS | Regras de ISS para optantes, nas leis municipais |
+| **B05 · Tributos federais** | CTN; IRPJ, CSLL, PIS/Cofins, IPI; RIR e RIPI; INs da RFB; COSIT; CARF; temas do STF e do STJ | — | — |
+| **B06 · Reforma do consumo** | EC 132, LC 214, LC 227, atos do CGIBS; CBS e IS | Alíquota própria do IBS: no B07 | Alíquota própria do IBS: no B09 |
+| **B07 · ICMS e IBS estadual** | LC 87/1996, LC 24/1975, CONFAZ, resoluções do Senado sobre alíquotas interestaduais | RICMS e anexos (ST, MVA), leis e decretos, respostas a consultas, tribunal administrativo, lei de alíquota do IBS | — |
+| **B08 · ITCMD e IPVA** | Normas gerais do ITCMD (LC 227) | Leis e decretos das 27 UFs | — |
+| **B09 · ISS e IBS municipal** | LC 116 (mínimo de 2%), CF arts. 156 e 156-A, LC 214 | — | Código tributário (ISS), regulamento, alíquotas, retenção, lei de alíquota do IBS |
+| **B10 · IPTU e ITBI** | CTN, normas gerais do ITBI (LC 227) | — | IPTU (planta de valores, isenções), ITBI (base, alíquota, pauta) |
+| **B11 · Taxas e demais tributos municipais** | CTN (taxas, contribuição de melhoria), CF art. 149-A (COSIP) **[acréscimo]** | — | Taxas de licença e fiscalização, COSIP, UFM, REFIS e anistias |
+| **B12 · Processo tributário** | Decreto 70.235, Lei 6.830, regimento do CARF | Processo administrativo e tribunal de cada UF | Processo administrativo tributário municipal |
+| **B13 · Trabalho, DP e eSocial** | CLT (parte material), FGTS, eSocial, Portaria MTE 671/2021, convenções e acordos (Mediador) | Pisos salariais estaduais onde instituídos **[acréscimo]** | Feriados municipais (Lei 9.093/1995) **[acréscimo]** |
+| **B14 · Previdência (RGPS)** | Leis 8.212 e 8.213, Decreto 3.048, EC 103, normas do INSS; TNU na camada L1 | Regimes próprios de servidores **[acréscimo]**, fora da 1ª versão | Idem |
+| **B15 · Processo do trabalho** | CLT processual; súmulas, OJs e PNs do TST | — | — |
+| **B16 · Societário e registro** | CC Livro II, Leis 6.404, 8.934 e 13.874, Decreto 1.800, DREI, Redesim | Atos das 27 Juntas Comerciais | Alvará e licença de funcionamento **[acréscimo]**, sob demanda |
+| **B17 · Recuperação e falência** | Lei 11.101 | — | — |
+| **B18 · Normas contábeis** | NBC, CPC e ITG do CFC | — | — |
+| **B19 · Meios de pagamento e títulos** | Normas do BC sobre Pix e boleto, duplicata (Leis 5.474/1968 e 13.775/2018), protesto (Lei 9.492/1997) **[acréscimo]** | — | — |
+| **B20 · Juros, multa e correção (cível)** | CC (mora, juros, cláusula penal), Lei 14.905/2024, índices | — | — |
+| **B21 · Proteção de dados** | LGPD, ANPD, Marco Civil, Leis 12.846 e 9.613 | Regulamentação local **[acréscimo]** | Idem |
+| **B22 · Civil material** | CC (Parte Geral, Obrigações, Contratos, Responsabilidade, Coisas); STJ | — | — |
+| **B23 · Processo civil e custas** | CPC, Leis 9.099, 9.307 e 13.140; STJ | Custas por UF; regimentos dos TJs **[acréscimo]** | — |
+| **B24 · Família e sucessões** | CC Livros IV e V, Leis 5.478, 11.441, 12.318, 13.058, ECA, provimentos do CNJ | Códigos de normas das corregedorias (extrajudicial) | — |
+| **B25 · Consumidor e bancário** | CDC, Decretos 2.181 e 11.034, Lei 14.181, CMN e BC; STJ | Leis estaduais de consumo **[acréscimo]** | Leis municipais de consumo **[acréscimo]**, sob demanda |
+| **B26 · Penal e processo penal** | CP, CPP, LEP, Leis 11.343, 11.340, 12.850, 13.964; crimes contra a ordem tributária (Lei 8.137) **[acréscimo]** | — | — |
+| **B27 · Imobiliário e urbanístico** | Leis 8.245, 6.015, 13.465, 4.591, 13.786 | Códigos de normas das corregedorias (registro de imóveis) | Plano diretor, uso do solo, código de obras, sob demanda |
+| **B28 · Administrativo e licitações** | Leis 14.133, 9.784, 8.429 e 14.230, LAI, TCU | Processo administrativo, estatutos, normas dos TCEs | Estatutos de servidores, licitações locais, posturas, sob demanda |
+| **B29 · Saúde suplementar** | Lei 9.656, resoluções e rol da ANS | — | — |
+| **B30 · Blocos da cauda** | Ambiental, Eleitoral, Agrário, PI, Militar, Marítimo, Internacional (corpus do JU-04, 3.2) | Licenciamento ambiental, terras, militares estaduais **[acréscimo]** | Licenciamento ambiental **[acréscimo]** |
 
-Percentual de advogados por área principal e corpus federal de J9 e do JU-04, 3.2. Onda de construção do JU-04, 3.3. A coluna "#" é a posição no ranking; a tabela segue a ordem de construção.
+### 6.4 Matriz bloco × pacote
 
-| # | Módulo | Advogados | Federal | Estadual | Municipal | Reuso do lançamento | Onda |
-|---|---|---:|---|---|---|---|---|
-| 0 | **N0 Núcleo** | todos | CF, LINDB, Estatuto e Ética da OAB, CPC, CPP, CLT processual, Lei 9.099, súmulas vinculantes, índices | Calendário forense por tribunal (JU-03), custas por UF | Feriados locais, via calendário dos tribunais | — | 0 |
-| 1 | **Civil e Processual Civil** | 26% | CC, CPC, Leis 9.099, 9.307, 13.140; STJ | Custas e prazos por UF; regimentos dos TJs **[acréscimo]** | — | — | 1 |
-| 2 | **Família e Sucessões** | 14% | CC Livros IV e V, CPC, Leis 5.478, 11.441, 12.318, 13.058, ECA, provimentos do CNJ | **ITCMD (27 leis)**; códigos de normas das corregedorias | — | T2 | 2 |
-| 3 | **Trabalhista** | 12% | CLT, Lei 13.467, TST, convenções (Mediador), índices (ADC 58) | Pisos estaduais **[acréscimo]** | Feriados municipais **[acréscimo]** | D1 | 2 |
-| 4 | **Previdenciário** | 11% | Leis 8.212 e 8.213, Decreto 3.048, EC 103, INSS, TNU | Regimes próprios de servidores **[acréscimo]**, fora da 1ª versão | Idem **[acréscimo]** | D1 | 2 |
-| 6 | **Consumidor e Bancário** | 6% | CDC, Decretos 2.181 e 11.034, Lei 14.181, STJ, CMN e BC | Leis estaduais de consumo **[acréscimo]** | Leis municipais de consumo (ex.: espera em agência) **[acréscimo]**, sob demanda | — | 3 |
-| 5 | **Penal e Processual Penal** | 8% | CP, CPP, LEP, Leis 11.343, 11.340, 12.850, 13.964 | — | — | — | 3 (depois do Consumidor, pelo portão do JU-04) |
-| 7 | **Empresarial** | 4% | CC Livro II, Leis 6.404, 11.101, 13.874, 14.195, LC 123, DREI | Juntas Comerciais | Alvarás, sob demanda | S1 | 4 |
-| 8 | **Tributário** | 3% | CTN, Lei 6.830, Decreto 70.235, LC 116, EC 132, LC 214, STJ, STF, CARF | Tribunais e processo administrativo estaduais | Processo administrativo tributário municipal | T1, T2, T3 | 4 |
-| 9 | **Imobiliário** | 3% | Leis 8.245, 6.015, 13.465, 4.591, 13.786, CC Livro III | Códigos de normas das corregedorias; ITCMD | **IPTU, ITBI, plano diretor, uso do solo, código de obras** (pesado; sob demanda) | T3 | 5 |
-| 10 | **Saúde e Planos** | 1% | Lei 9.656, ANS, STJ, STF | — | — | — | 5 |
-| 11 | **Administrativo** | sem linha | Leis 14.133, 9.784, 8.429 e 14.230, LAI, TCU | Processo administrativo, estatutos, TCEs | **Estatutos de servidores, licitações locais, posturas** (pesado; sob demanda) | Coletores municipais | 5 |
-| 12 | **LGPD e Digital** | 0% | LGPD, ANPD, Marco Civil, Leis 12.846 e 9.613 | Regulamentação local **[acréscimo]** | Idem | — | 6 (paralelo desde a 2) |
-| 13 | **Ambiental** | 1% | Lei 9.605, Código Florestal, CONAMA | Licenciamento estadual **[acréscimo]** | Licenciamento municipal **[acréscimo]** | — | 6 |
-| 14 | **Eleitoral** | 0% | Legislação eleitoral, TSE | — | — | — | 6 (janela de 2028) |
-| 15 | **Agrário** | 0% | Normas fundiárias **[a confirmar no JU-04]** | Terras estaduais **[acréscimo]** | — | — | 7 |
-| 16 | **Propriedade Intelectual** | 0% | Leis 9.279, 9.609, 9.610, INPI, tratados | — | — | — | 7 |
-| 17 | **Militar** | sem linha | CPM, CPPM, STM | Estatutos dos militares estaduais **[acréscimo]** | — | — | 7 |
-| 18 | **Marítimo** | sem linha | Tribunal Marítimo, tratados | — | — | — | 7 |
-| 19 | **Internacional** | sem linha | Tratados | — | — | — | 7 |
+[Proposta]. **I** = inteiro; **F** = fatia (só leitura e citação); **·** = não usa.
 
-Leitura:
-- Os cinco primeiros jurídicos concentram 71% dos advogados; o pacote A de J9 também chega a 71% (26 + 2 de Contratual + 14 + 12 + 11 + 6).
-- O peso local dos jurídicos está quase todo no **estadual**, já coberto.
-- O **municipal pesado** se concentra em Imobiliário e Administrativo, na onda 5, sob demanda.
+Pacotes, com o percentual de advogados por área principal (J9):
+- **CTB** Contábil;
+- **BPO** BPO financeiro;
+- **CIV** Civil e Processual Civil (26%);
+- **FAM** Família e Sucessões (14%);
+- **TRA** Trabalhista (12%);
+- **PRE** Previdenciário (11%);
+- **CON** Consumidor e Bancário (6%);
+- **PEN** Penal (8%);
+- **EMP** Empresarial (4%);
+- **TRI** Tributário (3%);
+- **IMO** Imobiliário (3%);
+- **ADM** Administrativo;
+- **DEM** demais (Saúde, LGPD, Ambiental, Eleitoral, Agrário, PI, Militar, Marítimo, Internacional).
 
-### 6.4 Ordem de construção
+| Bloco | CTB | BPO | CIV | FAM | TRA | PRE | CON | PEN | EMP | TRI | IMO | ADM | DEM | Pacotes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---:|
+| B01 Fundamentos | F | F | I | I | I | I | I | I | I | I | I | I | I | 13 |
+| B02 Documentos fiscais | I | I | · | · | · | · | · | · | F | I | · | · | · | 4 |
+| B03 Retenções | I | I | · | · | · | · | · | · | · | I | · | · | · | 3 |
+| B04 Simples e MEI | I | F | · | · | · | · | · | · | F | I | · | · | · | 4 |
+| B05 Tributos federais | I | · | · | · | · | · | · | · | F | I | · | · | · | 3 |
+| B06 Reforma do consumo | I | F | · | · | · | · | · | · | F | I | · | · | · | 4 |
+| B07 ICMS e IBS estadual | I | F | · | · | · | · | · | · | · | I | · | · | · | 3 |
+| B08 ITCMD e IPVA | I | · | · | F | · | · | · | · | · | I | F | · | · | 4 |
+| B09 ISS e IBS municipal | I | F | · | · | · | · | · | · | · | I | · | · | · | 3 |
+| B10 IPTU e ITBI | I | · | · | · | · | · | · | · | · | I | I | · | · | 3 |
+| B11 Taxas municipais | I | F | · | · | · | · | · | · | · | I | · | F | · | 4 |
+| B12 Processo tributário | F | · | · | · | · | · | · | · | · | I | · | F | · | 3 |
+| B13 Trabalho, DP e eSocial | I | F | · | · | I | F | · | · | · | · | · | · | · | 4 |
+| B14 Previdência | I | · | · | · | F | I | · | · | · | · | · | · | · | 3 |
+| B15 Processo do trabalho | · | · | · | · | I | · | · | · | · | · | · | · | · | 1 |
+| B16 Societário e registro | I | F | F | · | · | · | · | · | I | · | · | · | · | 4 |
+| B17 Recuperação e falência | F | · | F | · | · | · | · | · | I | F | · | · | · | 4 |
+| B18 Normas contábeis | I | F | · | · | · | · | · | · | F | F | · | · | · | 4 |
+| B19 Pagamentos e títulos | F | I | F | · | · | · | F | · | I | · | · | · | · | 5 |
+| B20 Juros, multa e correção | F | I | I | F | F | · | F | · | F | · | · | · | · | 7 |
+| B21 Proteção de dados | F | F | · | · | · | · | F | · | · | · | · | F | I | 5 |
+| B22 Civil material | F | F | I | F | F | · | F | · | F | · | F | · | F | 9 |
+| B23 Processo civil | · | F | I | F | F | F | F | · | F | F | F | F | F | 11 |
+| B24 Família e sucessões | F | · | · | I | · | · | · | · | · | · | F | · | · | 3 |
+| B25 Consumidor e bancário | · | F | F | · | · | · | I | · | · | · | · | · | F | 4 |
+| B26 Penal | F | · | · | · | · | · | · | I | · | F | · | · | F | 4 |
+| B27 Imobiliário | · | · | F | · | · | · | · | · | · | · | I | · | F | 3 |
+| B28 Administrativo | · | · | · | · | · | · | · | · | · | · | · | I | F | 2 |
+| B29 Saúde suplementar | · | · | · | · | · | · | · | · | · | · | · | · | I | 1 |
+| B30 Cauda | · | · | · | · | · | · | · | · | · | · | · | · | I | 1 |
 
-| Etapa | Módulos | Fonte da ordem |
+Por que algumas sobreposições:
+- **BPO usa** documentos fiscais e retenções inteiros, porque confere notas e retenções em contas a pagar.
+- **BPO usa como fatia:**
+  - ISS e ICMS, pela retenção e pela ST nas compras;
+  - consumidor, porque a cobrança dos clientes do cliente segue o CDC;
+  - processo civil, pelo protesto e pela execução de título.
+- **Contábil usa como fatia:**
+  - família e sucessões, pelo planejamento sucessório e pelo ITCMD;
+  - penal, pelos crimes contra a ordem tributária;
+  - falência, pelos créditos e pela habilitação.
+- **Tributário jurídico usa quase todos os blocos fiscais inteiros**, mais o processo tributário.
+
+### 6.5 Ordem de construção dos blocos
+
+[Proposta] Critério: primeiro o que o lançamento usa; dentro disso e depois dele, os blocos que mais pacotes usam.
+
+| Etapa | Blocos | Por quê |
 |---|---|---|
-| Lançamento | N0 compartilhado (a parte que o contábil usa) + T1, T2, T3, D1, S1, K1 + B1 | **[Dono]** |
-| Jurídico, onda 0 | N0 completo | JU-04 |
-| Onda 1 | Civil e Processual Civil | J9, JU-04 |
-| Onda 2 | Família e Sucessões; depois Trabalhista e Previdenciário | JU-04 (9/11/2026) |
-| Onda 3 | Consumidor e Bancário; depois Penal | J9 |
-| Onda 4 | Empresarial e Tributário | J9 |
-| Onda 5 | Imobiliário, Saúde, Administrativo | J9 |
-| Onda 6 | LGPD (paralelo desde a 2), Ambiental, Eleitoral | J9 |
-| Onda 7 | Agrário, PI, Militar, Marítimo, Internacional, como base mínima | J9, JU-04 |
+| **L1 · Lançamento, base fiscal** | B02 Documentos fiscais e B03 Retenções (inteiros no Contábil e no BPO); B09 ISS, B07 ICMS, B05 Tributos federais, B04 Simples, B06 Reforma | Núcleo do contábil e do BPO; destravam 3 a 4 pacotes cada |
+| **L2 · Lançamento, demais blocos inteiros** | B13 DP, B14 Previdência, B16 Societário, B18 Normas contábeis, B08 ITCMD e IPVA, B10 IPTU e ITBI, B11 Taxas, B19 Pagamentos, B20 Juros | Fecham Contábil e BPO; já servem a Trabalhista, Previdenciário, Empresarial, Imobiliário e Tributário |
+| **L3 · Lançamento, fatias** | B01 Fundamentos (CF, LINDB, índices), B22 Civil, B23 Processo civil, B21 Proteção de dados, B12 Processo tributário, B17 Falência, B24 Família, B25 Consumidor, B26 Penal | Só os dispositivos que Contábil e BPO citam |
+| **J1 · Jurídico, os mais compartilhados** | B01 Fundamentos (13 pacotes), B23 Processo civil (11), B22 Civil (9) completos | Coincide com as ondas 0 e 1 de J9; destrava fatias em quase todos os pacotes |
+| **J2** | B24 Família; B15 Processo do trabalho + camada L1 de B13 e B14 (TST, TNU) | Onda 2 (Família antes de Trabalhista) |
+| **J3** | B25 Consumidor; depois B26 Penal | Onda 3 (Consumidor antes de Penal, pelo portão do JU-04) |
+| **J4** | B17 Falência e B12 Processo tributário completos | Onda 4: Empresarial e Tributário ficam completos |
+| **J5** | B27 Imobiliário, B29 Saúde, B28 Administrativo (o municipal pesado entra aqui, sob demanda) | Onda 5 |
+| **J6 e J7** | B21 Proteção de dados completo (pode ir antes, é barato), B30 Cauda | Ondas 6 e 7 |
 
-**[Proposta]** Como o lançamento já constrói T1 a T3, D1 e S1, os jurídicos Tributário, Empresarial e a parte material do Trabalhista ficam quase prontos. Podem ser oferecidos como complementos baratos antes da onda 4, sem mudar a ordem principal. J9 admite inverter "com motivo escrito (ganho de custo muito grande)", e o motivo aqui é o reuso.
+### 6.6 Quanto do jurídico já sai pronto do lançamento
+
+**Estimativa** contada na matriz. "Pronto" = bloco inteiro no Contábil ou no BPO. "Fatia pronta" = o pacote precisa só da fatia, e ela existe. "A completar" = o pacote precisa do bloco inteiro e o lançamento só fez a fatia. "A construir" = o lançamento não toca.
+
+| Pacote (advogados) | Blocos | Pronto | Fatia pronta | A completar | A construir | Leitura |
+|---|---:|---|---|---|---|---|
+| **Tributário** (3%) | 16 | 11 (fiscais, contábeis) | 3 | 2 (Fundamentos, Processo tributário) | 0 | Quase pronto |
+| **Empresarial** (4%) | 12 | 8 (fiscais, societário, pagamentos, juros, normas contábeis) | 2 | 2 (Fundamentos, Falência) | 0 | Quase pronto |
+| **Trabalhista** (12%) | 7 | 3 (DP, Previdência, Juros) | 2 | 1 (Fundamentos) | 1 (Processo do trabalho) | Parte material pronta; falta processo e TST |
+| **Previdenciário** (11%) | 4 | 2 (DP, Previdência) | 1 | 1 (Fundamentos) | 0 | Parte material pronta; falta TNU |
+| **Imobiliário** (3%) | 7 | 2 (IPTU e ITBI, ITCMD) | 3 | 1 | 1 (Imobiliário) | Tributos locais prontos; falta o corpus imobiliário |
+| **Civil** (26%) | 9 | 3 (Societário, Pagamentos, Juros) | 2 | 3 (Fundamentos, Civil, Processo civil) | 1 (Imobiliário, como fatia) | Só blocos de apoio prontos |
+| **Família** (14%) | 6 | 2 (ITCMD, Juros) | 2 | 2 (Fundamentos, Família) | 0 | Pouco |
+| **Consumidor** (6%) | 7 | 2 (Pagamentos, Juros) | 3 | 2 (Fundamentos, Consumidor) | 0 | Pouco |
+| **Penal** (8%) | 2 | 0 | 0 | 2 | 0 | Só a fatia de crimes tributários |
+| **Administrativo** | 6 | 1 (Taxas) | 3 | 1 | 1 (Administrativo) | Pouco |
+| **Demais** | 10 | 0 | 4 | 2 | 4 | Quase nada |
+
+Em resumo:
+- **Tributário e Empresarial** (7% dos advogados) saem do lançamento quase prontos.
+- **Trabalhista e Previdenciário** (23%) saem com a parte material pronta. Falta o processo do trabalho e a camada de súmulas e teses.
+- Somados, **cerca de 30% dos advogados** têm a parte material da área principal pronta no lançamento contábil e BPO.
+- Civil, Família, Consumidor e Penal (54%) dependem dos blocos J1 a J3. São justamente os mais compartilhados, e por isso vêm primeiro no jurídico.
+
+### 6.7 Ordem dos pacotes jurídicos
+
+A ordem de lançamento dos pacotes segue J9 e o JU-04: a de construção dos blocos (6.5) já foi alinhada a ela.
+
+| Onda | Pacotes | Fonte |
+|---|---|---|
+| 0 | Fundamentos completos | JU-04 |
+| 1 | Civil e Processual Civil | J9, JU-04 |
+| 2 | Família e Sucessões; depois Trabalhista e Previdenciário | JU-04 (9/11/2026) |
+| 3 | Consumidor e Bancário; depois Penal | J9 |
+| 4 | Empresarial e Tributário | J9 |
+| 5 | Imobiliário, Saúde, Administrativo | J9 |
+| 6 | LGPD, Ambiental, Eleitoral | J9 |
+| 7 | Agrário, PI, Militar, Marítimo, Internacional, como base mínima | J9, JU-04 |
+
+**[Proposta]** Tributário, Empresarial e a parte material do Trabalhista e do Previdenciário podem ser vendidos como complementos antes das ondas 2 e 4. Os blocos já existem, e J9 admite inverter "com motivo escrito (ganho de custo muito grande)".
 
 ---
 
@@ -403,18 +508,20 @@ Leitura:
 | D8 | Texto atual sem histórico (C2) pode ser lançado, rotulado | **[Dono]** | Seção 8 |
 | D9 | LAI e convênios em nome da empresa; CAPTCHA por pessoa no celular como reserva | **[Dono]** | Seção 10.2 |
 | D10 | Leis Ltda como trilha adicional, da licença à parceria societária; opcional | **[Dono]** | Seção 18 |
-| D11 | Unidade de cobertura: ente local × domínio × nível (C0 a C4) | [Proposta] | O Consultor precisa saber o que pode afirmar sobre um ente numa data |
-| D12 | Núcleo tributário primeiro no local | [Proposta], coerente com D1 | 7,5% das leis e 2,6% dos decretos municipais são tributários |
-| D13 | Coletor por plataforma, reaproveitando o Querido Diário (MIT, com atribuição) | [Proposta] | 85,5% dos raspadores são instâncias de 21 plataformas |
-| D14 | Hierarquia de fontes. A citação aponta para a publicação oficial. <ul><li>Veículo oficial: prova.</li><li>Bases estruturadas: descoberta.</li><li>Consolidações de terceiros: só com acordo.</li><li>NFS-e: tabela declarada.</li></ul> | [Proposta] | — |
-| D15 | O modelo extrai eventos com evidência literal; o código consolida | [Proposta] (princípio 4 do Plano de Ingestão) | Acerto exato de 50% e 20% quando o modelo consolida |
-| D16 | Três famílias de modelos; o revisor final nunca é da família de quem extraiu | [Proposta], para cumprir D5 | Reduz pontos cegos comuns (seção 13.6) |
-| D17 | Evento sem consenso não entra no texto consolidado: fica sinalizado no dispositivo e rebaixa a certeza | [Proposta] | Erro não se propaga pela linha do tempo |
-| D18 | Ouro de medição separado do ouro de conferência | [Proposta] | Sem isso a medida seria circular |
-| D19 | Usuário como revisor: "reportar" e "confirmar", sempre ancorados na publicação oficial | [Proposta] | Fonte de erros reais que o ouro não cobre |
-| D20 | Anterioridade tributária como regra do validador | [Proposta] | Erro de data do fato mais provável em lei de dezembro |
-| D21 | Triagem LGPD na entrada | [Proposta] | — |
-| D22 | Laço inspirado na DGM na ingestão, offline, contra ouro escondido | [Proposta] | É como a base melhora sem revisor humano |
+| D11 | Textos dos rótulos de cobertura C0 a C4 aprovados | **[Dono]** | Seção 8.2 |
+| D12 | Base em **blocos** construídos uma vez e vendida em **pacotes que se sobrepõem**; nada de divisão binária entre áreas | **[Dono]** | "Contábil sem as partes referentes a NFs não faz sentido"; seção 6 |
+| D13 | Unidade de cobertura: ente local × domínio × nível (C0 a C4) | [Proposta] | O Consultor precisa saber o que pode afirmar sobre um ente numa data |
+| D14 | Núcleo tributário primeiro no local | [Proposta], coerente com D1 | 7,5% das leis e 2,6% dos decretos municipais são tributários |
+| D15 | Coletor por plataforma, reaproveitando o Querido Diário (MIT, com atribuição) | [Proposta] | 85,5% dos raspadores são instâncias de 21 plataformas |
+| D16 | Hierarquia de fontes. A citação aponta para a publicação oficial. <ul><li>Veículo oficial: prova.</li><li>Bases estruturadas: descoberta.</li><li>Consolidações de terceiros: só com acordo.</li><li>NFS-e: tabela declarada.</li></ul> | [Proposta] | — |
+| D17 | O modelo extrai eventos com evidência literal; o código consolida | [Proposta] (princípio 4 do Plano de Ingestão) | Acerto exato de 50% e 20% quando o modelo consolida |
+| D18 | Três famílias de modelos; o revisor final nunca é da família de quem extraiu | [Proposta], para cumprir D5 | Reduz pontos cegos comuns (seção 13.6) |
+| D19 | Evento sem consenso não entra no texto consolidado: fica sinalizado no dispositivo e rebaixa a certeza | [Proposta] | Erro não se propaga pela linha do tempo |
+| D20 | Ouro de medição separado do ouro de conferência | [Proposta] | Sem isso a medida seria circular |
+| D21 | Usuário como revisor: "reportar" e "confirmar", sempre ancorados na publicação oficial | [Proposta] | Fonte de erros reais que o ouro não cobre |
+| D22 | Anterioridade tributária como regra do validador | [Proposta] | Erro de data do fato mais provável em lei de dezembro |
+| D23 | Triagem LGPD na entrada | [Proposta] | — |
+| D24 | Laço inspirado na DGM na ingestão, offline, contra ouro escondido | [Proposta] | É como a base melhora sem revisor humano |
 
 ---
 
@@ -436,7 +543,7 @@ O nível sai de regras sobre o registro `cobertura_local` (`ente`, `dominio`, `n
 
 ### 8.2 O texto que o Consultor mostra
 
-**[Proposta]**, com variáveis entre chaves:
+**[Dono]** Textos aprovados em 9/11/2026. Variáveis entre chaves:
 
 | Nível | Texto |
 |---|---|
@@ -543,7 +650,7 @@ Só 4,3% das leis usam "(NR)", 11,8% dizem "passa a vigorar com a seguinte reda�
 - **Casos com regras, citados no mesmo artigo:** leis japonesas estruturadas chegaram a 99,47% (Ogawa et al., 2008); leis gregas em PDF heterogêneo, a 37,1% (59,4% com correção manual).
 - **O ouro oficial também falha.** O mesmo artigo relata uma lei alemã em vigor desde 14/05/2024 que ainda não estava no texto consolidado oficial em 30/07/2025.
 
-O município brasileiro se parece mais com o caso grego. Daí D15: o modelo identifica o quê muda; o código aplica.
+O município brasileiro se parece mais com o caso grego. Daí D17: o modelo identifica o quê muda; o código aplica.
 
 ### 11.3 Procedimento por norma-mãe
 
@@ -669,7 +776,7 @@ Uma versão entra em produção, sem pessoa, com a certeza que os limiares derem
 | Todas | Reportes de usuários confirmados na publicação oficial | Cresce com o uso |
 
 **Regras da medida** ([Proposta]):
-- **Ouro de medição separado do ouro de conferência (D18).** Uma parte sorteada do ouro nunca entra como contexto no pipeline, só serve para medir. É a mesma ideia do conjunto reservado da DGM.
+- **Ouro de medição separado do ouro de conferência (D20).** Uma parte sorteada do ouro nunca entra como contexto no pipeline, só serve para medir. É a mesma ideia do conjunto reservado da DGM.
 - **Erro por estrato**: esfera, tipo de evento, qualidade da fonte, certeza declarada.
 - **Calibração**: a certeza "alta" tem de errar bem menos que a "média", e esta menos que a "baixa". Se não errar, os limiares mudam.
 - **Cobertura do ouro publicada junto com o erro.** Fora do ouro, o erro não é medido; é estimado pela calibração.
@@ -721,7 +828,7 @@ Na versão 0.2 eram cerca de 17 horas por mês com revisão humana de exceções
 - **Partição.** A legislação local é partição da base global, chaveada por `ente_ibge`. A etapa 3 da cascata (07, 3.1) filtra por UF e município **por código**.
 - **Saída de `legal.consultar`.** Ganha `cobertura_local`; `lacunas[]` vem do registro.
 - **Grau de confiança** = o menor entre o grau da afirmação, a certeza da versão citada (13.3) e o nível de cobertura.
-- **Módulos.** O roteador só consulta partições dos módulos ativos (JU-04, 3.6).
+- **Pacotes e blocos.** O roteador só consulta os blocos dos pacotes ativos do escritório: os blocos inteiros e as fatias (seção 6.2; JU-04, 3.6).
 - **M3 Cálculo.** As funções leem a alíquota local da Ficha 4, conferida com a NFS-e. Sem tabela, devolvem "alíquota municipal fora da base", nunca um padrão.
 - **Busca ao vivo.** `municipal.buscar_diario`, `municipal.sapl`, `municipal.parametros_nfse`, `estadual.sefaz`. O que achar entra na fila de ingestão, marcado "ainda não validado".
 
@@ -774,7 +881,7 @@ Todas seguem atrás de chave e só ligam se vencerem no benchmark (07, 3.7 e 9.4
 
 **RAPTOR** ([Sarthi et al., ICLR 2024](https://arxiv.org/abs/2401.18059)).
 - *No artigo:* agrupa trechos por similaridade (mistura gaussiana sobre embeddings reduzidos com UMAP), resume, agrupa os resumos e repete, formando uma árvore; busca percorrendo a árvore ou na "árvore colapsada". Com GPT-4, +20 pontos absolutos no QuALITY.
-- *No nosso uso:* a árvore segue a taxonomia (módulo → tributo → ente → tema), uma adaptação. Os resumos roteiam; nunca são citados.
+- *No nosso uso:* a árvore segue a taxonomia (bloco → tributo → ente → tema), uma adaptação. Os resumos roteiam; nunca são citados.
 
 **HippoRAG 2** ([Gutiérrez et al., ICML 2025](https://arxiv.org/abs/2502.14802)).
 - *No artigo:* grafo de triplas extraídas por modelo (OpenIE), nós de frase e de passagem, PageRank personalizado; cerca de 7% de ganho em memória associativa. O "10 a 30 vezes mais barato" é do **HippoRAG 1** ([arXiv 2405.14831](https://arxiv.org/abs/2405.14831)), contra o IRCoT.
@@ -945,7 +1052,7 @@ Todas seguem atrás de chave e só ligam se vencerem no benchmark (07, 3.7 e 9.4
 - Cinco capitais dos pilotos como primeiros C3 municipais, até a demanda indicar os municípios.
 - **Portão contínuo:** ≤ 7 horas humanas por mês; certeza baixa caindo a cada ciclo do laço.
 
-**Fase 4 · Módulos jurídicos (seção 6.4).**
+**Fase 4 · Blocos e pacotes jurídicos (seções 6.5 e 6.7).**
 
 **Laço de melhoria** a partir do fim da Fase 1.
 
@@ -1060,7 +1167,7 @@ Seção 13.7: **≈ 2 a 7 h por mês** e **≈ 40 a 110 h pontuais**. A R$ 90/h 
 |---|---|---|---|
 | 1 | MVP municipal com 5 UFs inteiras, capitais e todos acima de 100 mil (2.853) | **[Dono]** Municipal fácil + sob demanda; os 338 como ordem da fila | Custo de coletores; decisão do dono |
 | 2 | Estadual não tratado | **[Dono]** 27 UFs, com expectativa corrigida e custo | Seção 3 |
-| 3 | Tipos de norma todos juntos | Núcleo tributário no lançamento; urbanismo e posturas com os módulos jurídicos | Seção 6 |
+| 3 | Tipos de norma todos juntos | Núcleo tributário no lançamento; urbanismo e posturas com os pacotes jurídicos | Seção 6 |
 | 4 | Esquema plano por documento | Fichas por dispositivo, versão e evento, com leituras por modelo | Data do fato; rastreio da revisão |
 | 5 | "Status quando detectável" | Eventos, revogação genérica como sinal, anterioridade, certeza por limiar | 22,9% de revogação genérica |
 | 6 | "Modelo forte extrai e padroniza" | Três famílias extraem e revisam; o código consolida | 50% e 20% de acerto quando o modelo consolida; erros correlacionados |
@@ -1072,7 +1179,7 @@ Seção 13.7: **≈ 2 a 7 h por mês** e **≈ 40 a 110 h pontuais**. A R$ 90/h 
 | 12 | "Nível de confiança" sem efeito | C0 a C4 com rótulos, textos e lugar na resposta | Seção 8 |
 | 13 | "Ativar DGM completo" | Laço inspirado na DGM, offline, contra ouro escondido | DGM real custa US$ 22 mil por rodada e burla a métrica |
 | 14 | Robots e rate limit | Direito autoral, LGPD, termos, LAI e convênio; **[Dono]** CAPTCHA como reserva | Seções 10.2 e 17 |
-| 15 | Sem módulos | **[Dono]** Módulos de base legal | Seção 6 |
+| 15 | Sem divisão da base | **[Dono]** 30 blocos construídos uma vez, vendidos em pacotes que se sobrepõem, com matriz inteiro/fatia | Seção 6 |
 | 16 | Custo qualitativo | Custo por camada com a revisão múltipla e horas humanas | Seção 21 |
 
 ---
@@ -1082,7 +1189,7 @@ Seção 13.7: **≈ 2 a 7 h por mês** e **≈ 40 a 110 h pontuais**. A R$ 90/h 
 ### 24.1 Decisões
 
 **Primeira rodada:**
-1. **Primeiros clientes:** contábil e BPO; advocacia em módulos, do mais comum ao menos comum (seção 6).
+1. **Primeiros clientes:** contábil e BPO; advocacia depois, do mais comum ao menos comum (seção 6).
 2. **Escopo local:** estadual dos 27 entes; municipal só o fácil, o resto sob demanda e pelo feedback.
 3. **C2:** pode ser lançado, rotulado (seção 8).
 4. **Janela:** 10 anos no federal; 5 anos no estadual e no municipal.
@@ -1094,6 +1201,10 @@ Seção 13.7: **≈ 2 a 7 h por mês** e **≈ 40 a 110 h pontuais**. A R$ 90/h 
 8. **Pessoa só onde não tem jeito:** CAPTCHA, papelada de LAI e convênios, reunião da parceria (seção 13.7).
 9. **Leis Ltda** como trilha adicional, com reunião que pode chegar a parceria societária; opcional (seção 18).
 
+**Terceira rodada:**
+10. **Rótulos:** os textos C0 a C4 da seção 8.2 estão aprovados.
+11. **Divisão da base:** os blocos estão aprovados, com sobreposição entre áreas e sem divisão binária. A base é feita de blocos construídos uma vez e vendida em pacotes que compartilham blocos (seção 6).
+
 **Resolvidas por consequência destas decisões:**
 - quem faz as horas de revisão: não há revisão humana; sobram 2 a 7 h por mês de tarefas administrativas;
 - se reportes podem corrigir a base sem pessoa: sim, desde que confirmados na publicação oficial pela revisão da IA;
@@ -1102,8 +1213,8 @@ Seção 13.7: **≈ 2 a 7 h por mês** e **≈ 40 a 110 h pontuais**. A R$ 90/h 
 ### 24.2 O que segue aberto
 
 1. **Municípios dos pilotos.** Virão pela demanda. Até lá, as cinco capitais de RS, SC, PR, SP e MG servem de primeiros C3 municipais.
-2. **Aprovar a divisão em módulos** do contábil (T1, T2, T3, D1, S1, K1) e do BPO (B1), e os complementos jurídicos baratos antes da onda 4 (seções 6.2 e 6.4).
-3. **Aprovar os textos dos rótulos** C0 a C4 (seção 8.2).
+2. **Conferir a matriz bloco × pacote** (seção 6.4). O modelo de blocos com sobreposição está decidido; a atribuição de cada bloco como inteiro ou fatia em cada pacote é proposta deste plano.
+3. **Complementos jurídicos antecipados.** Vender Tributário, Empresarial e a parte material do Trabalhista e do Previdenciário antes das suas ondas, já que os blocos existem (seção 6.7).
 
 ---
 
