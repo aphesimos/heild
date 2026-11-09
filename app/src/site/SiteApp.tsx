@@ -89,7 +89,12 @@ export function SiteApp() {
     raiz.style.setProperty('--onda-y', `${y}px`)
     raiz.style.setProperty('--onda-r', `${raio}px`)
     raiz.dataset.ondaPara = novo
-    doc.startViewTransition(() => flushSync(() => setModo(novo)))
+    // A captura da transição não leva o desfoque do cabeçalho: durante a onda ele fica opaco, e a página não aparece nítida por trás.
+    raiz.classList.add('trocando-tema')
+    const vt = doc.startViewTransition(() => flushSync(() => setModo(novo))) as { finished?: Promise<void> } | undefined
+    const tirar = () => raiz.classList.remove('trocando-tema')
+    if (vt?.finished) vt.finished.then(tirar, tirar)
+    else window.setTimeout(tirar, 1100)
   }
   const [rota, setRota] = useState<Rota>(rotaDaHash)
   useEffect(() => {
@@ -215,7 +220,7 @@ function Navegacao({ rota, modo, onTrocarModo }: { rota: Rota; modo: ModoCor; on
   const soltar = () => (fechar.current = window.setTimeout(() => setSolucoes(false), 160))
   const link = 'sublinha text-muted-foreground hover:text-foreground cursor-pointer'
   return (
-    <header className={cn('cabecalho fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-300', rolou || menu ? 'border-border bg-background/85 backdrop-blur-xl' : 'border-transparent')}>
+    <header className={cn('cabecalho fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-300', menu ? 'border-border bg-background' : rolou ? 'border-border bg-background/85 backdrop-blur-xl' : 'border-transparent')}>
       <Wrap className="flex h-16 items-center gap-8">
         <a href="#" aria-label="Heild, página inicial" className="shrink-0" onClick={() => ir('inicio')}>
           <Logo largura={92} />

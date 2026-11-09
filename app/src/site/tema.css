@@ -95,3 +95,9 @@ html.tema-esmaece * {
     transition: none;
   }
 }
+
+/* Durante a onda de troca de tema, o cabeçalho fica opaco: a captura da transição não leva o desfoque (backdrop-filter). */
+html.trocando-tema .cabecalho {
+  background-color: var(--background);
+  backdrop-filter: none;
+}
