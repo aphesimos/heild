@@ -52,7 +52,9 @@ cite { font-style: italic; }
 .topo-logo heild-logo { width: 88px; }
 .topo.sem-logo .topo-logo { opacity: 0; transform: translateY(-6px); pointer-events: none; }
 .topo-titulo { font-size: 13px; line-height: 16px; color: var(--texto-suave); }
-.topo-acoes { margin-left: auto; display: flex; gap: 8px; }
+.topo-acoes { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+/* o botão de tema é o do site (../comum/tema.css); como lá, no canto ele avança 8 px para o ícone alinhar com a margem */
+.topo-acoes .botao-tema { margin-right: -8px; }
 .botao-icone {
   display: inline-flex; align-items: center; gap: 6px; height: 36px; min-width: 36px; padding: 0 10px;
   border: 0; border-radius: var(--raio-pilula); background: var(--fundo); color: var(--texto);
@@ -122,7 +124,7 @@ html.no-escuro .cursor { color: var(--areia-100); }
    passar por cima do campo que fica */
 .palco { --saida: 0; }
 .palco > .texto, .palco > .abre, .palco > .verbete, .palco > .beat, .palco > .medidas, .palco > .legenda-respiro,
-.palco > .dica-grade, .palco > .dica-luz, .palco > .citacao, .palco > .eco, .palco > .voltar {
+.palco > .dica-grade, .palco > .dica-luz, .palco > .citacao, .palco > .eco, .palco > .voltar, .palco > .ir-inicio {
   filter: opacity(calc(1 - var(--saida)));
 }
 .parado .palco > * { filter: none !important; }
@@ -319,6 +321,9 @@ html.no-escuro .cursor { color: var(--areia-100); }
 .citacao-fim p { font-size: clamp(24px, min(2.6vw, 4.4vh), 40px); }
 .eco { margin-top: 3vh; color: var(--texto-suave); --vis: clamp(0, calc((var(--p) - 0.46) * 12), 1); opacity: var(--vis); }
 .voltar { margin-top: 4vh; display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: var(--raio-pilula); background: var(--primaria); color: var(--texto-sobre-primaria); text-decoration: none; font-size: 14px; font-weight: 500; --vis: clamp(0, calc((var(--p) - 0.5) * 12), 1); opacity: var(--vis); }
+/* no site (build.py --site), a saída para a página inicial, discreta, embaixo do botão */
+.ir-inicio { margin-top: 2vh; padding: 10px 4px; font-size: 14px; line-height: 20px; color: var(--texto-suave); text-decoration: none; --vis: clamp(0, calc((var(--p) - 0.5) * 12), 1); opacity: var(--vis); }
+.ir-inicio:hover { color: var(--texto); text-decoration: underline; }
 .rodape { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 var(--margem) 28px; display: grid; gap: 6px; font-size: 12px; line-height: 16px; color: var(--texto-suave); max-width: 980px; }
 .rodape cite, .rodape i { font-style: italic; }
 
@@ -393,7 +398,7 @@ html.no-escuro .cursor { color: var(--areia-100); }
 .parado .figura canvas.estatico { display: block; }
 .parado .cena, .parado .beat, .parado .abre, .parado .verbete, .parado .medidas > div, .parado .texto-respiro,
 .parado .cota-grade, .parado .legenda-respiro, .parado .logo-caixa, .parado .logo-caixa-fim, .parado .citacao-fim,
-.parado .eco, .parado .voltar, .parado .dica-grade, .parado .dica-luz, .parado .texto-pilula { opacity: 1 !important; transform: none !important; }
+.parado .eco, .parado .voltar, .parado .ir-inicio, .parado .dica-grade, .parado .dica-luz, .parado .texto-pilula { opacity: 1 !important; transform: none !important; }
 .parado .logo-caixa heild-logo, .parado .logo-caixa-fim heild-logo { clip-path: none; }
 .parado .cota-grade { opacity: 1 !important; }
 .parado .cota-pilula, .parado .dica-rolar, .parado .respiros, .parado .fases, .parado .dica-grade, .parado .dica-luz { display: none; }

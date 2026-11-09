@@ -1,8 +1,11 @@
 /*
  * Diretrizes da marca Heild — o conteúdo vivo da página.
  *
- * LINK_FILOSOFIA: o endereço da outra aba, a peça sobre a ideia da marca ("o inteiro"). Preencha ao
- * publicar; com '#', os links aparecem mas não levam a lugar nenhum.
+ * LINK_FILOSOFIA: o endereço da outra aba, a peça sobre a ideia da marca ("o inteiro"), na versão publicada
+ * no claude.ai. Com '#', os links aparecem mas não levam a lugar nenhum.
+ * window.HEILD_LINKS, quando existe, vale antes: é o que o build põe nas páginas do site (build.py --site),
+ * com endereços relativos: { inicio: './', diretrizes: 'diretrizes.html', inteiro: 'inteiro.html' }. Com ele,
+ * a logo do topo leva à página inicial do site.
  */
 var LINK_FILOSOFIA = 'https://claude.ai/artifact/Ac3gktJEVzTg6oL1AuTMPH';
 
@@ -17,11 +20,18 @@ var LINK_FILOSOFIA = 'https://claude.ai/artifact/Ac3gktJEVzTg6oL1AuTMPH';
   function num(v, casas) { return v.toLocaleString('pt-BR', { minimumFractionDigits: casas || 0, maximumFractionDigits: casas || 0 }); }
   var P = window.Heild && window.Heild.paths;
 
-  /* ---------- a outra aba ---------- */
+  /* ---------- a outra aba e, no site, a página inicial ---------- */
+  var LINKS = window.HEILD_LINKS || {};
+  var filosofia = LINKS.inteiro || LINK_FILOSOFIA;
   qa('[data-link-filosofia]').forEach(function (a) {
-    a.setAttribute('href', LINK_FILOSOFIA);
-    a.addEventListener('click', function (e) { if (LINK_FILOSOFIA === '#') e.preventDefault(); });
+    a.setAttribute('href', filosofia);
+    a.addEventListener('click', function (e) { if (filosofia === '#') e.preventDefault(); });
   });
+  if (LINKS.inicio) {
+    var logoTopo = q('.topo-logo');
+    if (logoTopo) { logoTopo.setAttribute('href', LINKS.inicio); logoTopo.setAttribute('aria-label', 'Heild, página inicial'); }
+    qa('[data-link-inicio]').forEach(function (a) { a.setAttribute('href', LINKS.inicio); a.hidden = false; });
+  }
 
   /* ---------- os traçados oficiais onde a página desenha o HE (ícone da aba, barra do produto) ---------- */
   if (P) qa('path[data-traco="HE"]').forEach(function (p) { p.setAttribute('d', P.HE); });

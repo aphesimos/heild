@@ -22,8 +22,16 @@
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
   /* ---------- o que vale nos dois modos ---------- */
-  var linkDir = (typeof LINK_DIRETRIZES === 'string' && LINK_DIRETRIZES) ? LINK_DIRETRIZES : '#';
-  qa('.link-diretrizes').forEach(function (a) { a.href = linkDir; if (linkDir === '#') { a.removeAttribute('target'); a.setAttribute('aria-disabled', 'true'); } });
+  // no site, window.HEILD_LINKS (do build.py --site) vale antes da constante: as páginas são do mesmo site e
+  // abrem na mesma aba, e o índice ganha a página inicial; sem ele, valem os endereços do claude.ai
+  var LINKS = window.HEILD_LINKS || {};
+  var linkDir = LINKS.diretrizes || ((typeof LINK_DIRETRIZES === 'string' && LINK_DIRETRIZES) ? LINK_DIRETRIZES : '#');
+  qa('.link-diretrizes').forEach(function (a) {
+    a.href = linkDir;
+    if (linkDir === '#') { a.removeAttribute('target'); a.setAttribute('aria-disabled', 'true'); }
+    else if (LINKS.diretrizes) a.removeAttribute('target');
+  });
+  if (LINKS.inicio) qa('.link-inicio').forEach(function (a) { a.setAttribute('href', LINKS.inicio); a.hidden = false; });
   // a referência de cada glosa vira um número discreto, que leva à fonte
   qa('.glosa[data-fonte]').forEach(function (g) {
     var n = g.getAttribute('data-fonte'), sup = document.createElement('sup'), a = document.createElement('a');

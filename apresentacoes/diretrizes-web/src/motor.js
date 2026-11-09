@@ -17,7 +17,6 @@
   var G = window.Genealogia;
   var raiz = document.documentElement;
   var RMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var DMQ = window.matchMedia('(prefers-color-scheme: dark)');
   var parado = RMQ.matches;
   var TIMELINE = !!(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'));
   var FINO = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -590,24 +589,21 @@
   }
 
   /* ---------- tema, som, toque ---------- */
-  function escuroAgora() { var t = raiz.getAttribute('data-theme'); return t ? t === 'dark' : DMQ.matches; }
   function aoTrocarTema() {
     lerCores(); colorirOrbs();
     if (campo) { campo.forcar = true; campo.assentado = false; }
     if (parado) desenharEstaticos();
   }
   function ligarControles() {
-    q('[data-acao="tema"]').addEventListener('click', function () {
-      raiz.setAttribute('data-theme', escuroAgora() ? 'light' : 'dark');
-      requestAnimationFrame(aoTrocarTema);
-    });
+    // o botão e a onda são os do site (../comum/tema.js), que avisa a cada troca, também quando o sistema
+    // muda: o aviso chega dentro da transição, e as cores relidas aqui já entram no quadro que a onda revela
+    document.addEventListener('heild-tema', aoTrocarTema);
     var bs = q('[data-acao="som"]');
     bs.addEventListener('click', function () {
       var on = G.Som.alternar();
       bs.setAttribute('aria-pressed', on ? 'true' : 'false'); bs.setAttribute('aria-label', on ? 'Desligar o som' : 'Ligar o som');
       if (on) G.Som.nota(4, 0.6);
     });
-    if (DMQ.addEventListener) DMQ.addEventListener('change', function () { requestAnimationFrame(aoTrocarTema); });
     var mover = function (e) { ponteiro.x = e.clientX; ponteiro.y = e.clientY; ponteiro.t = performance.now(); ponteiro.toque = e.pointerType !== 'mouse'; if (campo) campo.assentado = false; };
     window.addEventListener('pointermove', mover, { passive: true });
     window.addEventListener('pointerdown', mover, { passive: true });

@@ -7,7 +7,9 @@
 /*{{FONTES}}*/
 /*{{ARQ:../comum/tokens.css}}*/
 /*{{ARQ:src/estilo.css}}*/
+/*{{ARQ:../comum/tema.css}}*/
 </style>
+<script>/*{{ARQ:../comum/tema.js}}*/</script>
 
 <!--
   Diretrizes da marca Heild, numa página de rolagem para o site.
@@ -31,9 +33,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path class="onda-1" d="M8 9.5v5"/><path class="onda-2" d="M12 7v10"/><path class="onda-3" d="M16 9.5v5"/></svg>
       <span class="botao-rotulo">Som</span>
     </button>
-    <button type="button" class="botao-icone" data-acao="tema" aria-label="Trocar entre claro e escuro">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/><path d="M12 4.5a7.5 7.5 0 0 1 0 15z" fill="currentColor"/></svg>
-    </button>
+    <!-- o botão de tema do site: o desenho, a onda e a escolha guardada vêm de ../comum/tema.js e tema.css -->
+    <button type="button" class="botao-tema" data-tema-botao></button>
   </div>
 </header>
 
@@ -540,6 +541,7 @@
       <h2 id="t-fecho" class="fecho-linha">O inteiro: todos os sistemas da empresa em um só lugar.</h2>
       <p class="eco">A ideia da marca, em outra página: <a class="link-filosofia" data-link-filosofia href="#">o inteiro</a>.</p>
       <a class="voltar" href="#nome">Voltar ao começo</a>
+      <a class="ir-inicio" data-link-inicio href="./" hidden>Página inicial da Heild</a>
     </div>
     <footer class="rodape">
       <p>Diretrizes da marca Heild. Fonte da verdade: o design system (branch design-system), os tokens e o componente &lt;heild-logo&gt;. Em PP Neue Montreal.</p>

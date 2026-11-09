@@ -13,7 +13,8 @@
   Do inteiro: uma experiência filosófica da marca Heild, em câmaras (fólios), não em seções.
   Cada fólio é um estado com um gesto que se descobre (raspar, aproximar, girar, parar, segurar, tocar).
   As glosas crescem nas margens com o tempo de leitura; as últimas são pistas; depois de um tempo aparece
-  "seguir". O índice (no alto, à direita) é a saída: leva a qualquer fólio, às fontes e às diretrizes.
+  "seguir". O índice (no alto, à direita) é a saída: leva a qualquer fólio, às fontes e às diretrizes
+  (e, no site, à página inicial).
   O mundo começa escuro (a obra em negro) e amanhece no fólio iv (a obra em branco).
   Sem movimento reduzido, tudo roda no motor (src/motor.js); com movimento reduzido, ou sem JavaScript,
   a página é o códice inteiro, parado e legível, com as mesmas palavras e as mesmas glosas.
@@ -229,7 +230,7 @@
         <p class="havamal" lang="non">Heill sá, er kvað,<br>heill sá, er kann,<br>njóti sá, er nam,<br>heilir, þeirs hlýddu.</p>
         <p class="havamal-pt">Salve quem falou, salve quem sabe, proveito a quem aprendeu, salve os que ouviram.</p>
         <p class="explicit">Aqui acaba o livro do inteiro. <i lang="non">Ves heill</i>: sê inteiro.</p>
-        <p class="saidas"><a href="#fontes" data-acao="fontes">fontes</a> <a class="link-diretrizes" href="#" target="_blank" rel="noopener">diretrizes da marca</a> <a href="#limiar" data-acao="recomecar">recomeçar</a></p>
+        <p class="saidas"><a href="#fontes" data-acao="fontes">fontes</a> <a class="link-diretrizes" href="#" target="_blank" rel="noopener">diretrizes da marca</a> <a class="link-inicio" href="./" aria-label="Heild, página inicial do site" hidden>Heild</a> <a href="#limiar" data-acao="recomecar">recomeçar</a></p>
       </div>
     </div>
     <aside class="margem esq">
@@ -264,6 +265,7 @@
       <a href="#fontes" data-acao="fontes">fontes</a>
       <a href="#codice" data-acao="codice">ler como códice</a>
       <a class="link-diretrizes" href="#" target="_blank" rel="noopener">diretrizes da marca</a>
+      <a class="link-inicio" href="./" aria-label="Heild, página inicial do site" hidden>Heild</a>
     </p>
     <button type="button" class="botao-texto fechar" data-acao="fechar">fechar</button>
   </div>
@@ -310,7 +312,8 @@
 </section>
 
 <script>
-/* O link para as diretrizes da marca (a outra aba). Preenchido ao publicar. */
+/* O link para as diretrizes da marca (a outra aba), na versão publicada no claude.ai. No site, o build
+   (build.py --site) define window.HEILD_LINKS, que vale antes: diretrizes e página inicial, relativos. */
 var LINK_DIRETRIZES = 'https://claude.ai/artifact/E79TcfZE3uCFk4z9noTPXE';
 </script>
 <script>/*{{HEILD_LOGO}}*/</script>
