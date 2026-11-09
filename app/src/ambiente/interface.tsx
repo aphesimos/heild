@@ -171,7 +171,7 @@ export function CentralAvisos({ onPreferencias }: { onPreferencias?: () => void 
             ))}
           </div>
         </div>
-        <ul className="max-h-[60vh] overflow-y-auto py-1">
+        <ul className="area-rolagem-dupla max-h-[60vh] overflow-y-auto py-1">
           {lista.length === 0 && <li className="text-muted-foreground px-4 py-8 text-center text-sm">Nada por aqui.</li>}
           {lista.map((a) => {
             const lido = a.lidoPor.includes(usuario.id)

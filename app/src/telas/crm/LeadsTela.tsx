@@ -163,7 +163,7 @@ function DetalheLead({ lead: l, onMover, onAbrirConversa }: { lead: Lead; onMove
           {etapa.rotulo} · {l.origem} · desde {l.desde.replace('há ', 'há ')}
         </SheetDescription>
       </SheetHeader>
-      <div className="flex flex-col gap-4 overflow-y-auto p-4 text-sm">
+      <div className="area-rolagem-dupla flex flex-col gap-4 overflow-y-auto p-4 text-sm">
         <ol className="flex gap-1" aria-label="Etapas">
           {etapasLead
             .filter((e) => e.id !== 'perdido')

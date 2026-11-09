@@ -119,8 +119,8 @@ export function ArquivosTela({ aba, inicial, onConfigurar }: { aba: 'pastas' | '
           </Caixa>
         ) : (
           <div className="grid gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
-            <Caixa className="max-h-[70vh] overflow-y-auto">
-              <ul className="flex flex-col text-sm">
+            <Caixa className="max-h-[70vh] overflow-hidden">
+              <ul className="area-rolagem-dupla -mx-1 flex min-h-0 flex-col overflow-y-auto px-1 text-sm">
                 {raizes.map((r) => {
                   const aberto = abertos.includes(r.id)
                   return (

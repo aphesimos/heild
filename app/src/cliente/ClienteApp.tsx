@@ -129,7 +129,7 @@ function LoginApp({ onEntrar }: { onEntrar: (nome: string) => void }) {
   const [codigo, setCodigo] = useState('')
   const alvo = pessoas.find((x) => x.empresas.some((e) => e.contato.whatsapp === contato || e.contato.email === contato))
   return (
-    <div className="flex h-full flex-col gap-5 overflow-y-auto px-6 py-10 [&>*]:shrink-0">
+    <div className="area-rolagem-dupla flex h-full flex-col gap-5 overflow-y-auto px-6 py-10 [&>*]:shrink-0">
       <div className="-ml-2 flex items-center gap-2.5">
         {ehHeild(tema) ? <Marca /> : <SiglaMarca />}
         <span>
@@ -283,25 +283,27 @@ function AppDaPessoa({ pessoa, onSair }: { pessoa: PessoaApp; onSair: () => void
         </div>
       )}
       {sino && (
-        <div className="bg-surface shadow-painel absolute top-14 right-3 left-3 z-20 flex max-h-[60%] flex-col overflow-y-auto rounded-[16px] p-2">
-          <p className="px-2 py-1 text-sm font-medium">Do escritório</p>
-          {recebidas.length === 0 && <p className="text-muted-foreground px-2 py-4 text-sm">Nada novo.</p>}
-          {recebidas.map((m) => (
-            <button
-              key={m.id}
-              type="button"
-              onClick={() => {
-                setSino(false)
-                ctx.abrirConversa(m.setor)
-              }}
-              className="hover:bg-sunken/60 cursor-pointer rounded-[12px] px-2 py-2 text-left text-sm"
-            >
-              <span className="text-muted-foreground block text-[11px]">
-                {nomeSetor[m.setor]} · {m.hora}
-              </span>
-              <span className="line-clamp-2">{m.texto}</span>
-            </button>
-          ))}
+        <div className="bg-surface shadow-painel absolute top-14 right-3 left-3 z-20 flex max-h-[60%] flex-col overflow-hidden rounded-[16px]">
+          <div className="area-rolagem-dupla flex min-h-0 flex-col overflow-y-auto p-2">
+            <p className="px-2 py-1 text-sm font-medium">Do escritório</p>
+            {recebidas.length === 0 && <p className="text-muted-foreground px-2 py-4 text-sm">Nada novo.</p>}
+            {recebidas.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => {
+                  setSino(false)
+                  ctx.abrirConversa(m.setor)
+                }}
+                className="hover:bg-sunken/60 cursor-pointer rounded-[12px] px-2 py-2 text-left text-sm"
+              >
+                <span className="text-muted-foreground block text-[11px]">
+                  {nomeSetor[m.setor]} · {m.hora}
+                </span>
+                <span className="line-clamp-2">{m.texto}</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

@@ -212,10 +212,10 @@ export function VisualizadorDocumento({ d, onFechar, acoes }: { d: Documento; on
             ))}
           </nav>
           <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_22rem]">
-            <div className="bg-sunken/60 min-h-0 overflow-y-auto p-4 sm:p-8">
+            <div className="bg-sunken/60 area-rolagem-dupla min-h-0 overflow-y-auto p-4 sm:p-8">
               <PaginaDocumento d={d} />
             </div>
-            <aside className="flex min-h-0 flex-col gap-4 overflow-y-auto border-t p-4 lg:border-t-0 lg:border-l">
+            <aside className="area-rolagem-dupla flex min-h-0 flex-col gap-4 overflow-y-auto border-t p-4 lg:border-t-0 lg:border-l">
               <dl className="flex flex-col gap-2">
                 <Linha rotulo="Tipo">{rotuloTipoDoc[d.tipo]}</Linha>
                 {d.competencia && <Linha rotulo="Competência">{d.competencia}</Linha>}

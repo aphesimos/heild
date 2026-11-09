@@ -55,7 +55,7 @@ export function Widget({ def, tamanho, editando, arrastando, onRemover, onTamanh
           {!editando && def.acao}
           {editando && <ArrowsOutCardinalIcon className="text-muted-foreground size-4" aria-hidden />}
         </header>
-        <div className={cn('@container min-h-0 flex-1 overflow-auto', editando && 'pointer-events-none')}>{def.conteudo(tamanho)}</div>
+        <div className={cn('area-rolagem-dupla @container min-h-0 flex-1 overflow-auto', editando && 'pointer-events-none')}>{def.conteudo(tamanho)}</div>
 
         {editando && (
           <>

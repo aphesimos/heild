@@ -67,7 +67,7 @@ export function SeletorCliente({ clientes, selecionado, onSelecionar, className 
             className="placeholder:text-muted-foreground h-10 w-full bg-transparent text-sm outline-none"
           />
         </div>
-        <ul role="listbox" className="max-h-72 overflow-y-auto p-1">
+        <ul role="listbox" className="area-rolagem-dupla max-h-72 overflow-y-auto p-1">
           {!busca && (
             <Opcao ativo={selecionado === null} onClick={() => escolher(null)} titulo="Todos" descricao="Visão de carteira" icone={<BriefcaseIcon />} />
           )}

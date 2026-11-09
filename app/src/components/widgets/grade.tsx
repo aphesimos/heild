@@ -192,7 +192,7 @@ export function GradeWidgets({ chave, catalogo, padrao, titulo, className }: Pro
             <SheetTitle>Adicionar widget</SheetTitle>
             <SheetDescription>Os que estão escondidos nesta tela. Entram no fim; arraste para onde quiser.</SheetDescription>
           </SheetHeader>
-          <ul className="flex flex-col gap-2 overflow-y-auto p-4">
+          <ul className="area-rolagem-dupla flex flex-col gap-2 overflow-y-auto p-4">
             {ocultos.map((d) => {
               const Icone = d.icone
               return (

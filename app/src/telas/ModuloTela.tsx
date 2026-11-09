@@ -86,7 +86,7 @@ export function GavetaChat({ nomeUsuario, conversaGeral, integrantes, onAbrirInt
         </SheetHeader>
         <div className="flex min-h-0 flex-1">
           <div className="flex min-w-0 flex-1 flex-col">
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="area-rolagem-dupla flex-1 overflow-y-auto p-4">
               <ListaMensagens mensagens={mensagens} acoes={{ onAbrirIntegrante }} />
             </div>
             <CampoChat className="p-3" onEnviar={enviar} desabilitado={pensando} />
