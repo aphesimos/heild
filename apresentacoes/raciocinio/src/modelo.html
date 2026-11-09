@@ -1,0 +1,54 @@
+<meta charset="utf-8">
+<title>O raciocínio do Consultor · Heild</title>
+<meta name="description" content="Como o Consultor da Heild responde sobre a lei: a norma certa, na redação que valia na data do fato, com o trecho citado e conferido, e por que isso é diferente de uma IA comum.">
+<style>
+/*{{FONTES}}*/
+/*{{ARQ:../comum/tokens.css}}*/
+/*{{ARQ:../produto/src/estilo.css}}*/
+/*{{ARQ:src/estilo.css}}*/
+</style>
+
+<div class="janela">
+  <main class="palco">
+    <div class="moldura" aria-hidden="true">
+      <div class="rodape"><heild-logo label="Heild"></heild-logo><span class="onde"></span></div>
+      <div class="progresso"><i></i></div>
+    </div>
+  </main>
+</div>
+
+<nav class="controles" aria-label="Controles da apresentação">
+  <button type="button" data-acao="voltar" aria-label="Voltar (seta para a esquerda)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button type="button" data-acao="avancar" aria-label="Avançar (seta para a direita)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button type="button" data-acao="versoes" aria-haspopup="true" aria-expanded="false" aria-label="Escolher a versão (V)"><span class="versao-atual">Completa</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9.5l4-4 4 4M8 14.5l4 4 4-4"/></svg></button>
+  <button type="button" data-acao="geral" aria-label="Visão geral (O)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></button>
+  <button type="button" data-acao="notas" aria-label="Notas (N)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M5 6.5h14M5 11.5h14M5 16.5h9"/></svg></button>
+  <button type="button" data-acao="tema" aria-label="Trocar entre claro e escuro (T)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
+  <button type="button" data-acao="cheia" aria-label="Tela cheia (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</nav>
+
+<div class="menu-versoes" role="menu" hidden></div>
+
+<section class="visao-geral" aria-label="Visão geral dos slides" hidden>
+  <div class="vg-topo"><p class="titulo-pagina vg-titulo"></p><button type="button" class="botao botao--fantasma vg-fechar">Fechar</button></div>
+  <ol></ol>
+</section>
+
+<div class="notas" role="note" hidden></div>
+<div class="ir-para" hidden></div>
+<p class="dica">→ avança · O visão geral · V versão · T claro e escuro · N notas · F tela cheia</p>
+
+<script>/*{{HEILD_LOGO}}*/</script>
+<script>/*{{ORB_AVATAR}}*/</script>
+<script>/*{{ARQ:../produto/src/dados.js}}*/</script>
+<script>/*{{ARQ:../produto/src/slides.js}}*/</script>
+<script>/*{{ARQ:src/dados.js}}*/</script>
+<script>/*{{ARQ:src/comum.js}}*/</script>
+<script>/*{{ARQ:src/cenas-problema.js}}*/</script>
+<script>/*{{ARQ:src/cenas-base.js}}*/</script>
+<script>/*{{ARQ:src/cenas-cascata.js}}*/</script>
+<script>/*{{ARQ:src/cenas-confianca.js}}*/</script>
+<script>/*{{ARQ:src/cenas-municipal.js}}*/</script>
+<script>/*{{ARQ:src/cenas-melhoria.js}}*/</script>
+<script>/*{{ARQ:../produto/src/motor.js}}*/</script>
+<script>/*{{ARQ:src/depois.js}}*/</script>
