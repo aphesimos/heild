@@ -769,7 +769,6 @@ html:has(.barra-rolagem)::-webkit-scrollbar {
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
-  scroll-snap-type: x proximity;
   border-radius: 9999px;
   background: var(--sunken);
   box-shadow: var(--inset-shadow-trilho);
@@ -782,7 +781,6 @@ html:has(.barra-rolagem)::-webkit-scrollbar {
 }
 .seletor-movel [role='tab'] {
   flex-shrink: 0;
-  scroll-snap-align: start;
   display: inline-flex;
   align-items: center;
   gap: 6px;
