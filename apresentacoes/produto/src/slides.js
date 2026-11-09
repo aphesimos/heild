@@ -106,9 +106,9 @@
   /* ---------------- nome ---------------- */
   T.nome = {
     html: function () {
-      return '<div class="dividido">' + cab({ titulo: 'Heild quer dizer o inteiro.', frase: 'Do nórdico antigo e do islandês: o todo, sem partes separadas. É o que o sistema faz com as ferramentas de uma empresa.' }) +
+      return '<div class="dividido">' + cab({ titulo: 'Heild quer dizer o inteiro.', frase: 'Do islandês: o todo, sem partes separadas, com raiz no nórdico antigo heill, inteiro. É o que o sistema faz com as ferramentas de uma empresa.' }) +
         '<div class="visual"><div class="definicao" data-e="dir" style="--d:300ms">' +
-        '<div class="verbete">heild</div><p class="rotulo">nórdico antigo e islandês</p>' +
+        '<div class="verbete">heild</div><p class="rotulo">islandês · raiz no nórdico antigo heill</p>' +
         '<ol class="acepcoes"><li><span>1</span><span>o inteiro</span></li><li><span>2</span><span>o todo, sem partes separadas</span></li></ol>' +
         '<heild-logo label="Heild" style="margin-top:28px" tabindex="0" role="button" aria-label="Tocar a forma centralizar"></heild-logo>' +
         '<p class="rotulo">Na forma centralizar, a grade de nove pontos volta a ser uma peça só.</p></div></div></div>';

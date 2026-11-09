@@ -36,11 +36,11 @@
   var SOLTAS = [[-150, -40, -9], [-60, 52, 6], [0, -64, -4], [70, 46, 8], [160, -22, -6]];
   S.push({
     id: 'nome', capitulo: 'Abertura', curto: 'O nome', grade: 'direita',
-    notas: 'Heild vem do nórdico antigo e do islandês: o inteiro, o todo sem partes separadas. As letras soltas se juntam numa palavra só, que é o que o sistema faz com as ferramentas da empresa.',
+    notas: 'Heild vem do islandês: o inteiro, o todo sem partes separadas, com raiz no nórdico antigo heill. As letras soltas se juntam numa palavra só, que é o que o sistema faz com as ferramentas da empresa.',
     html: function () {
       var letras = 'heild'.split('').map(function (c, i) { var s = SOLTAS[i]; return '<span style="--dx:' + s[0] + 'px;--dy:' + s[1] + 'px;--r:' + s[2] + 'deg;--k:' + i + '">' + c + '</span>'; }).join('');
       return '<div class="nome-grade"><p class="verbete" aria-label="heild" data-e="fade" style="--d:200ms"><span class="letras" aria-hidden="true">' + letras + '</span></p>' +
-        '<div class="definicao" data-e style="--d:500ms"><p class="rotulo">nórdico antigo e islandês</p>' +
+        '<div class="definicao" data-e style="--d:500ms"><p class="rotulo">islandês · raiz no nórdico antigo heill</p>' +
         '<ol class="acepcoes"><li><span>1</span><span>o inteiro</span></li><li><span>2</span><span>o todo, sem partes separadas</span></li></ol>' +
         '<p class="corpo-grande suave">É o que o sistema faz com as ferramentas de uma empresa: Painel, CRM, timesheet, financeiro, arquivos e app do cliente, num produto só.</p></div></div>';
     },
