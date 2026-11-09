@@ -201,7 +201,9 @@
 .s-regras .quatro .d { grid-column: 2; }
 .s-regras .quatro li .n { position: relative; }
 .s-regras .quatro li.ativa .n::after { content: ""; position: absolute; left: -2px; top: 30px; width: 6px; height: 6px; border-radius: 50%; background: var(--destaque); }
-.retrato .s-regras .palco-regras { transform: scale(0.72); }
+.retrato .s-regras .palco-regras { transform: scale(0.6); }
+.retrato .s-regras .guia-limite { left: -40px; right: -40px; }
+.retrato .s-regras .guia-limite span { right: 40px; bottom: auto; top: -24px; }
 
 /* 10. os tempos */
 .s-tempos { gap: 18px; }
@@ -782,3 +784,15 @@
 
 .he-marca { display: block; }
 .s-raios .n-menu .at[data-r].foco { outline-offset: 0; }
+
+/* ---------- retrato: ajustes finos ---------- */
+.retrato .s-tempos .fase-t { padding: 0 4px; }
+.retrato .s-tempos .fase-t b { font-size: 11px; }
+.retrato .s-tempos .fase-t small { display: none; }
+.retrato .s-escala .escada { zoom: 0.62; }
+.retrato .s-onde .pergunta-mini { font-size: 18px; line-height: 22px; gap: 8px; }
+/* as camadas: os planos separados flutuam, então ganham a sombra do que flutua */
+.s-camadascor .separado .pl-superficie { box-shadow: var(--sombra-lg); }
+.s-camadascor .separado .pl-campo { box-shadow: var(--sombra-md); }
+.s-camadascor .pl-superficie, .s-camadascor .pl-campo { transition: box-shadow 900ms var(--sai); }
+.retrato .s-tempos .fase-t[data-f="0"] b { font-size: 0; }
