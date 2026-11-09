@@ -1,4 +1,4 @@
-# Apresentação da identidade da Heild
+# Diretrizes da marca Heild
 
 A identidade visual da Heild sozinha, como um livro de marca animado e interativo, num HTML só: a logo modular, o sistema de movimento, a areia, os orbs dos integrantes, a tipografia, a forma, a voz e as aplicações reais (produto, site, app do cliente com marca branca, README). Segue a preferência de claro ou escuro de quem assiste.
 
@@ -24,10 +24,10 @@ No toque, arraste para os lados. Os controles somem com o mouse parado.
 
 ```bash
 git fetch origin design-system prototipo
-python3 apresentacoes/build.py marca
+python3 apresentacoes/build.py diretrizes
 ```
 
-Gera `apresentacoes/dist/heild-marca.html` (fora do git). As fontes e o `<heild-logo>` vêm do branch `design-system`; o `<orb-avatar>`, da cópia do protótipo; as imagens do README, de `assets/readme/`.
+Gera `apresentacoes/dist/heild-diretrizes.html` (fora do git). As fontes e o `<heild-logo>` vêm do branch `design-system`; o `<orb-avatar>`, da cópia do protótipo; as imagens do README, de `assets/readme/`.
 
 ## Arquivos
 
