@@ -764,7 +764,7 @@ html:has(.barra-rolagem)::-webkit-scrollbar {
   width: fit-content;
   max-width: 100%;
   gap: 2px;
-  padding: 3px;
+  padding: 4px;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
@@ -786,8 +786,10 @@ html:has(.barra-rolagem)::-webkit-scrollbar {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 36px;
-  padding-block: 0;
+  /* Altura pelo conteúdo (com um mínimo): o trilho cresce junto e a pílula selecionada nunca é cortada. */
+  height: auto;
+  min-height: 36px;
+  padding-block: 3px;
   padding-inline: 14px;
   font-size: 14px;
   white-space: nowrap;
