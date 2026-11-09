@@ -312,48 +312,93 @@
     prox.ativo = true;
   }
 
-  /* ---------- 4. o respiro: a rolagem leva o <heild-logo> por contração, divisão, pausa e retorno ---------- */
+  /*
+   * ---------- 4. o respiro: o <heild-logo> respira sozinho, e a palavra da fase acompanha a logo ----------
+   * Enquanto o capítulo está preso, a logo toca play() em loop, com os tempos do próprio componente
+   * (contração 160 ms, divisão 1000 ms, a pausa da forma, retorno 900 ms) e 1,1 s de repouso entre um
+   * respiro e outro. A rolagem só escolhe a forma do próximo respiro (nunca corta um no meio).
+   * A palavra lê o estado do componente (_anim, _t0 e _lastL, o afastamento real de HE e LD) a cada quadro:
+   *   contração  começa no repouso, como quem toma ar, e pesa até 900 na contração de verdade;
+   *   divisão    perde peso enquanto as letras da logo se afastam;
+   *   pausa      fina, e respira num leve vaivém de peso no ritmo da pausa;
+   *   retorno    ganha peso enquanto HE e LD voltam.
+   * O espaçamento das letras segue _lastL. A troca de palavra é uma passagem no tempo, com easing: a
+   * seguinte sobe enquanto a anterior sai.
+   */
   var RESPIROS = [
-    { forma: 'centralizar', desc: 'nove pontos que voltam a ser uma peça só' },
-    { forma: 'ia', desc: 'três cópias do I, em leque, que giram' },
-    { forma: 'orbs', desc: 'um orb que se divide como uma célula, em três' }
+    // pausa e afastamento máximo de HE e LD (unidades do viewBox) vêm das formas do componente
+    { forma: 'centralizar', desc: 'nove pontos que voltam a ser uma peça só', pausa: 1900, afasta: 94 },
+    { forma: 'ia', desc: 'três cópias do I, em leque, que giram', pausa: 2000, afasta: 100 },
+    { forma: 'orbs', desc: 'um orb que se divide como uma célula, em três', pausa: 5400, afasta: 232 }
   ];
-  var FASES = [['contracao', 0], ['divisao', 0.14], ['pausa', 0.46], ['retorno', 0.78]];
+  var CONTRAI = 160, DIVIDE = 1000, VOLTA = 900, REPOUSO = 1100, ANTECIPA = 900;
+  var NOMES_FASE = ['contracao', 'divisao', 'pausa', 'retorno'];
   var resp = null;
   function iniciarRespiro() {
     var pal = q('.cap-respiro .palco'); if (!pal) return;
-    resp = { pal: pal, logo: q('.logo-respiro', pal), fases: {}, desc: q('.legenda-respiro .desc', pal), n: q('.legenda-respiro .n', pal), pontos: qa('.respiros li', pal), chave: '', alvo: undefined };
-    qa('.fase', pal).forEach(function (f) {
-      var ls = dividirLetras(f, false), meio = (ls.length - 1) / 2;
-      ls.forEach(function (l, i) { l.style.setProperty('--d', (i - meio).toFixed(2)); });
-      resp.fases[f.getAttribute('data-fase')] = f;
-    });
+    resp = { pal: pal, logo: q('.logo-respiro', pal), fases: {}, pres: {}, dir: {}, desc: q('.legenda-respiro .desc', pal), n: q('.legenda-respiro .n', pal),
+      pontos: qa('.respiros li', pal), tocando: false, proxima: 0, atual: null, faseAntes: '', tAnt: 0 };
+    qa('.fase', pal).forEach(function (f) { var k = f.getAttribute('data-fase'); resp.fases[k] = f; resp.pres[k] = 0; resp.dir[k] = 1; });
   }
-  function quadroRespiro(p, perto) {
+  /* a fase em que a logo está agora, lida do próprio componente */
+  function faseDaLogo(agora) {
+    var l = resp.logo, R = resp.atual;
+    if (l._anim && R && l._anim === R.forma) {
+      var t = agora - l._t0;
+      if (t >= 0 && t < CONTRAI) return { fase: 'contracao', q: 1 };
+      if (t >= CONTRAI && t < DIVIDE) return { fase: 'divisao', q: (t - CONTRAI) / (DIVIDE - CONTRAI) };
+      if (t >= DIVIDE && t < DIVIDE + R.pausa) return { fase: 'pausa', q: (t - DIVIDE) / R.pausa };
+      if (t >= DIVIDE + R.pausa && t < DIVIDE + R.pausa + VOLTA) return { fase: 'retorno', q: (t - DIVIDE - R.pausa) / VOLTA };
+    }
+    // repouso: se outro respiro vem aí, é a contração começando (a logo toma ar)
+    if (resp.zona >= 0 && !resp.tocando && resp.proxima - agora < ANTECIPA) return { fase: 'contracao', q: clamp(1 - (resp.proxima - agora) / ANTECIPA, 0, 1) };
+    return { fase: '', q: 0 };
+  }
+  function quadroRespiro(p, perto, agora) {
     if (!resp) return;
-    var dentro = p > 0.26 && p < 0.97, i = -1, fase = '', qf = 0;
-    if (dentro) {
-      var b = (p - 0.26) / 0.71 * RESPIROS.length; i = Math.min(RESPIROS.length - 1, Math.floor(b)); var lb = b - i;
-      for (var k = FASES.length - 1; k >= 0; k--) if (lb >= FASES[k][1]) { fase = FASES[k][0]; var fim = k + 1 < FASES.length ? FASES[k + 1][1] : 1; qf = (lb - FASES[k][1]) / (fim - FASES[k][1]); break; }
+    var zona = p > 0.26 && p < 0.97 ? Math.min(RESPIROS.length - 1, Math.floor((p - 0.26) / 0.71 * RESPIROS.length)) : -1;
+    if (zona >= 0 && resp.zona < 0 && !resp.tocando) resp.proxima = agora + 700; // ao chegar, toma ar antes do primeiro
+    resp.zona = zona;
+    // o loop: um respiro de cada vez; o seguinte usa a forma da zona em que a rolagem estiver
+    if (perto && zona >= 0 && !resp.tocando && agora >= resp.proxima) {
+      var R = RESPIROS[zona], self = resp;
+      resp.atual = R; resp.tocando = true;
+      var pr = resp.logo.play(R.forma);
+      if (pr && pr.then) pr.then(function () { self.tocando = false; self.proxima = performance.now() + REPOUSO; });
+      resp.n.textContent = String(zona + 1); resp.desc.textContent = R.desc;
+      resp.pontos.forEach(function (li, j) { li.className = j < zona ? 'feito' : j === zona ? 'agora' : ''; });
     }
-    resp.pal.style.setProperty('--q', qf.toFixed(3));
-    var chave = i + ':' + fase;
-    if (chave !== resp.chave) {
-      var antes = resp.chave.split(':')[1];
-      if (antes && resp.fases[antes]) { resp.fases[antes].classList.remove('ativa'); resp.fases[antes].classList.add('saindo'); }
-      Object.keys(resp.fases).forEach(function (k2) { if (k2 !== antes) resp.fases[k2].classList.remove('saindo'); });
-      if (fase && resp.fases[fase]) { resp.fases[fase].classList.remove('saindo'); resp.fases[fase].classList.add('ativa'); }
-      var alvo = fase === 'divisao' || fase === 'pausa' ? RESPIROS[i].forma : null;
-      if (alvo !== resp.alvo && perto) {
-        resp.logo.morph(alvo);
-        if (fase === 'divisao') { G.Som.respiro(true); G.Som.nota(i * 2 + 2, 0.7); }
-        if (fase === 'retorno') G.Som.respiro(false);
-        resp.alvo = alvo;
-      }
-      if (i >= 0) { resp.n.textContent = String(i + 1); resp.desc.textContent = RESPIROS[i].desc; }
-      resp.pontos.forEach(function (li, j) { li.className = j < i ? 'feito' : j === i ? 'agora' : ''; });
-      resp.chave = chave;
+    if (!perto && resp.tocando) { resp.logo.stop(); resp.tocando = false; }
+    if (!perto) return;
+    var dt = Math.min(0.05, Math.max(0, (agora - (resp.tAnt || agora)) / 1000)); resp.tAnt = agora;
+    var F = faseDaLogo(agora), afasta = resp.atual ? resp.atual.afasta : 100;
+    var abre = clamp((resp.logo._lastL || 0) / afasta, 0, 1); // 0 com a pílula fechada, 1 com HE e LD afastados ao máximo
+    if (F.fase !== resp.faseAntes) {
+      if (F.fase === 'divisao') { G.Som.respiro(true); G.Som.nota(RESPIROS.indexOf(resp.atual) * 2 + 2, 0.6); }
+      if (F.fase === 'retorno') G.Som.respiro(false);
+      resp.faseAntes = F.fase;
     }
+    var s = function (x) { return x * x * (3 - 2 * x); }, tt = agora / 1000;
+    var peso = {
+      contracao: 300 + 600 * s(F.fase === 'contracao' ? F.q : 1),
+      divisao: 900 - 650 * s(F.fase === 'divisao' ? F.q : 1),
+      pausa: 210 + 70 * Math.sin(tt * Math.PI * 2 / 1.8),
+      retorno: 230 + 220 * s(F.fase === 'retorno' ? F.q : 0)
+    };
+    var k = 1 - Math.exp(-dt / 0.13);
+    NOMES_FASE.forEach(function (nome) {
+      var alvo = nome === F.fase ? 1 : 0, el = resp.fases[nome];
+      if (alvo !== (resp.dir[nome] > 0 ? 1 : 0)) resp.dir[nome] = alvo ? 1 : -1;
+      resp.pres[nome] += (alvo - resp.pres[nome]) * k;
+      var pv = resp.pres[nome];
+      if (pv < 0.002 && !alvo) { if (el.style.opacity !== '0') el.style.opacity = '0'; return; }
+      var e = s(clamp(pv, 0, 1)), entra = resp.dir[nome] > 0;
+      // entra subindo de baixo; a que sai sobe e se apaga mais depressa, para as duas não se encavalarem
+      el.style.opacity = (entra ? e : Math.pow(e, 2.6)).toFixed(3);
+      el.style.transform = 'translate3d(0,' + ((1 - e) * (entra ? 0.42 : -0.5)).toFixed(3) + 'em,0)';
+      el.style.fontWeight = Math.round(peso[nome]);
+      el.style.letterSpacing = (-0.045 + 0.13 * abre).toFixed(4) + 'em';
+    });
   }
 
   /* ---------- 7. a luz: as cores se abrem e se somam; na luz, as presenças ---------- */
@@ -367,7 +412,7 @@
     luz = { pal: pal, cores: [], orbs: [], t0: performance.now() };
     LUZES.forEach(function (tok, i) {
       var s = document.createElement('span'); s.className = 'luz-cor'; s.style.setProperty('--c', 'var(' + tok + ')'); caixaL.appendChild(s);
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'presenca'; b.setAttribute('data-cursor', 'some');
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'presenca'; b.setAttribute('data-cursor', 'anel');
       b.setAttribute('aria-label', i === 12 ? 'Uma presença, da cor clara do tema, no centro' : 'Uma presença, de uma cor só');
       var o = document.createElement('orb-avatar');
       o.setAttribute('size', FINO ? '62' : '44'); o.setAttribute('mode', 'follow'); o.setAttribute('label', 'Presença');
@@ -477,7 +522,7 @@
     G.Som.rolagem(M.vel);
     var perto = function (c) { return y + vh > c.topo - vh * 0.2 && y < c.topo + c.altura + vh * 0.2; };
     if (CAP.partes && perto(CAP.partes)) quadroProximidade(CAP.partes.p);
-    if (CAP.respiro) quadroRespiro(CAP.respiro.p, perto(CAP.respiro));
+    if (CAP.respiro) quadroRespiro(CAP.respiro.p, perto(CAP.respiro), agora);
     if (CAP.luz && perto(CAP.luz)) quadroLuz(CAP.luz.p, agora);
     if (CAP.inteiro) quadroFim(CAP.inteiro.p);
     if (campo && prontas) {

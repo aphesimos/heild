@@ -69,7 +69,10 @@ cite { font-style: italic; }
 .botao-rotulo { padding-right: 2px; }
 
 /* ---------- a linhagem: a navegação é uma árvore de uma linha só ---------- */
-.linhagem { position: fixed; right: calc(var(--margem) * 0.45); top: 50%; z-index: 20; transform: translateY(-50%); }
+/* a linhagem só pega o ponteiro nos pontos e no rótulo visível: o resto da caixa deixa passar o clique */
+.linhagem { position: fixed; right: calc(var(--margem) * 0.45); top: 50%; z-index: 20; transform: translateY(-50%); pointer-events: none; }
+.linhagem .no { pointer-events: auto; }
+.linhagem a[aria-current="step"] .rotulo, .linhagem a:hover .rotulo { pointer-events: auto; }
 .linhagem ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; position: relative; }
 .linhagem ol::before { content: ''; position: absolute; right: 8.5px; top: 10px; bottom: 10px; width: 1px; background: var(--borda); }
 .linhagem a { display: flex; flex-direction: row-reverse; align-items: center; gap: 10px; height: 18px; text-decoration: none; color: var(--texto-suave); }
@@ -221,18 +224,10 @@ html.no-escuro .cursor { color: var(--areia-100); }
 .tempos span { display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: var(--raio-pilula); box-shadow: var(--sombra-contorno); background: var(--fundo); font-size: 12px; line-height: 16px; font-variant-numeric: tabular-nums; color: var(--texto); }
 .fases { grid-row: 1; grid-column: 1; align-self: end; justify-self: stretch; display: grid; place-items: end center; pointer-events: none; padding-bottom: calc(min(60vw, 840px, 120vh) * 0.1); }
 .fase {
-  grid-area: 1 / 1; font-family: var(--font-titulo); font-size: clamp(64px, min(13vw, 22vh), 240px); line-height: 0.9; letter-spacing: -0.04em;
-  color: var(--borda); white-space: nowrap; font-weight: 300; clip-path: inset(100% 0 0 0); opacity: 0;
-  transition: clip-path 0.7s var(--sai), opacity 0.7s var(--sai);
+  /* a palavra da fase: o motor escreve opacidade, posição, peso e espaçamento a cada quadro, lidos da logo */
+  grid-area: 1 / 1; font-family: var(--font-titulo); font-size: clamp(64px, min(13vw, 22vh), 240px); line-height: 0.9; letter-spacing: -0.045em;
+  color: var(--texto-suave); white-space: nowrap; font-weight: 300; opacity: 0; will-change: transform, opacity;
 }
-.fase.ativa { clip-path: inset(-30% -40% -30% -40%); opacity: 1; }
-.fase.saindo { clip-path: inset(-30% -40% 100% -40%); opacity: 0; }
-.fase .letra { display: inline-block; }
-.fase[data-fase="contracao"] { font-weight: calc(300 + 600 * var(--q, 0)); letter-spacing: calc(-0.04em - 0.05em * var(--q, 0)); }
-.fase[data-fase="divisao"] .letra { transform: translateX(calc(var(--d) * var(--q, 0) * 0.16em)); }
-.fase[data-fase="divisao"] { font-weight: calc(900 - 700 * var(--q, 0)); }
-.fase[data-fase="pausa"] { font-weight: 100; }
-.fase[data-fase="retorno"] { font-weight: calc(100 + 300 * var(--q, 0)); letter-spacing: calc(0.12em - 0.16em * var(--q, 0)); }
 /* A passagem do campo para a logo: o campo termina numa cápsula lisa no pixel exato do I. Em 0,135 o
    <heild-logo> aparece de uma vez (sem opacidade parcial), mostrando só a faixa do I, igual à do campo; o
    campo some em 0,1375. Depois HE e LD se abrem a partir do I, por máscara (--rev de 0 a 1). A faixa do I
@@ -300,10 +295,12 @@ html.no-escuro .cursor { color: var(--areia-100); }
   mix-blend-mode: plus-lighter; will-change: transform, opacity; opacity: 0;
 }
 @supports not (mix-blend-mode: plus-lighter) { .luz-cor { mix-blend-mode: screen; } }
-.presencas { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+/* as presenças ficam acima do texto: a caixa do texto (e a cena apagada) não pode engolir o clique num orb */
+.presencas { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
 .presenca {
-  position: absolute; left: 0; top: 0; padding: 0; margin: 0; border: 0; background: none; border-radius: 50%;
+  position: absolute; left: 0; top: 0; padding: 17px; margin: 0; border: 0; background: none; border-radius: 50%;
   cursor: pointer; pointer-events: auto; line-height: 0; will-change: transform; opacity: 0;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
 .presenca orb-avatar { display: block; }
 .presenca orb-avatar::part(canvas) { filter: drop-shadow(var(--sombra-orb)); }
