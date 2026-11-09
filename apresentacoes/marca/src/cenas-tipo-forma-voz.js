@@ -171,6 +171,10 @@
     },
     entrar: function (el, api) {
       var t1 = q(el, '.v-t1'), t2 = q(el, '.v-t2'), regra = q(el, '.v-regra'), antes = q(el, '.v-antes'), pts = qa(el, '.v-pontos i');
+      if (api.parado) {
+        var p0 = PARES[0]; t1.textContent = p0[0]; antes.classList.add('riscado'); t2.textContent = p0[1]; regra.textContent = p0[2]; pts[0].classList.add('at');
+        return;
+      }
       (async function () {
         await api.esperar(700);
         for (var k = 0; ; k++) {

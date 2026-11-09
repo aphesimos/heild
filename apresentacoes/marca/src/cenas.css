@@ -125,8 +125,8 @@
 .s-minimo .logo-tam { width: 320px; }
 .s-minimo .so-pilula { display: grid; place-items: center; color: var(--primaria); }
 .s-minimo .so-pilula rect { fill: currentColor; }
-.s-minimo .leitura-tam { display: flex; gap: 8px; align-items: baseline; margin: 0; min-height: 30px; font-size: 14px; }
-.s-minimo .leitura-tam .qual { display: inline-block; min-width: 116px; text-align: right; font-family: var(--font-titulo); font-size: 24px; font-weight: 400; letter-spacing: -0.02em; }
+.s-minimo .leitura-tam { display: grid; grid-template-columns: 150px 230px; gap: 8px; align-items: baseline; margin: 0; min-height: 30px; font-size: 14px; }
+.s-minimo .leitura-tam .qual { text-align: right; font-family: var(--font-titulo); font-size: 24px; font-weight: 300; letter-spacing: -0.025em; }
 
 /* 7. o que não fazer */
 .s-naofaca .cab-linha { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 32px; }
@@ -327,7 +327,7 @@
 
 /* 15. o destaque */
 .s-destaque { justify-content: flex-end; }
-.s-destaque::before { -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 72%); mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 72%); }
+.slide.s-destaque[data-grade]::before { -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 72%); mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 72%); }
 .s-destaque .campo-destaque { position: absolute; left: 64px; right: 64px; top: 48px; height: 372px; z-index: 1; }
 .retrato .s-destaque .campo-destaque { left: 20px; right: 20px; height: 560px; }
 .s-destaque .vinheta { position: absolute; display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: var(--raio-cartao); background: var(--superficie); box-shadow: var(--sombra-cartao); opacity: 0.82; transition: opacity 500ms var(--sai), transform 600ms var(--sai); }
@@ -389,7 +389,7 @@
 .s-contraste .mc-cab span { padding: 0 10px 6px; font-size: 12px; color: var(--texto-suave); }
 .s-contraste .mc-nome { display: flex; align-items: center; font-size: 12px; line-height: 16px; color: var(--texto-suave); }
 .s-contraste .mc-cel { position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; align-items: center; gap: 0 8px; height: 62px; padding: 8px 10px; border-radius: var(--raio-md); box-shadow: inset 0 0 0 1px rgba(var(--tinta-sombra), 0.06); }
-.s-contraste .mc-cel .aa { grid-row: span 2; font-family: var(--font-titulo); font-size: 26px; line-height: 30px; font-weight: 400; letter-spacing: -0.02em; }
+.s-contraste .mc-cel .aa { grid-row: span 2; font-family: var(--font-titulo); font-size: 26px; line-height: 30px; font-weight: 300; letter-spacing: -0.025em; }
 .s-contraste .mc-cel .razao { justify-self: end; font-size: 14px; line-height: 18px; font-weight: 500; }
 .s-contraste .mc-cel .ok { justify-self: end; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; color: var(--texto-suave); }
 .s-contraste .mc-cel .ok .ico { width: 13px; height: 13px; color: var(--sucesso); }
@@ -456,7 +456,7 @@
 .s-time .grupos-time .g { display: flex; flex-direction: column; gap: 8px; font-size: 12px; line-height: 16px; color: var(--texto-suave); text-align: center; }
 .s-time .grupos-time .g i { height: 8px; border: 1px solid var(--borda); border-top: 0; border-radius: 0 0 6px 6px; }
 .s-time .ficha-time { display: flex; flex-direction: column; gap: 4px; min-height: 64px; padding-top: 16px; border-top: 1px solid var(--borda); }
-.s-time .ficha-time b { font-family: var(--font-titulo); font-size: 24px; line-height: 30px; font-weight: 400; letter-spacing: -0.02em; }
+.s-time .ficha-time b { font-family: var(--font-titulo); font-size: 24px; line-height: 30px; font-weight: 300; letter-spacing: -0.025em; }
 .s-time .ficha-time b .codigo { font-size: 14px; letter-spacing: 0; }
 .s-time .ficha-time span.f-faz { font-size: 16px; line-height: 24px; color: var(--texto-suave); }
 
@@ -475,7 +475,7 @@
 .retrato .s-estadosorb .orb-grande { height: 250px; }
 .s-estadosorb .orb-grande orb-avatar { cursor: pointer; }
 .s-estadosorb .leitura-estado { display: flex; align-items: baseline; gap: 10px; margin: 0; font-family: var(--font-titulo); font-size: 30px; line-height: 36px; font-weight: 300; letter-spacing: -0.025em; white-space: nowrap; }
-.s-estadosorb .leitura-estado .quem { font-weight: 400; }
+.s-estadosorb .leitura-estado .quem { font-weight: 300; }
 .s-estadosorb .desc-estado { margin: 0; min-height: 24px; font-size: 16px; line-height: 24px; text-align: center; }
 .s-estadosorb .marcadores { display: flex; gap: 10px; margin-top: 10px; }
 .s-estadosorb .marcador { width: 14px; height: 14px; padding: 0; border: 0; border-radius: 50%; background: var(--c); box-shadow: var(--sombra-orb); transition: transform 300ms var(--assenta); }
@@ -493,7 +493,7 @@
 .retrato .s-emotes .orb-vivo { height: 260px; }
 .s-emotes .orb-vivo orb-avatar { cursor: pointer; }
 .s-emotes .agora-emote { margin: 0; min-height: 28px; font-size: 18px; line-height: 28px; }
-.s-emotes .agora-emote b { display: inline-block; min-width: 150px; font-family: var(--font-titulo); font-size: 24px; font-weight: 400; letter-spacing: -0.02em; }
+.s-emotes .agora-emote b { display: inline-block; min-width: 150px; font-family: var(--font-titulo); font-size: 24px; font-weight: 300; letter-spacing: -0.025em; }
 .s-emotes .lista-emotes { justify-content: center; max-width: 620px; }
 
 /* 22. onde o orb aparece */
@@ -622,7 +622,7 @@
 .s-espaco .pontos { background-image: radial-gradient(circle, var(--grade-ponto) 1px, transparent 1.5px); }
 .s-espaco .pontos-luz { background-image: radial-gradient(circle, var(--texto-suave) 1.4px, transparent 2px); -webkit-mask-image: radial-gradient(circle 150px at var(--mx, 50%) var(--my, 50%), #000, transparent); mask-image: radial-gradient(circle 150px at var(--mx, 50%) var(--my, 50%), #000, transparent); }
 .s-espaco .lente { position: absolute; right: 28px; top: 28px; width: 132px; height: 132px; border-radius: 50%; background: var(--fundo); box-shadow: var(--sombra-lg), inset 0 0 0 1px var(--borda); overflow: hidden; }
-.s-espaco .lente-pontos { position: absolute; inset: 0; background-image: radial-gradient(circle, var(--texto-suave) 3px, transparent 3.6px); background-size: 72px 72px; background-position: 30px 30px; }
+.s-espaco .lente-pontos { position: absolute; inset: 0; background-image: radial-gradient(circle, var(--texto-suave) 3px, transparent 3.6px); background-size: 72px 72px; background-position: -6px 20px; }
 .s-espaco .lente-cota { position: absolute; left: 30px; top: 74px; width: 72px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; }
 .s-espaco .lente-cota i { width: 100%; height: 1px; background: var(--texto); position: relative; }
 .s-espaco .lente-cota i::before, .s-espaco .lente-cota i::after { content: ""; position: absolute; top: -4px; width: 1px; height: 9px; background: var(--texto); }
@@ -664,18 +664,18 @@
 /* =====================================================================
    Voz
    ===================================================================== */
-.s-voz .palco-voz { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
+.s-voz .palco-voz { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 18px; padding-top: 40px; }
 .s-voz .v-antes, .s-voz .v-depois { display: grid; grid-template-columns: 44px 1fr; align-items: baseline; margin: 0; }
-.s-voz .v-marca { align-self: center; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; }
+.s-voz .v-marca { align-self: start; margin-top: var(--mt, 8px); display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; }
 .s-voz .v-marca .ico { width: 16px; height: 16px; }
 .s-voz .v-antes .v-marca { background: color-mix(in srgb, var(--erro) 15%, transparent); color: var(--erro); }
-.s-voz .v-depois .v-marca { background: color-mix(in srgb, var(--sucesso) 15%, transparent); color: var(--sucesso); }
+.s-voz .v-depois .v-marca { --mt: 16px; background: color-mix(in srgb, var(--sucesso) 15%, transparent); color: var(--sucesso); }
 .s-voz .v-t1 { font-family: var(--font-titulo); font-size: 36px; line-height: 44px; font-weight: 300; letter-spacing: -0.025em; color: var(--texto-suave); min-height: 44px; text-decoration: line-through; text-decoration-color: transparent; text-decoration-thickness: 2px; transition: text-decoration-color 400ms var(--sai); }
 .s-voz .v-antes.riscado .v-t1 { text-decoration-color: var(--texto-suave); }
-.s-voz .v-t2 { font-family: var(--font-titulo); font-size: 64px; line-height: 68px; font-weight: 300; letter-spacing: -0.025em; min-height: 136px; max-width: 18ch; text-wrap: balance; }
-.retrato .s-voz .v-t2 { font-size: 40px; line-height: 46px; min-height: 184px; }
+.s-voz .v-t2 { font-family: var(--font-titulo); font-size: 56px; line-height: 60px; font-weight: 300; letter-spacing: -0.025em; height: 180px; max-width: 24ch; text-wrap: balance; }
+.retrato .s-voz .v-t2 { font-size: 36px; line-height: 42px; height: 210px; }
 .retrato .s-voz .v-t1 { font-size: 24px; line-height: 30px; min-height: 60px; }
-.s-voz .v-t2.como-botao { align-self: start; justify-self: start; min-height: 0; display: inline-flex; align-items: center; height: 72px; margin: 32px 0; padding: 0 40px; border-radius: var(--raio-pilula); background: var(--primaria); color: var(--texto-sobre-primaria); font-family: var(--font-texto); font-size: 28px; font-weight: 500; letter-spacing: 0; animation: entra 400ms var(--sai) both; }
+.s-voz .v-t2.como-botao { align-self: start; justify-self: start; display: inline-flex; align-items: center; height: 72px; margin: 54px 0; padding: 0 40px; border-radius: var(--raio-pilula); background: var(--primaria); color: var(--texto-sobre-primaria); font-family: var(--font-texto); font-size: 28px; font-weight: 500; letter-spacing: 0; animation: entra 400ms var(--sai) both; }
 .s-voz .v-regra { margin: 0 0 0 44px; min-height: 28px; font-size: 18px; line-height: 28px; }
 .s-voz .v-pontos { display: flex; gap: 6px; margin-left: 44px; }
 .s-voz .v-pontos i { width: 6px; height: 6px; border-radius: 50%; background: var(--borda); transition: background 300ms; }

@@ -147,7 +147,7 @@
       var t = q(el, '.t-msg'), o = q(el, '.orb-msg');
       qa(el, '.b-ajuda orb-avatar').forEach(function (x) { api.ouvir(x, 'click', function () { if (x.poke) x.poke(); }); });
       (async function () {
-        await api.esperar(900);
+        if (!api.parado) await api.esperar(900);
         for (;;) {
           t.textContent = ''; o.setAttribute('reaction', 'working');
           await api.digitar(t, 'Conciliei 41 de 44 lançamentos. Os 3 que sobraram estão na tarefa CTB-016.', 55);

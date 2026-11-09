@@ -247,10 +247,14 @@
         api.ouvir(c, 'pointerenter', function () {
           alvo = i; pausaAte = performance.now() + 4000;
           clearTimeout(tHover);
-          tHover = setTimeout(function () {
-            if (alvo !== i || !api.vivo() || performance.now() < ocupado) return;
+          var tentar = function () {
+            if (alvo !== i || !api.vivo()) return;
+            // espera a logo que está se mexendo assentar: nunca duas animando juntas
+            if (performance.now() < ocupado) { tHover = setTimeout(tentar, 120); return; }
+            pausaAte = performance.now() + 4000;
             if (estado[i]) ir(i, false).then(function () { return ir(i, true); }); else ir(i, true);
-          }, 140);
+          };
+          tHover = setTimeout(tentar, 140);
         });
         api.ouvir(c, 'pointerleave', function () { if (alvo === i) alvo = -1; pausaAte = performance.now() + 2500; });
       });

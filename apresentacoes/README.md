@@ -5,7 +5,7 @@ Cada apresentação é uma pasta, com o mesmo build e os mesmos tokens do design
 | Pasta | O que é |
 |---|---|
 | [`produto/`](produto) | A marca e o produto, com uma versão por plataforma (principal, Heild Contábil, Heild BPO), montadas no mesmo molde |
-| `marca/` | O livro da marca em apresentação: a identidade sozinha, experimental e animada |
+| [`marca/`](marca) | O livro da marca em apresentação: a identidade sozinha, experimental e animada |
 | `raciocinio/` | O raciocínio do Consultor: como ele responde com a lei certa, na data certa |
 | `comum/` | O que todas usam: os tokens do design system (`tokens.css`) |
 
