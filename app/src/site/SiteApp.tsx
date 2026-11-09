@@ -589,7 +589,7 @@ function SecaoTime({ setores, titulo, texto }: { setores: string[]; titulo: Reac
       visual={
         <div data-luz className="bg-background shadow-painel flex h-[520px] flex-col gap-4 overflow-hidden rounded-[28px] p-5 sm:h-[min(680px,calc(100svh-120px))] sm:min-h-[460px] sm:p-6">
           <CabecalhoIntegrante nivel="h3" integrante={{ ...atual, fazendoAgora: [], fila: 0, pendentes: cartoesPendentes(exemplo.conversasPorIntegrante[atual.id] ?? [], {}) }} className="bg-surface shadow-contorno rounded-[22px] px-3 py-2.5 sm:px-4" />
-          <div key={atual.id} className="area-rolagem-dupla esmaece-topo entra min-h-0 flex-1 overflow-y-auto pr-1">
+          <div key={atual.id} className="area-rolagem-dupla entra min-h-0 flex-1 overflow-y-auto pr-1">
             {conversa.length ? <ListaMensagens mensagens={conversa} /> : <p className="text-muted-foreground text-sm">Ainda sem conversa nesta demonstração.</p>}
           </div>
         </div>
