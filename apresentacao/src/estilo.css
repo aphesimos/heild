@@ -1014,7 +1014,11 @@ html.parado .controles { opacity: 0; transform: translateY(6px); pointer-events:
 .s-outra .plat b, .s-plataformas .plat b { font-family: var(--font-titulo); font-size: 30px; line-height: 36px; font-weight: 400; letter-spacing: -0.03em; }
 .s-outra .plat p, .s-plataformas .plat p { margin: 0; font-size: 14px; line-height: 20px; color: var(--texto-suave); }
 .orbs-linha { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.s-outra .logo-outra, .s-plataformas .logo-plat { width: 360px; }
+.s-plataformas .logo-plat { width: 360px; }
+/* Dentro do cartão, a logo fica centrada e menor: em volta sobra a área livre (≈ 12%) mais o espaço
+   que HE e LD usam ao se afastar na animação (≈ 9% para cada lado), e ela nunca sai do cartão. */
+.s-outra .logo-outra { width: 260px; align-self: center; margin: 22px 0 18px; }
+.retrato .s-outra .logo-outra { width: 220px; }
 .s-plataformas .lista-plat { display: grid; grid-template-columns: repeat(var(--col, 2), minmax(0, 1fr)); gap: 14px; width: 100%; }
 .retrato .s-plataformas .lista-plat { --col: 1 !important; }
 .s-outra .itens-outra { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 14px; }
