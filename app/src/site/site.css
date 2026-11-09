@@ -829,3 +829,19 @@ html:has(.barra-rolagem)::-webkit-scrollbar {
     overscroll-behavior-x: contain;
   }
 }
+
+/* No celular, a demonstração do cartão de aprovação mostra um toque (um anel que se abre) em vez de um cursor de mouse. */
+.toque-demo {
+  background: color-mix(in oklab, var(--highlight) 22%, transparent);
+  animation: toque-demo 0.5s ease-out both;
+}
+@keyframes toque-demo {
+  from {
+    scale: 0.3;
+    opacity: 0.9;
+  }
+  to {
+    scale: 1.4;
+    opacity: 0;
+  }
+}

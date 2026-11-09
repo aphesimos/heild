@@ -5,6 +5,7 @@ import * as exemplo from '@/dados/exemplo'
 import { pedidosAssistente } from '@/dados/simulacao'
 import type { Integrante, RespostaLegal } from '@/dados/tipos'
 import { useAparencia } from '@/hooks/useAparencia'
+import { useMedia } from '@/hooks/useMedia'
 import { cn } from '@/lib/utils'
 import { ReservaAltura } from './Estavel'
 
@@ -67,27 +68,40 @@ export function AprovacaoAoVivo() {
   const [volta, setVolta] = useState(0)
   const [manual, setManual] = useState<number | null>(null)
   const CICLO = 9000
-  const ms = useRelogio(visto && !parado(), volta, CICLO)
+  const ms = useRelogio(visto && !parado(), volta, 60_000)
+  // Aprovado na mão, o ciclo termina o mesmo tempo depois do toque que depois da aprovação automática: as 14 transmissões correm inteiras.
+  const fimCiclo = manual !== null ? manual + (CICLO - 2700) : CICLO
   useEffect(() => {
-    if (ms >= CICLO) {
+    if (ms >= fimCiclo) {
       setManual(null)
       setVolta((v) => v + 1)
     }
-  }, [ms])
+  }, [ms, fimCiclo])
   const aprovou = manual !== null || ms >= 2700
   const desde = manual ?? 2700
   const feitas = aprovou ? Math.min(14, Math.floor(Math.max(0, ms - desde - 500) / 140)) : 0
   const [alvo, setAlvo] = useState({ x: 0, y: 0 })
+  // Onde fica o botão, medido de novo sempre que o cartão muda de tamanho (a seção entra animada e a largura muda com a tela).
   useEffect(() => {
-    const b = botao.current
     const c = caixa.current
-    if (!b || !c) return
-    const rb = b.getBoundingClientRect()
-    const rc = c.getBoundingClientRect()
-    setAlvo({ x: rb.left - rc.left + rb.width * 0.55, y: rb.top - rc.top + rb.height * 0.6 })
+    if (!c) return
+    const medir = () => {
+      const b = botao.current
+      if (!b) return
+      const rb = b.getBoundingClientRect()
+      const rc = c.getBoundingClientRect()
+      setAlvo({ x: rb.left - rc.left + rb.width * 0.55, y: rb.top - rc.top + rb.height * 0.6 })
+    }
+    medir()
+    const ro = new ResizeObserver(medir)
+    ro.observe(c)
+    return () => ro.disconnect()
   }, [visto, volta])
+  // Tela de toque: em vez de um cursor de mouse, um anel de toque no botão.
+  const toque = useMedia('(hover: none)')
   const fase = manual !== null ? 3 : ms < 1100 ? 0 : ms < 2400 ? 1 : ms < 2700 ? 2 : 3
-  const cursor = fase === 0 ? { x: alvo.x + 180, y: alvo.y + 120, o: 0 } : fase === 3 && ms > 4200 ? { x: alvo.x + 140, y: alvo.y + 90, o: 0 } : { x: alvo.x, y: alvo.y, o: 1 }
+  // Quem aprovou de verdade não vê mais o cursor da demonstração.
+  const cursor = manual !== null || toque ? { x: alvo.x, y: alvo.y, o: 0 } : fase === 0 ? { x: alvo.x + 180, y: alvo.y + 120, o: 0 } : fase === 3 && ms > 4200 ? { x: alvo.x + 140, y: alvo.y + 90, o: 0 } : { x: alvo.x, y: alvo.y, o: 1 }
   const hora = '14:02'
   return (
     <div ref={caixa} className="relative">
@@ -136,6 +150,7 @@ export function AprovacaoAoVivo() {
           )}
         </div>
       </div>
+      {toque && manual === null && fase === 2 && <span aria-hidden className="toque-demo pointer-events-none absolute size-12 rounded-full" style={{ left: alvo.x - 24, top: alvo.y - 24 }} />}
       <svg
         aria-hidden
         width="22"
