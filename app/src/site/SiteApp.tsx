@@ -849,7 +849,7 @@ function SecaoInteiro() {
     <Secao
       id="inteiro"
       titulo="Heild, um sistema no lugar de vinte."
-      texto="Heild vem do nórdico heild, o inteiro. Prazos, conversas, horas, arquivos, cobrança e o financeiro dos clientes passam a morar no mesmo lugar, sobre o mesmo cadastro."
+      texto="Heild vem do islandês heild, o inteiro. Prazos, conversas, horas, arquivos, cobrança e o financeiro dos clientes passam a morar no mesmo lugar, sobre o mesmo cadastro."
       grade
     >
       <div ref={caixa} data-visual data-junto={junto} data-vivo={vivo} className="junta flex min-h-[440px] flex-col items-center justify-center gap-10 rounded-[28px] py-16" style={{ color: 'var(--primary)' }}>
