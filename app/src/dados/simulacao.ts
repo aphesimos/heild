@@ -80,27 +80,29 @@ const respostaFatorR =
 
 const legalFatorR: RespostaLegal = {
   afirmacoes: [
-    { texto: 'Odontologia está entre as atividades do § 5º-I do art. 18, que vão para o Anexo III ou para o Anexo V conforme o fator R.', trecho: 't1', grau: 'alto' },
-    { texto: 'Com folha de salários igual ou maior que 28% da receita bruta, a tributação é pelo Anexo III.', trecho: 't1', grau: 'alto' },
-    { texto: 'Abaixo de 28%, as mesmas atividades vão para o Anexo V.', trecho: 't2', grau: 'alto' },
+    { texto: 'Odontologia e prótese dentária estão no § 5º-B, XX, do art. 18, entre as atividades tributadas pelo Anexo III.', trecho: 't1', grau: 'alto' },
+    { texto: 'Com folha de salários abaixo de 28% da receita bruta, essas atividades vão para o Anexo V.', trecho: 't2', grau: 'alto' },
+    { texto: 'Com folha igual ou maior que 28%, ficam no Anexo III.', trecho: 't2', grau: 'alto' },
     { texto: 'A folha da Clínica nos últimos 12 meses é 31,2% da receita bruta.', calculo: true, grau: 'alto' },
     { texto: 'A opção pelo Simples para 2027 é feita até o último dia útil de janeiro e vale desde 1º de janeiro.', trecho: 't3', grau: 'alto' },
   ],
   trechos: [
     {
       id: 't1',
-      norma: 'LC 123/2006, art. 18, § 5º-J',
+      // Odontologia: § 5º-B, XX, com o § 5º-M, I (LC 155/2016, efeitos desde 01/01/2018). O § 5º-J vale só
+      // para as atividades do § 5º-I; de 2015 a 2017 a odontologia estava no § 5º-I, III, no Anexo VI.
+      norma: 'LC 123/2006, art. 18, § 5º-B, XX',
       redacao:
-        'As atividades de prestação de serviços a que se refere o § 5º-I serão tributadas na forma do Anexo III desta Lei Complementar caso a razão entre a folha de salários e a receita bruta da pessoa jurídica seja igual ou superior a 28% (vinte e oito por cento).',
+        'Sem prejuízo do disposto no § 1º do art. 17 desta Lei Complementar, serão tributadas na forma do Anexo III desta Lei Complementar as seguintes atividades de prestação de serviços: (…) XX - odontologia e prótese dentária;',
       vigenteDe: '01/01/2018',
       hierarquia: 'Lei complementar',
       link: LC123,
     },
     {
       id: 't2',
-      norma: 'LC 123/2006, art. 18, § 5º-M',
+      norma: 'LC 123/2006, art. 18, § 5º-M, I',
       redacao:
-        'Quando a relação entre a folha de salários e a receita bruta da microempresa ou da empresa de pequeno porte for inferior a 28% (vinte e oito por cento), serão tributadas na forma do Anexo V desta Lei Complementar as atividades previstas (…) no § 5º-I deste artigo.',
+        'Quando a relação entre a folha de salários e a receita bruta da microempresa ou da empresa de pequeno porte for inferior a 28% (vinte e oito por cento), serão tributadas na forma do Anexo V desta Lei Complementar as atividades previstas: I - nos incisos XVI, XVIII, XIX, XX e XXI do § 5º-B deste artigo;',
       vigenteDe: '01/01/2018',
       hierarquia: 'Lei complementar',
       link: LC123,

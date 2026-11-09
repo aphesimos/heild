@@ -9,7 +9,7 @@
 
 # Heild
 
-**Heild** vem do nórdico antigo *heild*: o inteiro, o todo sem partes separadas. É um sistema que junta num lugar só as ferramentas de uma empresa (painel, CRM com WhatsApp, timesheet, financeiro, arquivos, app do cliente) com um time de integrantes de IA, um para cada área. Os integrantes preparam o trabalho, e uma pessoa aprova.
+**Heild** vem do islandês *heild*: o inteiro, o todo sem partes separadas. A raiz é o nórdico antigo *heill*, inteiro. É um sistema que junta num lugar só as ferramentas de uma empresa (painel, CRM com WhatsApp, timesheet, financeiro, arquivos, app do cliente) com um time de integrantes de IA, um para cada área. Os integrantes preparam o trabalho, e uma pessoa aprova.
 
 Este repositório é o controlador geral da marca: a identidade, o design system, o site e o sistema interativo de demonstração. Cada parte mora no seu branch, com a sua documentação.
 
