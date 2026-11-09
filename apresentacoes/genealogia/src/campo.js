@@ -204,8 +204,13 @@
       g[0] = fa[o] + (fb[o] - fa[o]) * ti;
       g[1] = fa[o + 1] + (fb[o + 1] - fa[o + 1]) * ti;
       g[2] = fa[o + 2] + meiaVolta(fb[o + 2] - fa[o + 2]) * ti;
-      g[3] = fa[o + 3] + (fb[o + 3] - fa[o + 3]) * ti;
-      g[4] = ea + (eb - ea) * ti;
+      // tamanho: a que some encolhe tarde e a que nasce (ou cresce muito) cresce cedo, para a forma de destino
+      // estar coberta antes de as partes antigas saírem (nada se rasga no meio da passagem)
+      var tiE = ti;
+      if (eb < 0.35 && ea >= 0.35) tiE = suave(Math.min(1, Math.max(0, (t - 0.45) / 0.55)));
+      else if ((ea < 0.35 && eb >= 0.35) || (eb > ea * 3 && eb > 12)) tiE = suave(Math.min(1, t / 0.65));
+      g[3] = fa[o + 3] + (fb[o + 3] - fa[o + 3]) * tiE;
+      g[4] = ea + (eb - ea) * tiE;
       // deriva: grupos que flutuam devagar, cada um no seu ritmo
       if (deriva) {
         var gr = ti < 0.5 ? fa[o + 5] : fb[o + 5];

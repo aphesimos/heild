@@ -161,6 +161,8 @@
       muitosFim: F.muitos(tela, n, [], 97),
       pilulaFinal: F.pilulaNoLogo(noPalco(lf), n)
     };
+    // a cápsula que vira a pílula final (índice n/2) já começa de pé: cresce e desliza, sem girar
+    forms.muitosFim.f[Math.floor(n / 2) * G.PASSO + 2] = 0;
     Object.keys(forms).forEach(function (k) { forms[k].pares = paresVizinhos(forms[k].f, n); forms[k].grande = poucasGrandes(forms[k].f, n); });
     campo.formacoes(forms);
     var cot = q('.cotas'); if (cot && pil.mapa) cot.style.setProperty('--S', pil.mapa.S.toFixed(4));
@@ -331,7 +333,9 @@
     // pausa e afastamento máximo de HE e LD (unidades do viewBox) vêm das formas do componente
     { forma: 'centralizar', desc: 'nove pontos que voltam a ser uma peça só', pausa: 1900, afasta: 94 },
     { forma: 'ia', desc: 'três cópias do I, em leque, que giram', pausa: 2000, afasta: 100 },
-    { forma: 'orbs', desc: 'um orb que se divide como uma célula, em três', pausa: 5400, afasta: 232 }
+    // orbs: no componente, a mitose em três ocupa os primeiros 1600 ms da pausa e a fusão os últimos 1200 ms
+    // (ORBS_DIV e ORBS_FUSE): a palavra diz divisão e retorno quando é isso que se vê
+    { forma: 'orbs', desc: 'um orb que se divide como uma célula, em três', pausa: 5400, afasta: 232, divideNaPausa: 1600, juntaNaPausa: 1200 }
   ];
   var CONTRAI = 160, DIVIDE = 1000, VOLTA = 900, REPOUSO = 1100, ANTECIPA = 900;
   var NOMES_FASE = ['contracao', 'divisao', 'pausa', 'retorno'];
@@ -347,10 +351,11 @@
     var l = resp.logo, R = resp.atual;
     if (l._anim && R && l._anim === R.forma) {
       var t = agora - l._t0;
+      var fimDiv = DIVIDE + (R.divideNaPausa || 0), iniVolta = DIVIDE + R.pausa - (R.juntaNaPausa || 0), fim = DIVIDE + R.pausa + VOLTA;
       if (t >= 0 && t < CONTRAI) return { fase: 'contracao', q: 1 };
-      if (t >= CONTRAI && t < DIVIDE) return { fase: 'divisao', q: (t - CONTRAI) / (DIVIDE - CONTRAI) };
-      if (t >= DIVIDE && t < DIVIDE + R.pausa) return { fase: 'pausa', q: (t - DIVIDE) / R.pausa };
-      if (t >= DIVIDE + R.pausa && t < DIVIDE + R.pausa + VOLTA) return { fase: 'retorno', q: (t - DIVIDE - R.pausa) / VOLTA };
+      if (t >= CONTRAI && t < fimDiv) return { fase: 'divisao', q: (t - CONTRAI) / (fimDiv - CONTRAI) };
+      if (t >= fimDiv && t < iniVolta) return { fase: 'pausa', q: (t - fimDiv) / (iniVolta - fimDiv) };
+      if (t >= iniVolta && t < fim) return { fase: 'retorno', q: (t - iniVolta) / (fim - iniVolta) };
     }
     // repouso: se outro respiro vem aí, é a contração começando (a logo toma ar)
     if (resp.zona >= 0 && !resp.tocando && resp.proxima - agora < ANTECIPA) return { fase: 'contracao', q: clamp(1 - (resp.proxima - agora) / ANTECIPA, 0, 1) };
@@ -370,7 +375,8 @@
       resp.n.textContent = String(zona + 1); resp.desc.textContent = R.desc;
       resp.pontos.forEach(function (li, j) { li.className = j < zona ? 'feito' : j === zona ? 'agora' : ''; });
     }
-    if (!perto && resp.tocando) { resp.logo.stop(); resp.tocando = false; }
+    // longe, ou de volta acima da máscara de entrada: o respiro para (a logo volta à pílula, como o campo a deixou)
+    if ((!perto || p < 0.2) && resp.tocando) { resp.logo.stop(); resp.tocando = false; }
     if (!perto) return;
     var dt = Math.min(0.05, Math.max(0, (agora - (resp.tAnt || agora)) / 1000)); resp.tAnt = agora;
     var F = faseDaLogo(agora), afasta = resp.atual ? resp.atual.afasta : 100;
