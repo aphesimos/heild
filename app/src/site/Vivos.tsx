@@ -250,9 +250,9 @@ function ConversaLei({ q, t }: { q: (typeof perguntasLei)[number]; t: number }) 
             </footer>
           </blockquote>
           {legal.calculo && (
-            <div className="entra flex items-baseline justify-between gap-4 text-sm" style={{ animationDelay: '500ms' }}>
+            <div className="entra flex flex-col gap-0.5 text-sm sm:flex-row sm:items-baseline sm:justify-between sm:gap-4" style={{ animationDelay: '500ms' }}>
               <span className="text-muted-foreground">{legal.calculo.titulo}</span>
-              <span className="shrink-0 font-medium">{legal.calculo.resultado}</span>
+              <span className="min-w-0 font-medium sm:text-right">{legal.calculo.resultado}</span>
             </div>
           )}
           <div className="text-muted-foreground entra flex flex-wrap items-center gap-x-3 gap-y-1 border-t pt-3 text-xs" style={{ animationDelay: '700ms' }}>

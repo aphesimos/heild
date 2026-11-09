@@ -53,6 +53,6 @@ a principal.
 
 ## Testes
 
-`app/scripts/site-demo.cjs` percorre a demonstração guiada (Playwright). Sirva o
+`app/scripts/site-demo.cjs` percorre a demonstração guiada (Playwright). `app/scripts/site-cortes.cjs` mede cada texto contra a caixa que o recorta e contra a tela, em todas as páginas, em 360, 390, 768, 1024 e 1440 px e com cada aba clicada; rode antes de publicar. Sirva o
 site numa porta e rode o script com uma pasta para as capturas (ver o
 comentário no topo do arquivo).
