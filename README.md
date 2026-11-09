@@ -21,6 +21,7 @@ Este repositório é o controlador geral da marca: a identidade, o design system
 | [`design-system`](../../tree/design-system) | A marca: cores, tipografia, forma, gradientes, logo animada (`<heild-logo>`), fontes, logos estáticas, orbs e tokens | `design-system/README.md` |
 | [`prototipo`](../../tree/prototipo) | O sistema wireframe interativo: Início com o Assistente e o time, Painel, CRM, Timesheet, Financeiro, BPO, Arquivos, app do cliente, configurações | `app/README.md` |
 | [`site`](../../tree/site) | O site e as landing pages (principal, Heild Contábil, Heild BPO, contato), construído sobre os componentes do protótipo | `app/src/site/README.md` |
+| [`gh-pages`](../../tree/gh-pages) | Só o build estático do site, servido pelo GitHub Pages. Gerado a partir do `site`; não se edita à mão | `README.md` do branch |
 
 O `site` nasce do `prototipo`: a demonstração da landing roda o produto de verdade (a mesma loja, os mesmos fluxos, os mesmos cartões), então os dois dividem o código do app. O mapa completo está em [`docs/branches.md`](docs/branches.md).
 
