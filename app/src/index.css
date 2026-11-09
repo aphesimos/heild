@@ -195,10 +195,20 @@
     calc(100% - 60px) 100%;
 }
 
-/* Sem animação guiada por rolagem (navegadores mais antigos): o fim esmaece sempre, para nada parecer cortado na borda. */
+/*
+ * Sem animação guiada por rolagem (o Safari de alguns iPhones): a página mede a
+ * rolagem (src/lib/esmaecer-rolagem.ts) e passa as alturas do esmaecido. O topo
+ * esmaece quando há conteúdo acima e o fim quando há conteúdo abaixo, como no
+ * nativo: nada some atrás de uma borda sólida.
+ */
 @supports not (animation-timeline: scroll()) {
+  .area-rolagem {
+    animation: none;
+    mask-image: linear-gradient(to bottom, transparent 0, black var(--esmaecer-js-topo, 0px));
+  }
   .area-rolagem-dupla {
-    mask-image: linear-gradient(to bottom, black calc(100% - 36px), transparent 100%);
+    animation: none;
+    mask-image: linear-gradient(to bottom, transparent 0, black var(--esmaecer-js-topo, 0px), black calc(100% - var(--esmaecer-js-fim, 0px)), transparent 100%);
   }
 }
 
