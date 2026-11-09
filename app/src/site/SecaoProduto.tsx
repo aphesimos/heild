@@ -1,5 +1,5 @@
 import type { Icon } from '@phosphor-icons/react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { cn } from '@/lib/utils'
 import { ReservaAltura } from './Estavel'
 import { PainelMini, type AbaMini } from './PainelMini'
@@ -13,28 +13,74 @@ import { useVisto } from './Vivos'
 
 export const Wrap = ({ children, className }: { children: ReactNode; className?: string }) => <div className={cn('wrap mx-auto w-[min(1216px,calc(100%-32px))] sm:w-[min(1216px,calc(100%-48px))]', className)}>{children}</div>
 
-export function Secao({ id, titulo, texto, children, visual, className, grade }: { id: string; titulo: ReactNode; texto?: ReactNode; children?: ReactNode; visual: ReactNode; className?: string; grade?: boolean }) {
+export function Secao({ id, titulo, texto, children, visual, className, grade, seletor }: { id: string; titulo: ReactNode; texto?: ReactNode; children?: ReactNode; visual: ReactNode; className?: string; grade?: boolean; seletor?: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const visto = useVisto(ref, { limiar: 0.15 })
   return (
     <section id={id} aria-labelledby={`${id}-t`} className={cn('flex min-h-[100svh] scroll-mt-16 flex-col justify-center py-16 lg:py-14', grade && 'grade-pontos', className)}>
       <Wrap>
-        <div ref={ref} data-visto={visto} className="revela grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-          <div className="flex min-w-0 flex-col gap-8 lg:col-span-5">
+        <MoldeVisual
+          refRevela={ref}
+          visto={visto}
+          seletor={seletor}
+          visual={visual}
+          cabeca={
             <div className="flex flex-col gap-3">
               <h2 id={`${id}-t`} className="font-heading text-3xl font-light tracking-[-0.025em] text-balance sm:text-4xl lg:text-[44px] lg:leading-[1.1]">
                 {titulo}
               </h2>
               {texto && <p className="text-muted-foreground text-base leading-relaxed text-pretty sm:text-lg">{texto}</p>}
             </div>
-            {children}
-          </div>
-          <div data-visual className="min-w-0 lg:col-span-7">
-            {visual}
-          </div>
-        </div>
+          }
+        >
+          {children}
+        </MoldeVisual>
       </Wrap>
     </section>
+  )
+}
+
+/** O seletor colado no cartão (celular): marca quando as opções não cabem, para a ponta esmaecer só aí. */
+function SeletorMovel({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const lista = ref.current?.querySelector<HTMLElement>('[role="tablist"]')
+    if (!lista) return
+    const medir = () => lista.toggleAttribute('data-rola', lista.scrollWidth > lista.clientWidth + 1)
+    medir()
+    const ro = new ResizeObserver(medir)
+    ro.observe(lista)
+    return () => ro.disconnect()
+  }, [])
+  return (
+    <div ref={ref} className="seletor-movel -mb-4 flex min-w-0 justify-center lg:hidden">
+      {children}
+    </div>
+  )
+}
+
+/**
+ * O molde das seções com visual. No desktop: título, seletor e texto à esquerda
+ * (5 colunas), o visual à direita (7). No celular a ordem é a de quem usa: o
+ * título, o seletor numa barra que rola de lado colada no cartão, o cartão e,
+ * por último, o resto do texto. Assim o que se escolhe fica junto do que muda.
+ */
+export function MoldeVisual({ refRevela, visto, cabeca, seletor, visual, children }: { refRevela: RefObject<HTMLDivElement | null>; visto: boolean; cabeca: ReactNode; seletor?: ReactNode; visual: ReactNode; children?: ReactNode }) {
+  const resto = !!seletor || (children !== undefined && children !== null && children !== false)
+  return (
+    <div ref={refRevela} data-visto={visto} className="revela grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-x-12 lg:gap-y-8">
+      <div className={cn('min-w-0 lg:col-span-5 lg:col-start-1 lg:row-start-1', resto ? 'lg:self-end' : 'lg:row-span-2 lg:self-center')}>{cabeca}</div>
+      {seletor && <SeletorMovel>{seletor}</SeletorMovel>}
+      <div data-visual className="min-w-0 lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:self-center">
+        {visual}
+      </div>
+      {resto && (
+        <div className="flex min-w-0 flex-col gap-8 lg:col-span-5 lg:col-start-1 lg:row-start-2 lg:self-start">
+          {seletor && <div className="hidden lg:block">{seletor}</div>}
+          {children}
+        </div>
+      )}
+    </div>
   )
 }
 

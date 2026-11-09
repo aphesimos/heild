@@ -44,7 +44,8 @@ export function ResultadoDecisao({ decisao }: { decisao: Decisao }) {
     editar_e_aprovar: 'Aberto para editar; aprova ao salvar',
   }
   return (
-    <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+    // Ocupa a mesma altura da linha de botões que substitui e entra com um esmaecer: o cartão não pula.
+    <div className="surgir text-muted-foreground flex min-h-8 items-center gap-1.5 text-xs">
       {decisao === 'aprovar' ? <CheckIcon className="text-success size-3.5" /> : decisao === 'recusar' ? <XIcon className="size-3.5" /> : <PencilSimpleIcon className="size-3.5" />}
       {textos[decisao]}
     </div>

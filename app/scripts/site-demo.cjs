@@ -8,10 +8,11 @@ const { chromium } = require('playwright');
   await p.getByRole('button', { name: 'Soluções' }).click(); await p.waitForTimeout(300);
   ok(await p.locator('#menu-solucoes[data-aberto=true]').count() === 1, 'menu Soluções abre'); await p.keyboard.press('Escape');
   const demo = p.locator('#demo');
+  const alturas = () => p.evaluate(() => [...document.querySelectorAll('#demo, #demo .revela > *')].map((e) => Math.round(e.getBoundingClientRect().height)).join(','));
   await demo.scrollIntoViewIfNeeded(); await p.waitForTimeout(800);
   for (const [plat, dono, segundo] of [['Contábil', 'Contábil', 'Fiscal'], ['BPO', 'Contas a Pagar', 'Atendimento']]) {
     if (plat === 'BPO') { await demo.getByRole('tab', { name: 'BPO' }).click(); await p.waitForTimeout(500) }
-    const y0 = await p.evaluate(() => scrollY);
+    const h0 = await alturas();
     ok(await dica('Clique aqui para pedir'), `${plat}: dica na caixa`);
     await demo.locator('button[aria-label^="Pedir"]').click();
     ok(await dica(`O ${dono} começou`), `${plat}: dica aponta o Time`);
@@ -27,7 +28,7 @@ const { chromium } = require('playwright');
     ok(await dica('Assistente'), `${plat}: dica volta ao Assistente`);
     await demo.getByRole('tab', { name: 'Assistente' }).click();
     ok(await espera(async () => (await demo.getByRole('button', { name: 'Ver de novo' }).count()) > 0, 30000), `${plat}: resumo e "Ver de novo"`);
-    const y1 = await p.evaluate(() => scrollY); ok(Math.abs(y1 - y0) < 300, `${plat}: página no lugar (${y0} -> ${y1})`);
+    const h1 = await alturas(); ok(h1 === h0, `${plat}: nada mudou de altura na seção (${h0} -> ${h1}; o Playwright rola sozinho ao clicar, então medimos as alturas e não o scrollY)`);
     await demo.screenshot({ path: `${out}/lp-demo-${plat}.png` });
   }
   await p.goto('http://localhost:6101/#contabil'); await p.waitForTimeout(2500); await p.screenshot({ path: `${out}/lp-contabil-hero.png` });

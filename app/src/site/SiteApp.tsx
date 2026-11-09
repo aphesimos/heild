@@ -23,6 +23,7 @@ import { SecoesContabil } from './SecoesContabil'
 import { ReservaAltura } from './Estavel'
 import { Luz } from './Luz'
 import { BarraRolagem } from './Rolagem'
+import { MoldeVisual } from './SecaoProduto'
 import { roteiros } from './roteiros'
 import { AprovacaoAoVivo, LeiAoVivo, rotulosLei, useVisto } from './Vivos'
 import type { HeildLogoElement } from './heild-logo.d.ts'
@@ -107,16 +108,44 @@ export function SiteApp() {
   }, [])
   const plataforma = plataformas.find((p) => p.id === rota)
   // A luz do cursor: cada área marcada (grade de pontos, painéis) sabe onde o cursor está.
+  // No toque, a luz nasce onde o dedo encosta, acompanha enquanto ele arrasta e some devagar quando ele sai.
   useEffect(() => {
-    const f = (e: PointerEvent) => {
-      const alvo = (e.target as Element | null)?.closest?.('[data-luz], .grade-pontos') as HTMLElement | null
-      if (!alvo) return
-      const r = alvo.getBoundingClientRect()
-      alvo.style.setProperty('--mx', `${e.clientX - r.left}px`)
-      alvo.style.setProperty('--my', `${e.clientY - r.top}px`)
+    const marcar = (e: PointerEvent) => {
+      const el = e.target as Element | null
+      const alvos = [el?.closest?.('[data-luz]'), el?.closest?.('.grade-pontos')].filter(Boolean) as HTMLElement[]
+      for (const alvo of alvos) {
+        const r = alvo.getBoundingClientRect()
+        alvo.style.setProperty('--mx', `${e.clientX - r.left}px`)
+        alvo.style.setProperty('--my', `${e.clientY - r.top}px`)
+      }
+      return alvos
     }
-    window.addEventListener('pointermove', f, { passive: true })
-    return () => window.removeEventListener('pointermove', f)
+    const tocados = new Set<HTMLElement>()
+    const mover = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse') return void marcar(e)
+      if (tocados.size) marcar(e)
+    }
+    const tocar = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse') return
+      for (const a of marcar(e)) {
+        a.dataset.toque = ''
+        tocados.add(a)
+      }
+    }
+    const soltar = () => {
+      for (const a of tocados) delete a.dataset.toque
+      tocados.clear()
+    }
+    window.addEventListener('pointermove', mover, { passive: true })
+    window.addEventListener('pointerdown', tocar, { passive: true })
+    window.addEventListener('pointerup', soltar, { passive: true })
+    window.addEventListener('pointercancel', soltar, { passive: true })
+    return () => {
+      window.removeEventListener('pointermove', mover)
+      window.removeEventListener('pointerdown', tocar)
+      window.removeEventListener('pointerup', soltar)
+      window.removeEventListener('pointercancel', soltar)
+    }
   }, [])
   return (
     <ThemeProvider tema={temaFabrica} modo={modo}>
@@ -296,27 +325,16 @@ function ItemSolucao({ p, atual }: { p: Plataforma; atual: boolean }) {
   )
 }
 
-function Secao({ id, titulo, texto, children, className, grade, extra, visual }: { id: string; titulo: ReactNode; texto?: ReactNode; children: ReactNode; className?: string; grade?: boolean; extra?: ReactNode; visual?: ReactNode }) {
+function Secao({ id, titulo, texto, children, className, grade, extra, visual, seletor }: { id: string; titulo: ReactNode; texto?: ReactNode; children?: ReactNode; className?: string; grade?: boolean; extra?: ReactNode; visual?: ReactNode; seletor?: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const visto = useVisto(ref, { limiar: 0.15 })
   if (visual)
     return (
       <section id={id} aria-labelledby={`${id}-t`} className={cn('flex min-h-[100svh] scroll-mt-16 flex-col justify-center py-16 lg:py-14', grade && 'grade-pontos', className)}>
         <Wrap>
-          <div ref={ref} data-visto={visto} className="revela grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-            <div className="flex flex-col gap-8 lg:col-span-5">
-              <div className="flex flex-col gap-3">
-                <h2 id={`${id}-t`} className="font-heading text-3xl font-light tracking-[-0.025em] text-balance sm:text-4xl lg:text-[44px] lg:leading-[1.1]">
-                  {titulo}
-                </h2>
-                {texto && <p className="text-muted-foreground text-base leading-relaxed text-pretty sm:text-lg">{texto}</p>}
-              </div>
-              {children}
-            </div>
-            <div data-visual className="lg:col-span-7">
-              {visual}
-            </div>
-          </div>
+          <MoldeVisual refRevela={ref} visto={visto} cabeca={<Cabeca id={id} titulo={titulo} texto={texto} />} seletor={seletor} visual={visual}>
+            {children}
+          </MoldeVisual>
         </Wrap>
       </section>
     )
@@ -337,6 +355,17 @@ function Secao({ id, titulo, texto, children, className, grade, extra, visual }:
         </div>
       </Wrap>
     </section>
+  )
+}
+
+function Cabeca({ id, titulo, texto }: { id: string; titulo: ReactNode; texto?: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <h2 id={`${id}-t`} className="font-heading text-3xl font-light tracking-[-0.025em] text-balance sm:text-4xl lg:text-[44px] lg:leading-[1.1]">
+        {titulo}
+      </h2>
+      {texto && <p className="text-muted-foreground text-base leading-relaxed text-pretty sm:text-lg">{texto}</p>}
+    </div>
   )
 }
 
@@ -432,15 +461,12 @@ function SecaoDemo({ escolhas, titulo, texto }: { escolhas: Plataforma[]; titulo
   return (
     <section id="demo" aria-labelledby="demo-t" className="faixa-suave flex min-h-[100svh] scroll-mt-16 flex-col justify-center py-16 lg:py-12">
       <Wrap>
-        <div ref={ref} data-visto={visto} className="revela grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-          <div className="flex flex-col gap-7 lg:col-span-5">
-            <div className="flex flex-col gap-3">
-              <h2 id="demo-t" className="font-heading text-3xl font-light tracking-[-0.025em] text-balance sm:text-4xl lg:text-[44px] lg:leading-[1.1]">
-                {titulo}
-              </h2>
-              <p className="text-muted-foreground text-base leading-relaxed text-pretty sm:text-lg">{texto}</p>
-            </div>
-            {escolhas.length > 1 && (
+        <MoldeVisual
+          refRevela={ref}
+          visto={visto}
+          cabeca={<Cabeca id="demo" titulo={titulo} texto={texto} />}
+          seletor={
+            escolhas.length > 1 ? (
               <div role="tablist" aria-label="Plataforma da demonstração" className="bg-sunken inset-shadow-trilho inline-flex w-fit gap-0.5 rounded-full p-[3px]">
                 {escolhas.map((x) => (
                   <button
@@ -455,17 +481,20 @@ function SecaoDemo({ escolhas, titulo, texto }: { escolhas: Plataforma[]; titulo
                   </button>
                 ))}
               </div>
-            )}
-            {/* As guias das duas plataformas reservam a mesma altura: trocar de plataforma não mexe a coluna. */}
-            <ReservaAltura variantes={escolhas.filter((x) => x.id !== p.id).map((x) => <ListaGuia key={x.id} guia={roteiros[x.id].guia} etapa={0} />)}>
-              <ListaGuia guia={roteiros[p.id].guia} etapa={etapa} />
-            </ReservaAltura>
-          </div>
-          {/* key: trocar de plataforma começa uma demonstração nova. */}
-          <div data-visual data-luz className="h-[620px] rounded-[28px] lg:col-span-7 lg:h-[min(700px,calc(100svh-112px))]">
-            <DemoGuiada key={p.id} roteiro={roteiros[p.id]} setores={p.demo.setores} onEtapa={setEtapa} />
-          </div>
-        </div>
+            ) : undefined
+          }
+          visual={
+            // key: trocar de plataforma começa uma demonstração nova.
+            <div data-luz className="h-[620px] rounded-[28px] lg:h-[min(700px,calc(100svh-112px))]">
+              <DemoGuiada key={p.id} roteiro={roteiros[p.id]} setores={p.demo.setores} onEtapa={setEtapa} />
+            </div>
+          }
+        >
+          {/* As guias das duas plataformas reservam a mesma altura: trocar de plataforma não mexe a coluna. */}
+          <ReservaAltura variantes={escolhas.filter((x) => x.id !== p.id).map((x) => <ListaGuia key={x.id} guia={roteiros[x.id].guia} etapa={0} />)}>
+            <ListaGuia guia={roteiros[p.id].guia} etapa={etapa} />
+          </ReservaAltura>
+        </MoldeVisual>
       </Wrap>
     </section>
   )
@@ -565,28 +594,30 @@ function SecaoTime({ setores, titulo, texto }: { setores: string[]; titulo: Reac
           </div>
         </div>
       }
+      seletor={
+        <div role="tablist" aria-label="Integrantes" className="flex flex-wrap gap-2">
+          {lista.map((i) => {
+            const t = aparencia(i)
+            return (
+              <button
+                key={i.id}
+                role="tab"
+                type="button"
+                aria-selected={i.id === atual.id}
+                title={`${t.nome}: ${rotuloDoEstado[i.estado].toLowerCase()}`}
+                onClick={() => setId(i.id)}
+                className={cn('botao flex h-11 cursor-pointer items-center gap-2 rounded-full pr-4 pl-1.5 text-sm transition-colors', i.id === atual.id ? 'bg-primary text-primary-foreground' : 'bg-surface shadow-contorno hover:bg-raised')}
+              >
+                {/* Cada orb com a animação do próprio estado: trabalhando, esperando você, livre, dormindo. */}
+                <Orb cor={t.cor} corOlhos={t.corOlhos} tamanho={30} extras={false} cutucavel={false} estado={i.estado} animado />
+                {t.nome}
+                {i.estado === 'precisa_de_voce' && <span className="bg-highlight size-1.5 rounded-full" aria-label=", espera você" />}
+              </button>
+            )
+          })}
+        </div>
+      }
     >
-      <div role="tablist" aria-label="Integrantes" className="flex flex-wrap gap-2">
-        {lista.map((i) => {
-          const t = aparencia(i)
-          return (
-            <button
-              key={i.id}
-              role="tab"
-              type="button"
-              aria-selected={i.id === atual.id}
-              title={`${t.nome}: ${rotuloDoEstado[i.estado].toLowerCase()}`}
-              onClick={() => setId(i.id)}
-              className={cn('botao flex h-11 cursor-pointer items-center gap-2 rounded-full pr-4 pl-1.5 text-sm transition-colors', i.id === atual.id ? 'bg-primary text-primary-foreground' : 'bg-surface shadow-contorno hover:bg-raised')}
-            >
-              {/* Cada orb com a animação do próprio estado: trabalhando, esperando você, livre, dormindo. */}
-              <Orb cor={t.cor} corOlhos={t.corOlhos} tamanho={30} extras={false} cutucavel={false} estado={i.estado} animado />
-              {t.nome}
-              {i.estado === 'precisa_de_voce' && <span className="bg-highlight size-1.5 rounded-full" aria-label=", espera você" />}
-            </button>
-          )
-        })}
-      </div>
       {/* A frase de cada integrante reserva a altura da mais longa: trocar de integrante não mexe o título nem o texto da seção. */}
       <ReservaAltura variantes={lista.filter((i) => i.id !== atual.id).map((i) => <FuncaoIntegrante key={i.id} i={i} />)}>
         <FuncaoIntegrante key={atual.id} i={atual} entra />
@@ -644,21 +675,25 @@ function Pares({ itens }: { itens: [string, string][] }) {
 function SecaoLei() {
   const [k, setK] = useState(0)
   return (
-    <Secao id="lei" titulo="O Consultor responde sobre a lei com o artigo e a data." texto="Pergunte como a um colega. A resposta vem pela redação que vale na data do fato, com o trecho citado e o grau de segurança." visual={<LeiAoVivo k={k} />}>
-      <div role="tablist" aria-label="Pergunta ao Consultor" className="flex flex-wrap gap-2">
-        {rotulosLei.map((r, i) => (
-          <button
-            key={r}
-            role="tab"
-            type="button"
-            aria-selected={k === i}
-            onClick={() => setK(i)}
-            className={cn('botao h-11 cursor-pointer rounded-full px-4 text-sm transition-colors', k === i ? 'bg-primary text-primary-foreground' : 'bg-surface shadow-contorno hover:bg-raised')}
-          >
-            {r}
-          </button>
-        ))}
-      </div>
+    <Secao id="lei" titulo="O Consultor responde sobre a lei com o artigo e a data." texto="Pergunte como a um colega. A resposta vem pela redação que vale na data do fato, com o trecho citado e o grau de segurança." visual={<LeiAoVivo k={k} />}
+      seletor={
+        <div role="tablist" aria-label="Pergunta ao Consultor" className="flex flex-wrap gap-2">
+          {rotulosLei.map((r, i) => (
+            <button
+              key={r}
+              role="tab"
+              type="button"
+              aria-selected={k === i}
+              onClick={() => setK(i)}
+              className={cn('botao h-11 cursor-pointer rounded-full px-4 text-sm transition-colors', k === i ? 'bg-primary text-primary-foreground' : 'bg-surface shadow-contorno hover:bg-raised')}
+            >
+              <span className="so-largo">{r}</span>
+              <span className="so-curto">{['Fator R', 'Sublimite'][i]}</span>
+            </button>
+          ))}
+        </div>
+      }
+    >
       <Pares
         itens={[
           ['O artigo e a data', 'Cada afirmação aponta para a redação vigente na data considerada, não para a de hoje.'],
@@ -781,12 +816,14 @@ function SecaoInteiro() {
     >
       <div ref={caixa} data-visual data-junto={junto} data-vivo={vivo} className="junta flex min-h-[440px] flex-col items-center justify-center gap-10 rounded-[28px] py-16" style={{ color: 'var(--primary)' }}>
         <heild-logo ref={logo} label="Heild" style={{ width: 'min(360px, 64vw)' }} />
-        <ul className="flex max-w-2xl flex-wrap justify-center gap-2.5" aria-label="O que a Heild junta" onPointerLeave={() => passar(null)}>
+        <ul className="flex max-w-2xl flex-wrap justify-center gap-2.5" aria-label="O que a Heild junta" onPointerLeave={(e) => e.pointerType === 'mouse' && passar(null)}>
           {pecasInteiro.map(([m], i) => (
             <li
               key={m}
               ref={(n) => void (pecas.current[i] = n)}
-              onPointerEnter={() => vivo && passar(i)}
+              onPointerEnter={(e) => e.pointerType === 'mouse' && vivo && passar(i)}
+              // No toque, um toque escolhe a peça (e outro toque na mesma volta à pílula): sem precisar segurar.
+              onClick={() => vivo && passar(sobre === i ? null : i)}
               data-sobre={sobre === i || undefined}
               className="peca rounded-full px-4 py-2 text-sm select-none"
               style={{ ['--dx' as string]: `${soltas[i][0]}px`, ['--dy' as string]: `${soltas[i][1]}px`, ['--r' as string]: `${soltas[i][2]}deg`, ['--i' as string]: i }}

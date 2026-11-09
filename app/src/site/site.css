@@ -55,8 +55,10 @@ body {
   opacity: 0;
   transition: opacity 0.4s ease;
 }
-.grade-pontos:hover::before {
-  opacity: 0.9;
+@media (hover: hover) {
+  .grade-pontos:hover::before {
+    opacity: 0.9;
+  }
 }
 
 /* Painéis e cartões com [data-luz]: um brilho suave segue o cursor por cima. */
@@ -74,8 +76,10 @@ body {
   transition: opacity 0.35s ease;
   z-index: 30;
 }
-[data-luz]:hover::after {
-  opacity: 1;
+@media (hover: hover) {
+  [data-luz]:hover::after {
+    opacity: 1;
+  }
 }
 
 /* O cartão de aprovação esperando dentro da demonstração: o botão de aprovar pulsa. */
@@ -153,8 +157,10 @@ body {
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
-.levanta:hover {
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .levanta:hover {
+    transform: translateY(-2px);
+  }
 }
 .sublinha {
   background-image: linear-gradient(currentColor, currentColor);
@@ -164,16 +170,20 @@ body {
   transition: background-size 0.25s ease;
   text-underline-offset: 2px;
 }
-.sublinha:hover {
-  background-size: 100% 1px;
+@media (hover: hover) {
+  .sublinha:hover {
+    background-size: 100% 1px;
+  }
 }
 .botao {
   transition:
     transform 0.15s ease,
     background-color 0.15s ease;
 }
-.botao:hover {
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .botao:hover {
+    transform: translateY(-1px);
+  }
 }
 .botao:active {
   transform: translateY(1px) scale(0.99);
@@ -516,9 +526,11 @@ body {
     box-shadow 0.25s ease,
     translate 0.25s ease;
 }
-.painel-mini .mini-widget:not(.widget-tremendo):hover {
-  translate: 0 -2px;
-  box-shadow: var(--shadow-painel);
+@media (hover: hover) {
+  .painel-mini .mini-widget:not(.widget-tremendo):hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-painel);
+  }
 }
 
 /* Barras se enchem da esquerda ao aparecer. */
@@ -611,16 +623,20 @@ body {
     color 0.2s ease,
     scale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.modulo-nc:hover span:first-child {
-  scale: 1.08;
+@media (hover: hover) {
+  .modulo-nc:hover span:first-child {
+    scale: 1.08;
+  }
 }
 
 /* Os avisos do Consultor se destacam sob o cursor. */
 .aviso-reforma {
   transition: background-color 0.2s ease;
 }
-.aviso-reforma:hover {
-  background: var(--background);
+@media (hover: hover) {
+  .aviso-reforma:hover {
+    background: var(--background);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -729,4 +745,75 @@ html:has(.barra-rolagem)::-webkit-scrollbar {
   #inteiro.grade-pontos::after {
     mask-image: linear-gradient(to bottom, transparent 0, transparent 42%, #000 58%, #000 calc(100% - 140px), transparent);
   }
+}
+
+/* Toque (celular): a luz nasce onde o dedo encosta (ao rolar ou tocar num cartão) e some devagar quando ele sai. */
+.grade-pontos[data-toque]::before {
+  opacity: 0.9;
+}
+[data-luz][data-toque]::after {
+  opacity: 1;
+}
+
+/*
+ * O seletor colado no cartão (celular e tablet): o mesmo trilho das abas do
+ * sistema, numa linha só que rola de lado, com a ponta esmaecida quando há mais.
+ */
+.seletor-movel > * {
+  max-width: 100%;
+}
+.seletor-movel [role='tablist'] {
+  display: flex;
+  flex-wrap: nowrap;
+  width: fit-content;
+  max-width: 100%;
+  gap: 2px;
+  padding: 3px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  border-radius: 9999px;
+  background: var(--sunken);
+  box-shadow: var(--inset-shadow-trilho);
+}
+.seletor-movel [role='tablist'][data-rola] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+}
+.seletor-movel [role='tablist']::-webkit-scrollbar {
+  display: none;
+}
+.seletor-movel [role='tab'] {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding-block: 0;
+  padding-inline: 14px;
+  font-size: 14px;
+  white-space: nowrap;
+  border-radius: 9999px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted-foreground);
+}
+.seletor-movel [role='tab'][aria-selected='true'] {
+  background: var(--raised);
+  box-shadow: var(--shadow-pilula);
+  color: var(--foreground);
+  font-weight: 500;
+}
+.seletor-movel [role='tab'] * {
+  color: inherit;
+}
+/* Rótulos longos e curtos: no seletor colado no cartão (celular) vale o curto, para as opções caberem centralizadas. */
+.so-curto {
+  display: none;
+}
+.seletor-movel .so-curto {
+  display: inline;
+}
+.seletor-movel .so-largo {
+  display: none;
 }

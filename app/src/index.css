@@ -325,3 +325,19 @@
     transition: none !important;
   }
 }
+
+/* O check de uma etapa de trabalho entra com um pequeno salto (cartão de trabalho, etapa concluída). */
+.entra-check {
+  animation: entra-check 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes entra-check {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .entra-check {
+    animation: none;
+  }
+}

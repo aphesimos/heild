@@ -10,49 +10,11 @@ import { cn } from '@/lib/utils'
  * O integrante "fazendo" (trabalho simulado da demonstração): as etapas com o
  * que já foi feito, a atual animada e a barra de progresso. O progresso sai do
  * relógio, então trocar de aba e voltar mostra o ponto certo.
+ *
+ * É um cartão só, do começo ao fim: quando termina, o orb passa ao estado de
+ * concluído, os textos trocam com um esmaecer, a barra fica verde e as etapas
+ * ganham o check. Nada muda de tamanho nem de lugar.
  */
-/** Depois de pronto, o cartão fica no chat como registro: quem fez, o quê e quando terminou. */
-function TrabalhoConcluido({ trabalho: t, className }: { trabalho: Trabalho; className?: string }) {
-  const aparencia = useAparencia()
-  const quem = integrantes.find((i) => i.id === t.integrante)
-  const ap = quem ? aparencia(quem) : undefined
-  const fim = t.fimEm ? new Date(t.fimEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : ''
-  return (
-    <div role="status" className={cn('bg-surface shadow-cartao flex flex-col gap-3 rounded-[20px] p-4', className)}>
-      <div className="flex items-center gap-3">
-        {ap && <Orb cor={ap.cor} corOlhos={ap.corOlhos} estado="concluido" tamanho={28} extras={false} cutucavel={false} />}
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium">
-            {ap?.nome ?? 'Integrante'} fez: {t.titulo}
-          </div>
-          <div className="text-muted-foreground truncate text-xs">
-            {t.cliente ? `${t.cliente} · ` : ''}
-            {t.etapas.length} de {t.etapas.length} etapas{fim ? ` · concluído às ${fim}` : ''}
-          </div>
-        </div>
-        <span className="text-success flex items-center gap-1 text-xs font-medium">
-          <CheckIcon className="size-4" weight="bold" /> Concluído
-        </span>
-      </div>
-      <div className="bg-success/70 h-1.5 rounded-full" />
-      <details className="group text-sm">
-        <summary className="text-muted-foreground hover:text-foreground w-fit cursor-pointer list-none text-xs underline-offset-4 hover:underline">
-          <span className="group-open:hidden">ver as etapas</span>
-          <span className="hidden group-open:inline">esconder as etapas</span>
-        </summary>
-        <ol className="text-muted-foreground mt-2 flex flex-col gap-1.5">
-          {t.etapas.map((e) => (
-            <li key={e} className="flex items-center gap-2">
-              <CheckIcon className="text-success size-4 shrink-0" weight="bold" />
-              {e}
-            </li>
-          ))}
-        </ol>
-      </details>
-    </div>
-  )
-}
-
 export function ProgressoTrabalho({ trabalho: t, compacto, className }: { trabalho: Trabalho; compacto?: boolean; className?: string }) {
   const aparencia = useAparencia()
   const [agora, setAgora] = useState(Date.now())
@@ -62,51 +24,70 @@ export function ProgressoTrabalho({ trabalho: t, compacto, className }: { trabal
     const id = window.setInterval(() => setAgora(Date.now()), 200)
     return () => window.clearInterval(id)
   }, [concluido])
-  if (concluido) return <TrabalhoConcluido trabalho={t} className={className} />
   const dur = duracaoTrabalho(t)
-  const preparando = agora < t.inicioEm
-  const pct = Math.max(0, Math.min(1, (agora - t.inicioEm) / dur))
-  const atual = preparando ? -1 : Math.min(t.etapas.length - 1, Math.floor((agora - t.inicioEm) / (t.seg * 1000)))
+  const preparando = !concluido && agora < t.inicioEm
+  const pct = concluido ? 1 : Math.max(0, Math.min(1, (agora - t.inicioEm) / dur))
+  const atual = concluido ? t.etapas.length : preparando ? -1 : Math.min(t.etapas.length - 1, Math.floor((agora - t.inicioEm) / (t.seg * 1000)))
   const quem = integrantes.find((i) => i.id === t.integrante)
   const ap = quem ? aparencia(quem) : undefined
+  const nome = ap?.nome ?? 'Integrante'
+  const fim = t.fimEm ? new Date(t.fimEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : ''
+  const cliente = t.cliente ? `${t.cliente} · ` : ''
   return (
-    <div role="status" aria-live="polite" className={cn('bg-surface shadow-cartao flex flex-col gap-3 rounded-[20px] p-4', className)}>
+    <div role="status" aria-live="polite" data-concluido={concluido || undefined} className={cn('bg-surface shadow-cartao flex flex-col gap-3 rounded-[20px] p-4', className)}>
       <div className="flex items-center gap-3">
-        {ap && <Orb cor={ap.cor} corOlhos={ap.corOlhos} estado="trabalhando" tamanho={compacto ? 28 : 36} animado modo="drift" cutucavel={false} />}
+        {ap && <Orb cor={ap.cor} corOlhos={ap.corOlhos} estado={concluido ? 'concluido' : 'trabalhando'} tamanho={compacto ? 28 : 36} animado modo="drift" extras={false} cutucavel={false} />}
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium">
-            {ap?.nome ?? 'Integrante'} está fazendo: {t.titulo}
-          </div>
-          <div className="text-muted-foreground truncate text-xs">
-            {t.cliente ? `${t.cliente} · ` : ''}
-            {preparando ? 'preparando…' : pct >= 1 ? 'escrevendo o resultado…' : `etapa ${atual + 1} de ${t.etapas.length}`}
-          </div>
+          <Troca ligado={concluido} className="text-sm font-medium" antes={`${nome} está fazendo: ${t.titulo}`} depois={`${nome} fez: ${t.titulo}`} />
+          <Troca
+            ligado={concluido}
+            className="text-muted-foreground text-xs"
+            antes={cliente + (preparando ? 'preparando…' : pct >= 1 ? 'escrevendo o resultado…' : `etapa ${atual + 1} de ${t.etapas.length}`)}
+            depois={`${cliente}${t.etapas.length} de ${t.etapas.length} etapas${fim ? ` · concluído às ${fim}` : ''}`}
+          />
         </div>
-        <span className="text-muted-foreground text-xs tabular-nums">{Math.round(pct * 100)}%</span>
+        <span className="grid shrink-0 justify-items-end text-xs">
+          <span className={cn('text-muted-foreground tabular-nums transition-opacity duration-300 [grid-area:1/1]', concluido && 'opacity-0')}>{Math.round(pct * 100)}%</span>
+          <span className={cn('text-success flex items-center gap-1 font-medium transition-[opacity,translate] duration-500 [grid-area:1/1]', concluido ? 'opacity-100' : 'translate-y-1 opacity-0')}>
+            <CheckIcon className="size-4" weight="bold" /> Concluído
+          </span>
+        </span>
       </div>
       <div className="bg-sunken h-1.5 overflow-hidden rounded-full">
-        <div className="bg-foreground/70 h-full rounded-full transition-[width] duration-200 ease-linear" style={{ width: `${pct * 100}%` }} />
+        <div className={cn('h-full rounded-full transition-[width,background-color] ease-linear', concluido ? 'bg-success/70 duration-500' : 'bg-foreground/70 duration-200')} style={{ width: `${pct * 100}%` }} />
       </div>
       {!compacto && (
         <ol className="flex flex-col gap-1.5 text-sm">
           {t.etapas.map((e, i) => (
-            <li key={e} className={cn('flex items-center gap-2', i > atual && 'text-muted-foreground/60', i < atual && 'text-muted-foreground')}>
-              {i < atual ? (
-                <CheckIcon className="text-success size-4 shrink-0" weight="bold" />
-              ) : i === atual ? (
-                <span className="flex size-4 shrink-0 items-center justify-center">
+            <li key={e} className={cn('flex items-center gap-2 transition-colors duration-300', i > atual && 'text-muted-foreground/60', i < atual && 'text-muted-foreground')}>
+              <span className="grid size-4 shrink-0 place-items-center">
+                {i < atual ? (
+                  <CheckIcon className="text-success entra-check size-4" weight="bold" />
+                ) : i === atual ? (
                   <span className="border-foreground/30 border-t-foreground size-3.5 animate-spin rounded-full border-2" />
-                </span>
-              ) : (
-                <span className="flex size-4 shrink-0 items-center justify-center">
+                ) : (
                   <span className="bg-foreground/20 size-1.5 rounded-full" />
-                </span>
-              )}
+                )}
+              </span>
               {e}
             </li>
           ))}
         </ol>
       )}
+    </div>
+  )
+}
+
+/** Dois textos na mesma célula: troca de um para o outro com um esmaecer, sem mudar a altura da linha. */
+function Troca({ ligado, antes, depois, className }: { ligado: boolean; antes: string; depois: string; className?: string }) {
+  return (
+    <div className={cn('grid', className)}>
+      <span aria-hidden={ligado || undefined} className={cn('truncate transition-[opacity,translate] duration-300 [grid-area:1/1]', ligado && '-translate-y-1 opacity-0')}>
+        {antes}
+      </span>
+      <span aria-hidden={!ligado || undefined} className={cn('truncate transition-[opacity,translate] delay-100 duration-400 [grid-area:1/1]', !ligado && 'translate-y-1 opacity-0')}>
+        {depois}
+      </span>
     </div>
   )
 }

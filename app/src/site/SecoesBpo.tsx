@@ -530,21 +530,25 @@ function SecaoAprovacaoBpo() {
           </ReservaAltura>
         </div>
       }
+      seletor={
+        <div role="tablist" aria-label="Lote de exemplo" className="flex flex-wrap gap-2">
+          {lotesDemo.map((x, i) => (
+            <button
+              key={x.l.id}
+              role="tab"
+              type="button"
+              aria-selected={k === i}
+              onClick={() => setK(i)}
+              className={cn('botao flex h-11 cursor-pointer items-center gap-2 rounded-full px-4 text-sm transition-colors', k === i ? 'bg-primary text-primary-foreground' : 'bg-background shadow-contorno hover:bg-raised')}
+            >
+              <span className="so-largo">{curto(x.e.nome)}</span>
+            <span className="so-curto">{curto(x.e.nome).split(' ')[0]}</span>
+            <span className={cn('so-largo tabular-nums', k === i ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{brl(x.total)}</span>
+            </button>
+          ))}
+        </div>
+      }
     >
-      <div role="tablist" aria-label="Lote de exemplo" className="flex flex-wrap gap-2">
-        {lotesDemo.map((x, i) => (
-          <button
-            key={x.l.id}
-            role="tab"
-            type="button"
-            aria-selected={k === i}
-            onClick={() => setK(i)}
-            className={cn('botao flex h-11 cursor-pointer items-center gap-2 rounded-full px-4 text-sm transition-colors', k === i ? 'bg-primary text-primary-foreground' : 'bg-background shadow-contorno hover:bg-raised')}
-          >
-            {curto(x.e.nome)} <span className={cn('tabular-nums', k === i ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{brl(x.total)}</span>
-          </button>
-        ))}
-      </div>
       <Pares
         itens={[
           ['A alçada é da empresa', 'Faixas, aprovadores e janela combinados com cada cliente, aceitos por ele e com vigência.'],
