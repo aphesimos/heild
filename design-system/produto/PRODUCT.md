@@ -39,7 +39,7 @@ A Heild é o sistema único do escritório, com IA agêntica. Painel por setor, 
 
 ## Brand Commitments
 
-- **Nome:** Heild, do nórdico antigo *heild*, "o inteiro". Linha: "O inteiro: todos os sistemas da empresa em um só lugar."
+- **Nome:** Heild, do islandês *heild*, "o inteiro" (a raiz é o nórdico antigo *heill*). Linha: "O inteiro: todos os sistemas da empresa em um só lugar."
 - **Logo:** wordmark HE · I · LD com o I em pílula, em uma cor só, e o sistema de movimento em que o I se transforma (componente `<heild-logo>`). Fonte: o design system Heild (claude.ai/artifact/ASwj7jTmkAy81R2RL1Gdqx).
 - **Tema de fábrica:** areia em camadas (claro e escuro), PP Neue Montreal e Neue Montreal Text, um índigo de destaque, orbs coloridos por integrante (`ui-lab/src/theme/temas.ts`).
 - **Voz:** direta, em português, frases curtas, voz ativa; os integrantes falam na primeira pessoa e dizem o que fizeram e o que falta.

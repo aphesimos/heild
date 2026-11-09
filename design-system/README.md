@@ -2,7 +2,7 @@
 
 O inteiro: todos os sistemas da empresa em um só lugar.
 
-Heild é o sistema do escritório contábil e de BPO, vendido a outros escritórios, com marca branca: Painel, CRM com WhatsApp, timesheet, financeiro, BPO, arquivos e app do cliente num produto só, com um time de integrantes de IA que faz o trabalho e uma pessoa que aprova. O nome vem do nórdico antigo e islandês *heild*, que significa "o inteiro", "o todo sem partes separadas". Este documento é a referência para qualquer pessoa ou agente que for construir sites, apresentações ou telas da Heild.
+Heild é o sistema do escritório contábil e de BPO, vendido a outros escritórios, com marca branca: Painel, CRM com WhatsApp, timesheet, financeiro, BPO, arquivos e app do cliente num produto só, com um time de integrantes de IA que faz o trabalho e uma pessoa que aprova. O nome vem do islandês *heild*, que significa "o inteiro", "o todo sem partes separadas"; a raiz é o nórdico antigo *heill*, inteiro, são. Este documento é a referência para qualquer pessoa ou agente que for construir sites, apresentações ou telas da Heild.
 
 ## Tudo, num lugar só
 

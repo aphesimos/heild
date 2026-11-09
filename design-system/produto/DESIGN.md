@@ -125,7 +125,7 @@ components:
 
 **Creative North Star: "Tudo, num lugar só"**
 
-Heild vem do nórdico *heild*, o inteiro. O sistema junta tudo o que o escritório usa num lugar só, e a marca diz isso de três formas que se repetem em todo lugar. A logo é modular: o I sozinho no centro se transforma em cada coisa (grade, orb, barras, check) e volta a ser um traço, enquanto HE e LD ficam juntos e conectados. A interface é feita de camadas de areia que se empilham e viram uma superfície só. E o time de integrantes, cada um com o seu orb de cor, trabalha dentro dessa superfície neutra.
+Heild vem do islandês *heild*, o inteiro (a raiz é o nórdico antigo *heill*). O sistema junta tudo o que o escritório usa num lugar só, e a marca diz isso de três formas que se repetem em todo lugar. A logo é modular: o I sozinho no centro se transforma em cada coisa (grade, orb, barras, check) e volta a ser um traço, enquanto HE e LD ficam juntos e conectados. A interface é feita de camadas de areia que se empilham e viram uma superfície só. E o time de integrantes, cada um com o seu orb de cor, trabalha dentro dessa superfície neutra.
 
 A paleta é quase toda neutra, com uma escala só de areia quente nos dois modos. A cor fica com os integrantes e com o que pede decisão. A densidade é de ferramenta usada o dia inteiro: texto de 14px, títulos grandes e leves, muito espaço entre seções e pouco dentro dos grupos. Claro e escuro valem o mesmo, e o site segue a preferência da pessoa.
 
