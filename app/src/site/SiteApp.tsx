@@ -849,7 +849,16 @@ function SecaoInteiro() {
     <Secao
       id="inteiro"
       titulo="Heild, um sistema no lugar de vinte."
-      texto="Heild vem do islandês heild, o inteiro. Prazos, conversas, horas, arquivos, cobrança e o financeiro dos clientes passam a morar no mesmo lugar, sobre o mesmo cadastro."
+      texto={
+        <>
+          Heild vem do islandês heild,{' '}
+          {/* O sublink discreto para a peça sobre o nome e a filosofia da marca (public/inteiro.html). */}
+          <a href={marca.inteiro.href} className="sublinha text-foreground font-medium">
+            o inteiro
+          </a>
+          . Prazos, conversas, horas, arquivos, cobrança e o financeiro dos clientes passam a morar no mesmo lugar, sobre o mesmo cadastro.
+        </>
+      }
       grade
     >
       <div ref={caixa} data-visual data-junto={junto} data-vivo={vivo} className="junta flex min-h-[440px] flex-col items-center justify-center gap-10 rounded-[28px] py-16" style={{ color: 'var(--primary)' }}>
@@ -921,11 +930,20 @@ function Fechamento({ titulo }: { titulo: string }) {
   )
 }
 
+/**
+ * As peças da marca: páginas à parte, fora do app React, geradas por apresentacoes/build.py --site (branch
+ * claude/zealous-wright-fvok37) em public/ (ver public/README.md). Usam o mesmo tema guardado ('heild-tema').
+ */
+const marca = {
+  diretrizes: { href: 'diretrizes.html', nome: 'Diretrizes da marca', descricao: 'A logo, o movimento, a cor, os orbs e a voz.' },
+  inteiro: { href: 'inteiro.html', nome: 'Do inteiro', descricao: 'O nome e a filosofia da marca, em fólios.' },
+}
+
 function Rodape() {
   return (
     <footer id="contato-rodape" className="border-t py-14">
-      <Wrap className="grid gap-10 sm:grid-cols-[1fr_auto_auto] sm:gap-16">
-        <div className="flex flex-col gap-3">
+      <Wrap className="grid gap-10 sm:grid-cols-3 sm:gap-x-12 lg:grid-cols-[1fr_auto_auto_auto] lg:gap-16">
+        <div className="flex flex-col gap-3 sm:col-span-3 lg:col-span-1">
           <Logo largura={96} />
           <p className="text-muted-foreground max-w-xs text-sm">O inteiro: todos os sistemas da empresa em um só lugar.</p>
         </div>
@@ -945,6 +963,17 @@ function Rodape() {
           <a href="#contato" className="sublinha text-muted-foreground hover:text-foreground w-fit">
             Agendar uma demonstração
           </a>
+        </nav>
+        <nav aria-label="A marca" className="flex flex-col gap-2 text-sm">
+          <span className="font-medium">A marca</span>
+          {[marca.diretrizes, marca.inteiro].map((m) => (
+            <p key={m.href} className="flex max-w-[16rem] flex-col gap-0.5">
+              <a href={m.href} className="sublinha text-muted-foreground hover:text-foreground w-fit">
+                {m.nome}
+              </a>
+              <span className="text-muted-foreground text-xs leading-snug">{m.descricao}</span>
+            </p>
+          ))}
         </nav>
       </Wrap>
       <Wrap className="text-muted-foreground mt-12 text-xs">© 2026 Heild</Wrap>
