@@ -56,7 +56,7 @@ export function GavetaFormulario({
             if (!acaoDesabilitada) onAcao()
           }}
         >
-          <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-4">{children}</div>
+          <div className="area-rolagem-dupla flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-4">{children}</div>
           <footer className="flex items-center gap-2 border-t p-3">
             {secundaria}
             <Button type="button" variant="ghost" className="ml-auto rounded-full" onClick={onFechar}>

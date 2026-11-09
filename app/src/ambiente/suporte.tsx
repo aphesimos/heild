@@ -695,7 +695,7 @@ function BlocoFaq({
             </button>
           ))}
         </div>
-        <ul className="flex max-h-64 flex-col overflow-y-auto">
+        <ul className="area-rolagem-dupla flex max-h-64 flex-col overflow-y-auto">
           {lista.map((f) => (
             <li key={f.p} className="border-border/70 border-b last:border-0">
               <details className="py-1.5">

@@ -546,14 +546,24 @@ function SecaoPlataformas({ menos }: { menos?: string }) {
   )
 }
 
+/** Toca a forma do I uma vez; se a anterior ainda está tocando, não recomeça (recomeçar no meio corta seco). */
+function tocarUmaVez(logo: HeildLogoElement | null, nome: string, tocando: { current: boolean }) {
+  if (!logo?.play || tocando.current) return
+  tocando.current = true
+  const fim = () => void (tocando.current = false)
+  Promise.resolve(logo.play(nome)).then(fim, fim)
+}
+
 function LinhaPlataforma({ p, i = 0 }: { p: Plataforma; i?: number }) {
   const logo = useRef<HeildLogoElement>(null)
   const linha = useRef<HTMLAnchorElement>(null)
   // Toca toda vez que a plataforma entra na tela ao rolar (não só na primeira): no celular não há hover para chamar a animação.
   const visto = useVisto(linha, { limiar: 0.6, sempre: true })
+  const tocando = useRef(false)
   useEffect(() => {
     if (!visto) return
-    const id = window.setTimeout(() => logo.current?.play?.(p.animacao), 300 + i * 400)
+    // Só toca de novo depois que a anterior terminou: sair e voltar rápido não recomeça a animação no meio (sem corte).
+    const id = window.setTimeout(() => tocarUmaVez(logo.current, p.animacao, tocando), 300 + i * 400)
     return () => window.clearTimeout(id)
   }, [visto, i, p.animacao])
   return (
@@ -595,8 +605,9 @@ function SecaoTime({ setores, titulo, texto }: { setores: string[]; titulo: Reac
       visual={
         <div data-luz className="bg-background shadow-painel flex h-[520px] flex-col gap-4 overflow-hidden rounded-[28px] p-5 sm:h-[min(680px,calc(100svh-120px))] sm:min-h-[460px] sm:p-6">
           <CabecalhoIntegrante nivel="h3" integrante={{ ...atual, fazendoAgora: [], fila: 0, pendentes: cartoesPendentes(exemplo.conversasPorIntegrante[atual.id] ?? [], {}) }} className="bg-surface shadow-contorno rounded-[22px] px-3 py-2.5 sm:px-4" />
-          <div key={atual.id} className="area-rolagem-dupla entra min-h-0 flex-1 overflow-y-auto pr-1">
-            {conversa.length ? <ListaMensagens mensagens={conversa} /> : <p className="text-muted-foreground text-sm">Ainda sem conversa nesta demonstração.</p>}
+          <div key={atual.id} className="area-rolagem-dupla min-h-0 flex-1 overflow-y-auto pr-1">
+            {/* A entrada fica por dentro: na própria área de rolagem ela substituiria a animação do esmaecido. */}
+            <div className="entra">{conversa.length ? <ListaMensagens mensagens={conversa} /> : <p className="text-muted-foreground text-sm">Ainda sem conversa nesta demonstração.</p>}</div>
           </div>
         </div>
       }
@@ -748,6 +759,7 @@ function SecaoInteiro() {
   const [sobre, setSobre] = useState<number | null>(null)
   const caixa = useRef<HTMLDivElement>(null)
   const logo = useRef<HeildLogoElement>(null)
+  const tocandoInteiro = useRef(false)
   const pecas = useRef<(HTMLLIElement | null)[]>([])
   useEffect(() => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return setJunto(true)
@@ -762,12 +774,12 @@ function SecaoInteiro() {
         if (primeira) {
           primeira = false
           setJunto(true)
-          window.setTimeout(() => logo.current?.play?.('centralizar'), 500)
+          window.setTimeout(() => tocarUmaVez(logo.current, 'centralizar', tocandoInteiro), 500)
           window.setTimeout(() => setVivo(true), 1900)
         } else if (saiu) {
           saiu = false
           setSobre(null)
-          window.setTimeout(() => logo.current?.play?.('centralizar'), 250)
+          window.setTimeout(() => tocarUmaVez(logo.current, 'centralizar', tocandoInteiro), 250)
         }
       },
       { threshold: 0.45 },
@@ -819,8 +831,26 @@ function SecaoInteiro() {
   // A forma do I segue a peça sob o cursor (morph parte do desenho atual: chacoalhar o mouse não corta).
   const passar = (i: number | null) => {
     setSobre(i)
+    atual.current = i
     logo.current?.morph?.(i === null ? null : pecasInteiro[i][1])
   }
+  // A seleção automática: sem cursor nem toque, uma peça é escolhida ao acaso a cada poucos segundos (nunca a mesma
+  // duas vezes seguidas) e o I vira a forma dela. A mão da pessoa pausa o automático, que volta depois de um tempo parado.
+  const atual = useRef<number | null>(null)
+  const ultimaMao = useRef(0)
+  const mao = () => void (ultimaMao.current = performance.now())
+  const naTela = useVisto(caixa, { limiar: 0.3, sempre: true })
+  useEffect(() => {
+    if (!vivo || !naTela || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    const id = window.setInterval(() => {
+      if (performance.now() - ultimaMao.current < 6000) return
+      let i = Math.floor(Math.random() * pecasInteiro.length)
+      if (i === atual.current) i = (i + 1 + Math.floor(Math.random() * (pecasInteiro.length - 1))) % pecasInteiro.length
+      passar(i)
+    }, 3600)
+    return () => window.clearInterval(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vivo, naTela])
   return (
     <Secao
       id="inteiro"
@@ -830,14 +860,14 @@ function SecaoInteiro() {
     >
       <div ref={caixa} data-visual data-junto={junto} data-vivo={vivo} className="junta flex min-h-[440px] flex-col items-center justify-center gap-10 rounded-[28px] py-16" style={{ color: 'var(--primary)' }}>
         <heild-logo ref={logo} label="Heild" style={{ width: 'min(360px, 64vw)' }} />
-        <ul className="flex max-w-2xl flex-wrap justify-center gap-2.5" aria-label="O que a Heild junta" onPointerLeave={(e) => e.pointerType === 'mouse' && passar(null)}>
+        <ul className="flex max-w-2xl flex-wrap justify-center gap-2.5" aria-label="O que a Heild junta" onPointerLeave={(e) => e.pointerType === 'mouse' && (mao(), passar(null))}>
           {pecasInteiro.map(([m], i) => (
             <li
               key={m}
               ref={(n) => void (pecas.current[i] = n)}
-              onPointerEnter={(e) => e.pointerType === 'mouse' && vivo && passar(i)}
+              onPointerEnter={(e) => e.pointerType === 'mouse' && vivo && (mao(), passar(i))}
               // No toque, um toque escolhe a peça (e outro toque na mesma volta à pílula): sem precisar segurar.
-              onClick={() => vivo && passar(sobre === i ? null : i)}
+              onClick={() => vivo && (mao(), passar(sobre === i ? null : i))}
               data-sobre={sobre === i || undefined}
               className="peca rounded-full px-4 py-2 text-sm select-none"
               style={{ ['--dx' as string]: `${soltas[i][0]}px`, ['--dy' as string]: `${soltas[i][1]}px`, ['--r' as string]: `${soltas[i][2]}deg`, ['--i' as string]: i }}

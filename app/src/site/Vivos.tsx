@@ -67,19 +67,43 @@ export function AprovacaoAoVivo() {
   const visto = useVisto(caixa, { limiar: 0.5, sempre: true })
   const [volta, setVolta] = useState(0)
   const [manual, setManual] = useState<number | null>(null)
+  // Tela de toque: nada roda sozinho. O cartão espera o toque em Aprovar e o resultado fica guardado, mesmo saindo da tela.
+  const toque = useMedia('(hover: none)')
   const CICLO = 9000
-  const ms = useRelogio(visto && !parado(), volta, 60_000)
+  const ms = useRelogio(visto && !parado() && !toque, volta, 60_000)
   // Aprovado na mão, o ciclo termina o mesmo tempo depois do toque que depois da aprovação automática: as 14 transmissões correm inteiras.
   const fimCiclo = manual !== null ? manual + (CICLO - 2700) : CICLO
   useEffect(() => {
+    if (toque) return
     if (ms >= fimCiclo) {
       setManual(null)
       setVolta((v) => v + 1)
     }
-  }, [ms, fimCiclo])
-  const aprovou = manual !== null || ms >= 2700
+  }, [ms, fimCiclo, toque])
+  // No toque, as transmissões contam a partir do momento do toque, num relógio próprio que não depende de o cartão estar na tela.
+  const [aprovadoEm, setAprovadoEm] = useState<number | null>(null)
+  const [agora, setAgora] = useState(0)
+  const feitasToque = aprovadoEm === null ? 0 : Math.min(14, Math.floor(Math.max(0, agora - aprovadoEm - 500) / 140))
+  useEffect(() => {
+    if (aprovadoEm === null || feitasToque >= 14) return
+    let raf = 0
+    const f = () => {
+      setAgora(performance.now())
+      raf = requestAnimationFrame(f)
+    }
+    raf = requestAnimationFrame(f)
+    return () => cancelAnimationFrame(raf)
+  }, [aprovadoEm, feitasToque])
+  const aprovou = toque ? aprovadoEm !== null : manual !== null || ms >= 2700
   const desde = manual ?? 2700
-  const feitas = aprovou ? Math.min(14, Math.floor(Math.max(0, ms - desde - 500) / 140)) : 0
+  const feitas = toque ? feitasToque : aprovou ? Math.min(14, Math.floor(Math.max(0, ms - desde - 500) / 140)) : 0
+  const aprovar = () => {
+    if (toque) {
+      const t0 = performance.now()
+      setAgora(t0)
+      setAprovadoEm(t0)
+    } else setManual(ms)
+  }
   const [alvo, setAlvo] = useState({ x: 0, y: 0 })
   // Onde fica o botão, medido de novo sempre que o cartão muda de tamanho (a seção entra animada e a largura muda com a tela).
   useEffect(() => {
@@ -97,8 +121,6 @@ export function AprovacaoAoVivo() {
     ro.observe(c)
     return () => ro.disconnect()
   }, [visto, volta])
-  // Tela de toque: em vez de um cursor de mouse, um anel de toque no botão.
-  const toque = useMedia('(hover: none)')
   const fase = manual !== null ? 3 : ms < 1100 ? 0 : ms < 2400 ? 1 : ms < 2700 ? 2 : 3
   // Quem aprovou de verdade não vê mais o cursor da demonstração.
   const cursor = manual !== null || toque ? { x: alvo.x, y: alvo.y, o: 0 } : fase === 0 ? { x: alvo.x + 180, y: alvo.y + 120, o: 0 } : fase === 3 && ms > 4200 ? { x: alvo.x + 140, y: alvo.y + 90, o: 0 } : { x: alvo.x, y: alvo.y, o: 1 }
@@ -131,7 +153,7 @@ export function AprovacaoAoVivo() {
           {aprovou ? (
             <>
               <p className="carimbo text-success flex items-center gap-2 text-sm font-medium">
-                <CheckIcon className="size-4" weight="bold" /> Aprovado por {manual !== null ? 'você' : 'Ana Souza'} às {hora}
+                <CheckIcon className="size-4" weight="bold" /> Aprovado por {manual !== null || aprovadoEm !== null ? 'você' : 'Ana Souza'} às {hora}
               </p>
               <div className="flex items-center gap-3">
                 <div className="bg-sunken h-1.5 flex-1 overflow-hidden rounded-full">
@@ -142,7 +164,7 @@ export function AprovacaoAoVivo() {
             </>
           ) : (
             <div className="flex gap-2">
-              <button ref={botao} type="button" onClick={() => setManual(ms)} className={cn('botao bg-primary text-primary-foreground h-11 cursor-pointer rounded-full px-6 text-sm font-medium transition-transform', fase === 2 && 'scale-[0.96]')}>
+              <button ref={botao} type="button" onClick={aprovar} className={cn('botao bg-primary text-primary-foreground h-11 cursor-pointer rounded-full px-6 text-sm font-medium transition-transform', !toque && fase === 2 && 'scale-[0.96]', toque && 'pulso')}>
                 Aprovar
               </button>
               <span className="text-muted-foreground flex h-11 items-center rounded-full px-4 text-sm">Ver os 14</span>
@@ -150,7 +172,6 @@ export function AprovacaoAoVivo() {
           )}
         </div>
       </div>
-      {toque && manual === null && fase === 2 && <span aria-hidden className="toque-demo pointer-events-none absolute size-12 rounded-full" style={{ left: alvo.x - 24, top: alvo.y - 24 }} />}
       <svg
         aria-hidden
         width="22"

@@ -276,7 +276,7 @@ export function ConversasTela({ conversas: iniciais, clientes, clienteInicial, t
               <SheetTitle>{aberta.cliente ?? 'Lead'}</SheetTitle>
               <SheetDescription>O cadastro de quem escreve, projetado na conversa.</SheetDescription>
             </SheetHeader>
-            <Lateral c={aberta} tarefas={tarefas} onAbrirLead={onAbrirLead} className="overflow-y-auto" />
+            <Lateral c={aberta} tarefas={tarefas} onAbrirLead={onAbrirLead} className="area-rolagem-dupla overflow-y-auto" />
           </SheetContent>
         </Sheet>
       )}

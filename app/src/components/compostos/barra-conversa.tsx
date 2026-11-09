@@ -40,7 +40,7 @@ export function BarraConversa({ atual, historico, contexto, onAbrir, onNova, onL
         </PopoverTrigger>
         <PopoverContent align="start" className="w-80 p-1">
           <div className="text-muted-foreground px-3 pt-2 pb-1 text-xs">Conversas · {contexto}</div>
-          <div className="max-h-80 overflow-y-auto">
+          <div className="area-rolagem-dupla max-h-80 overflow-y-auto">
             {ordemGrupos.map((g) => {
               const itens = historico.filter((c) => c.grupo === g)
               if (!itens.length) return null
