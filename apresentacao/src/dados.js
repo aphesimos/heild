@@ -478,9 +478,9 @@
       { tipo: 'time', capitulo: 'O time', curto: 'O time', titulo: 'Um integrante de IA em cada setor.', frase: 'Cada um conhece o trabalho do seu setor, conversa com você no próprio chat e passa o que é de outro setor para quem faz.',
         grupos: [
           { nome: 'Fixos no topo', ids: ['assistente', 'consultor'] },
+          { nome: 'De todas as áreas', ids: ['atendimento', 'financeiro'] },
           { nome: 'Contábil', ids: ['fiscal', 'dp', 'contabil', 'societario', 'notas'] },
-          { nome: 'BPO', ids: ['bpo_pagar', 'bpo_receber', 'bpo_conciliacao', 'bpo_gerencial'] },
-          { nome: 'De todas as áreas', ids: ['atendimento', 'financeiro'] }
+          { nome: 'BPO', ids: ['bpo_pagar', 'bpo_receber', 'bpo_conciliacao', 'bpo_gerencial'] }
         ] },
       { tipo: 'orb', capitulo: 'O time', curto: 'O orb', quem: 'contabil' },
       Object.assign({ tipo: 'passagem', capitulo: 'O time', curto: 'Um pedido, o time inteiro' }, c.passagem),

@@ -84,7 +84,7 @@
     html: function (d) {
       var l = d.legendas && d.legendas[0];
       return luzHtml(d.luz) + '<div class="centralizado">' + titulo(d.titulo) + frase(d.frase, 380) +
-        (l ? '<div class="legenda" data-e style="--d:700ms"><span class="troca">' + orb(l.quem, { tamanho: 32, reacao: REACAO[l.estado], extras: false }) +
+        (l ? '<div class="legenda" data-e style="--d:700ms"><span class="troca">' + orb(l.quem, { tamanho: 32, reacao: REACAO[l.estado] }) +
           '<span><span class="quem">' + h(I[l.quem].nome) + '</span> <span class="txt">' + h(l.texto) + '</span></span></span></div>' : '') + '</div>';
     },
     entrar: function (el, d, api) {
@@ -157,7 +157,7 @@
       return '<div class="dividido">' + cab(d, '<p class="rotulo" data-e style="--d:600ms">Clique no desenho para separar e juntar de novo.</p>') +
         encaixe(620, 560, '<div class="pilha inicio" style="--yb:' + yb + 'px" role="button" tabindex="0" aria-label="Separar e juntar as camadas">' +
           '<div class="fio" style="top:' + top + 'px;height:' + (yb - top) + 'px"></div>' + base + planos +
-          '<div class="base-orb" style="top:' + (yb - 18) + 'px">' + orb(d.orb || 'assistente', { tamanho: 56, reacao: 'working', extras: false }) + '</div>' +
+          '<div class="base-orb" style="top:' + (yb - 18) + 'px">' + orb(d.orb || 'assistente', { tamanho: 56, reacao: 'working' }) + '</div>' +
           '<p class="rotulo rotulo-base" style="top:' + (yb + 100) + 'px">Uma superfície só, sobre o mesmo cadastro</p></div>') + '</div>';
     },
     entrar: function (el, d, api) {
@@ -327,7 +327,7 @@
   function telaMini() {
     return '<div class="tela-mini"><div class="lat"><span class="sig">HE</span><i class="at"></i><i></i><i></i><i></i><i></i></div>' +
       '<div class="cont"><div class="abas"><span class="at">Assistente</span><span>Time</span><span>Visão geral</span></div>' +
-      '<div class="pergunta">No que posso ajudar?' + orb('assistente', { tamanho: 40, extras: false, modo: 'follow' }) + '</div>' +
+      '<div class="pergunta">No que posso ajudar?' + orb('assistente', { tamanho: 40, modo: 'follow' }) + '</div>' +
       '<div class="sugestoes"><span>Feche outubro da Metalúrgica Andrade</span><span>Quem está aguardando documento?</span></div>' +
       '<div class="campo"><span>Peça ao Assistente…</span><div class="acoes"><span class="mais"></span><span class="enviar"></span></div></div></div></div>';
   }
@@ -390,7 +390,7 @@
       return '<div class="dividido">' + cab({ titulo: 'Fala como um colega do escritório.', frase: 'Frases curtas, voz ativa e os termos do ofício sem explicação. Os integrantes dizem o que fizeram e o que falta.' },
         '<div class="pilulas" data-e style="--d:600ms"><span class="pilula">Primeira pessoa</span><span class="pilula">O botão diz o que acontece: Aprovar</span><span class="pilula">PGDAS-D, fator R, lote</span><span class="pilula">Sem emoji</span></div>') +
         '<div class="visual"><div class="falas"><p class="antes" data-e style="--d:400ms">A conciliação foi processada.</p><p class="depois" aria-live="polite"></p>' +
-        '<div class="cartao msg" data-e style="--d:900ms">' + orb('fiscal', { tamanho: 32, extras: false, reacao: 'working' }) + '<div><span class="autor">Fiscal</span><p class="texto-msg"></p></div></div></div></div></div>';
+        '<div class="cartao msg" data-e style="--d:900ms">' + orb('fiscal', { tamanho: 32, reacao: 'working' }) + '<div><span class="autor">Fiscal</span><p class="texto-msg"></p></div></div></div></div></div>';
     },
     entrar: function (el, d, api) {
       var dep = q(el, '.depois'), msg = q(el, '.texto-msg'), o = q(el, '.msg orb-avatar');
@@ -409,23 +409,41 @@
   };
 
   /* ---------------- time ---------------- */
+  // O estado de cada um quando o slide abre: os mesmos da demonstração do protótipo.
+  var ESTADO_TIME = { assistente: 'trabalhando', consultor: 'pensando', fiscal: 'precisa_de_voce', dp: 'concluido', contabil: 'trabalhando', societario: 'precisa_de_voce', notas: 'trabalhando',
+    atendimento: 'trabalhando', financeiro: 'pensando', bpo_pagar: 'concluido', bpo_receber: 'trabalhando', bpo_conciliacao: 'precisa_de_voce', bpo_gerencial: 'concluido' };
+  // Para onde cada estado vai quando o integrante passa para a próxima coisa.
+  var PROXIMO = { trabalhando: 'concluido', concluido: 'disponivel', disponivel: 'pensando', pensando: 'trabalhando', precisa_de_voce: 'trabalhando' };
   T.time = {
     html: function (d) {
       var gs = (d.grupos || []).map(function (g, gi) {
         return '<div class="grupo" data-e style="--d:' + (300 + gi * 160) + 'ms"><p class="rotulo">' + h(g.nome) + '</p><div class="linha-orbs">' +
-          g.ids.map(function (id) { return '<button type="button" class="integrante" data-id="' + id + '">' + orb(id, { tamanho: 52, modo: 'follow', extras: false }) + '<span class="nome">' + h(I[id].nome) + '</span></button>'; }).join('') + '</div></div>';
+          g.ids.map(function (id) { var e = ESTADO_TIME[id] || 'disponivel'; return '<button type="button" class="integrante" data-id="' + id + '" data-estado="' + e + '">' + orb(id, { tamanho: 52, modo: 'follow', reacao: REACAO[e] }) + '<span class="nome">' + h(I[id].nome) + '</span><span class="estado-int">' + h(ESTADO_PALAVRA[e]) + '</span></button>'; }).join('') + '</div></div>';
       }).join('');
       return '<div class="dividido dividido--estreito">' + cab(d, '<div class="ficha" aria-live="polite" data-e style="--d:600ms"><b>Passe o cursor num orb</b><span>Clique para cutucar.</span></div>') +
         '<div class="visual"><div class="grupos">' + gs + '</div></div></div>';
     },
     entrar: function (el, d, api) {
-      var ficha = q(el, '.ficha');
-      qa(el, '.integrante').forEach(function (b) {
-        var it = I[b.dataset.id], o = q(b, 'orb-avatar');
-        var mostrar = function () { ficha.innerHTML = '<b>' + h(it.nome) + ' · <span class="suave" style="font-size:24px">' + h(it.area) + '</span></b><span>' + h(it.faz) + '</span>'; };
-        api.ouvir(b, 'pointerenter', mostrar); api.ouvir(b, 'focus', mostrar);
-        api.ouvir(b, 'click', function () { mostrar(); o.poke && o.poke(); });
+      var ficha = q(el, '.ficha'), bs = qa(el, '.integrante'), sobre = null;
+      function mostrar(b) {
+        sobre = b; var it = I[b.dataset.id];
+        ficha.innerHTML = '<b>' + h(it.nome) + ' · <span class="suave" style="font-size:24px">' + h(ESTADO_PALAVRA[b.dataset.estado]) + '</span></b><span>' + h(it.faz) + '</span>';
+      }
+      function mudar(b, e) {
+        b.dataset.estado = e; q(b, 'orb-avatar').setAttribute('reaction', REACAO[e]); q(b, '.estado-int').textContent = ESTADO_PALAVRA[e];
+        if (sobre === b) mostrar(b);
+      }
+      bs.forEach(function (b) {
+        var o = q(b, 'orb-avatar');
+        api.ouvir(b, 'pointerenter', function () { mostrar(b); }); api.ouvir(b, 'focus', function () { mostrar(b); });
+        api.ouvir(b, 'click', function () { mostrar(b); if (o.poke) o.poke(); });
       });
+      // O time segue trabalhando: a cada pouco, um integrante passa para a próxima coisa.
+      var ultimo = -1;
+      api.intervalo(function () {
+        var k; do { k = Math.floor(Math.random() * bs.length); } while (bs.length > 1 && k === ultimo);
+        ultimo = k; mudar(bs[k], PROXIMO[bs[k].dataset.estado] || 'trabalhando');
+      }, 2600);
     }
   };
 
@@ -468,7 +486,7 @@
     html: function (d) {
       var elos = ['assistente'].concat(d.cadeia.map(function (c) { return c.quem; }));
       var cadeia = '<div class="cadeia"><span class="fio-cadeia"></span><span class="viajante"></span>' + elos.map(function (id, i) {
-        return '<div class="elo" data-i="' + i + '">' + orb(id, { tamanho: 56, extras: false }) + '<div><div class="nome">' + h(I[id].nome) + '</div><div class="estado">disponível</div></div></div>';
+        return '<div class="elo" data-i="' + i + '">' + orb(id, { tamanho: 56 }) + '<div><div class="nome">' + h(I[id].nome) + '</div><div class="estado">disponível</div></div></div>';
       }).join('') + '</div>';
       return '<div class="dividido dividido--estreito">' + cab({ titulo: 'Um pedido, o time inteiro.', frase: 'O Assistente recebe, divide e acompanha. Cada integrante faz a sua parte e passa adiante; o que tem efeito fora volta como cartão.' },
         '<button type="button" class="botao botao--fantasma botao--pequeno repetir-cena" data-e style="--d:700ms;align-self:flex-start">Repetir a cena</button>') +
@@ -538,7 +556,7 @@
     html: function (d) {
       var sempre = '<ul class="sempre">' + ['Transmitir', 'Pagar', 'Assinar', 'Enviar ao cliente'].map(function (s, i) { return '<li data-e style="--d:' + (550 + i * 80) + 'ms">' + s + '</li>'; }).join('') + '</ul>';
       return '<div class="dividido">' + cab({ titulo: 'A IA prepara. Uma pessoa aprova.', frase: 'Sempre por um cartão, no chat, no Painel ou no celular. A aprovação fica registrada com o nome de quem aprovou.' }, sempre) +
-        encaixe(580, 440, '<div class="cartao-grande" data-e="zoom" style="--d:300ms"><div class="quem">' + orb(d.quem, { tamanho: 36, extras: false, reacao: 'needs' }) +
+        encaixe(580, 440, '<div class="cartao-grande" data-e="zoom" style="--d:300ms"><div class="quem">' + orb(d.quem, { tamanho: 36, reacao: 'needs' }) +
           '<div><b>' + h(I[d.quem].nome) + '</b><span class="estado-c">' + h(d.estado) + '</span></div></div>' +
           '<div class="o-que"><b>' + h(d.titulo) + '</b><span>' + h(d.sub) + '</span></div>' +
           '<dl>' + d.campos.map(function (c) { return '<div><dt>' + h(c[0]) + '</dt><dd>' + h(c[1]) + '</dd></div>'; }).join('') + '</dl>' +
@@ -585,7 +603,7 @@
     html: function (d) {
       return '<div class="dividido">' + cab(d, d.outra ? '<a class="link-outra" data-e style="--d:700ms" href="' + h(d.outra.href) + '" target="_blank" rel="noopener">' + h(d.outra.texto) + '</a>' : '') +
         encaixe(600, 490, '<div class="consulta"><div class="pergunta"><span class="t-perg"></span></div>' +
-          '<div class="resposta aparece r-cartao"><div class="quem">' + orb('consultor', { tamanho: 36, extras: false }) + '<b>Consultor</b><span class="suave est-lei">pensando</span></div><p class="t-resp"></p>' +
+          '<div class="resposta aparece r-cartao"><div class="quem">' + orb('consultor', { tamanho: 36 }) + '<b>Consultor</b><span class="suave est-lei">pensando</span></div><p class="t-resp"></p>' +
           '<blockquote class="aparece r-trecho">' + h(d.trecho) + '</blockquote>' +
           '<div class="norma aparece r-norma"><b>' + h(d.norma) + '</b><span class="suave">' + h(d.vigencia) + ' · ' + h(d.hierarquia) + '</span></div>' +
           '<div class="rodape-lei aparece r-rod">' + seloHtml('sucesso', d.grau) + '<span>' + h(d.calculo) + '</span></div></div></div>') + '</div>';
@@ -650,7 +668,7 @@
         i = k; var a = d.abas[k];
         bs.forEach(function (b, j) { b.setAttribute('aria-selected', String(j === k)); });
         corpo.innerHTML = '<div class="cab-tela"><div><div class="t">' + h(a.nome) + '</div><div class="s">' + a.linhas.length + ' itens · ' + h(I[a.quem].nome) + ' ' + h(ESTADO_PALAVRA[a.estado] || '') + '</div></div>' +
-          '<div class="fala-integrante"><span>' + h(a.fala) + '</span>' + orb(a.quem, { tamanho: 34, extras: false, reacao: REACAO[a.estado] }) + '</div></div>' +
+          '<div class="fala-integrante"><span>' + h(a.fala) + '</span>' + orb(a.quem, { tamanho: 34, reacao: REACAO[a.estado] }) + '</div></div>' +
           '<div class="linhas">' + a.linhas.map(function (l, k2) {
             return '<div class="linha" style="--k:' + k2 + '"><div><div class="t">' + h(l[0]) + '</div>' + (l[1] ? '<div class="s">' + h(l[1]) + '</div>' : '') + '</div>' + seloHtml(l[2], l[3]) + '<div class="v">' + h(l[4]) + '</div></div>';
           }).join('') + '</div>';
@@ -779,7 +797,7 @@
       var ids = plano(p.time).filter(function (id) { return id !== 'assistente' && id !== 'consultor'; });
       return '<div class="dividido dividido--meio">' + cab({ titulo: ch.titulo, frase: ch.frase }, '<ul class="itens-outra" data-e style="--d:560ms">' + ch.itens.map(function (x) { return '<li>' + h(x) + '</li>'; }).join('') + '</ul>') +
         encaixe(520, 440, '<div class="plat" data-e="zoom" style="--d:300ms"><heild-logo class="logo-outra" label="Heild" tabindex="0" role="button" aria-label="Tocar a forma"></heild-logo><b>' + h(p.nome) + '</b><p>' + h(p.resumo) + '</p>' +
-          '<div class="orbs-linha">' + ids.map(function (id) { return orb(id, { tamanho: 34, extras: false, modo: 'follow' }); }).join('') + '<span class="rotulo">' + ids.map(function (id) { return I[id].nome; }).join(', ') + '</span></div></div>') + '</div>';
+          '<div class="orbs-linha">' + ids.map(function (id) { return orb(id, { tamanho: 34, modo: 'follow' }); }).join('') + '<span class="rotulo">' + ids.map(function (id) { return I[id].nome; }).join(', ') + '</span></div></div>') + '</div>';
     },
     entrar: function (el, d, api) {
       var p = D.plataformas[d.plataforma], logo = q(el, 'heild-logo');
@@ -865,8 +883,8 @@
         encaixe(680, 420, '<div class="app-tema" data-e="zoom" style="--d:250ms"><div class="lat"><span class="sig">HE</span><i></i><i></i><i></i><i></i></div><div class="cont">' +
           '<div class="topo"><span class="nome-prod">Heild</span><span class="novo" aria-label="novo"></span></div>' +
           '<div class="bloco-tema"><span class="h">Hoje</span>' +
-          '<div class="linha-int"><orb-avatar class="orb-dp" size="30" extras="off" label="DP"></orb-avatar><div><b class="nome-dp">DP</b> preparou os contratos de experiência da Padaria<small>há 2 min</small></div></div>' +
-          '<div class="linha-int"><orb-avatar class="orb-fiscal" size="30" extras="off" reaction="needs" label="Fiscal"></orb-avatar><div><b>Fiscal</b> deixou as guias da Metalúrgica para você aprovar<small>expira em 2 dias</small></div></div>' +
+          '<div class="linha-int"><orb-avatar class="orb-dp" size="30" reaction="done" label="DP"></orb-avatar><div><b class="nome-dp">DP</b> preparou os contratos de experiência da Padaria<small>há 2 min</small></div></div>' +
+          '<div class="linha-int"><orb-avatar class="orb-fiscal" size="30" reaction="needs" label="Fiscal"></orb-avatar><div><b>Fiscal</b> deixou as guias da Metalúrgica para você aprovar<small>expira em 2 dias</small></div></div>' +
           '<span class="acao">Aprovar</span></div><div><p style="margin:0 0 6px;font-size:12px;opacity:.72">Limite de IA da janela de 5 horas</p><div class="barra-ia"><i></i></div></div></div></div>') + '</div>';
     },
     entrar: function (el, d, api) {

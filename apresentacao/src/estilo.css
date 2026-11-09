@@ -765,7 +765,7 @@ html.parado .controles { opacity: 0; transform: translateY(6px); pointer-events:
 @keyframes pisca { 50% { opacity: 0; } }
 
 /* time */
-.s-time .grupos { display: flex; flex-direction: column; gap: 22px; width: 100%; }
+.s-time .grupos { display: flex; flex-wrap: wrap; column-gap: 36px; row-gap: 18px; width: 100%; }
 .s-time .grupo { display: flex; flex-direction: column; gap: 10px; }
 .s-time .grupo .rotulo { padding-left: 4px; }
 .s-time .linha-orbs { display: flex; flex-wrap: wrap; gap: 14px 10px; }
@@ -775,7 +775,7 @@ html.parado .controles { opacity: 0; transform: translateY(6px); pointer-events:
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  width: 92px;
+  width: 104px;
   padding: 8px 4px;
   border: 0;
   border-radius: var(--raio-lg);
@@ -784,6 +784,7 @@ html.parado .controles { opacity: 0; transform: translateY(6px); pointer-events:
 }
 .s-time .integrante:hover, .s-time .integrante:focus-visible { background: var(--superficie); }
 .s-time .integrante .nome { font-size: 12px; line-height: 16px; text-align: center; }
+.s-time .integrante .estado-int { margin-top: -4px; font-size: 12px; line-height: 16px; text-align: center; color: var(--texto-suave); }
 .s-time .ficha { min-height: 52px; display: flex; flex-direction: column; gap: 2px; }
 .s-time .ficha b { font-family: var(--font-titulo); font-size: 24px; line-height: 30px; font-weight: 400; letter-spacing: -0.02em; }
 .s-time .ficha span { font-size: 16px; line-height: 24px; color: var(--texto-suave); }
