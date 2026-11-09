@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-26 -77 541 541">
+  <!-- O HE da logo da Heild (mesmos traçados do <heild-logo>), com um contorno leve para ler em 16 px: preto no tema claro do navegador, branco no escuro. -->
+  <style>
+    path { fill: #1b1917; stroke: #1b1917; }
+    @media (prefers-color-scheme: dark) { path { fill: #faf6f3; stroke: #faf6f3; } }
+  </style>
+  <path stroke-width="18" stroke-linejoin="miter" d="M54.5 163.805H231V14.3047H483.5V61.3047H285.5V163.305H459.5V210.805H285.5V324.805H489V371.805H231V210.805H54.5V371.805H0V14.3047H54.5V163.805Z"/>
+</svg>

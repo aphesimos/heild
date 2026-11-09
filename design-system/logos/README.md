@@ -14,3 +14,7 @@ Versões estáticas da marca, para quando o componente `<heild-logo>` não serve
 - Na tela, prefira o componente, que usa a cor do texto em volta.
 - Não recolorir, não esticar, não pôr contorno nem sombra. Abaixo de 72px de largura, use a pílula no lugar do wordmark.
 - O orb estático (a logo virando esfera, com olhos recortados) ainda não foi exportado aqui; ele existe animado no componente (`animation="orb"`).
+
+## Ícone da aba (favicon)
+
+`favicon-he.svg`: o HE da logo, com um contorno leve para ler em 16 px. Um arquivo só, que segue o tema do navegador: preto (`#1b1917`) no claro e branco (`#faf6f3`) no escuro, por `prefers-color-scheme` dentro do SVG.
