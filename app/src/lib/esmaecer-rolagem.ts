@@ -5,7 +5,7 @@
  * própria página mede a rolagem de cada `.area-rolagem` e `.area-rolagem-dupla`
  * e passa as alturas do esmaecido para o CSS (--esmaecer-js-topo e
  * --esmaecer-js-fim): o topo esmaece quando há conteúdo acima, o fim quando há
- * conteúdo abaixo. Com suporte nativo, não faz nada.
+ * conteúdo abaixo. Roda sempre; o CSS usa o maior entre o nativo e esta medida.
  */
 const SELETOR = '.area-rolagem, .area-rolagem-dupla'
 const MAX = 44
@@ -19,8 +19,8 @@ function medir(el: HTMLElement) {
 }
 
 export function instalarEsmaecerRolagem() {
-  if (typeof window === 'undefined' || typeof CSS === 'undefined') return
-  if (CSS.supports('animation-timeline: scroll()')) return
+  if (typeof window === 'undefined') return
+  // Roda em todo navegador: há navegadores que dizem ter a animação guiada por rolagem e não a aplicam.
   // Rolar: mede só a área que rolou.
   document.addEventListener(
     'scroll',

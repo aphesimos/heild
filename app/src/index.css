@@ -160,7 +160,7 @@
   }
 }
 .area-rolagem {
-  mask-image: linear-gradient(to bottom, transparent 0, black var(--esmaecer));
+  mask-image: linear-gradient(to bottom, transparent 0, black max(var(--esmaecer), var(--esmaecer-js-topo, 0px)));
   animation: esmaecer-topo linear both;
   animation-timeline: scroll(self);
   animation-range: 0 60px;
@@ -185,7 +185,8 @@
   }
 }
 .area-rolagem-dupla {
-  mask-image: linear-gradient(to bottom, transparent 0, black var(--esmaecer), black calc(100% - var(--esmaecer-fim)), transparent 100%);
+  /* O nativo (animação guiada por rolagem) e a medida da página (src/lib/esmaecer-rolagem.ts) dão o mesmo valor; vale o maior, então o esmaecido aparece mesmo onde o nativo não roda. */
+  mask-image: linear-gradient(to bottom, transparent 0, black max(var(--esmaecer), var(--esmaecer-js-topo, 0px)), black calc(100% - max(var(--esmaecer-fim), var(--esmaecer-js-fim, 0px))), transparent 100%);
   animation:
     esmaecer-topo linear both,
     esmaecer-fim linear both;
