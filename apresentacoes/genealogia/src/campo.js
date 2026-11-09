@@ -11,8 +11,16 @@
  * Sem WebGL2, um desenho em 2D faz o mesmo sem a fusão. Com movimento reduzido, nada disso roda:
  * o motor desenha cada formação parada, com desenharEstatico.
  *
+ * Nitidez: o campo tem o tamanho exato do canvas, na densidade do aparelho (até 3x), e é lido pixel a
+ * pixel; dentro de cada cápsula o campo sobe com a mesma inclinação da cauda de fora, então o limiar
+ * corta uma rampa simétrica e a borda sai com antisserrilhado de cobertura, como um SVG.
+ *
+ * Vida: o que assenta continua vivo (pulsação por cápsula, pescoços entre vizinhas, o cursor que afasta
+ * ou atrai e funde). Modo exato: no fim de uma passagem para o <heild-logo>, as cápsulas vão para o alvo
+ * sem mola, para a pílula do campo coincidir no pixel com a do componente.
+ *
  * Desempenho: as molas rodam na CPU (poucos milhares, sem alocar memória por quadro) e o buffer de
- * instâncias sobe inteiro a cada quadro; o desenho para quando tudo assenta e nada vive em volta.
+ * instâncias sobe inteiro a cada quadro; o desenho para quando o campo está invisível ou tudo assenta.
  */
 (function () {
   'use strict';

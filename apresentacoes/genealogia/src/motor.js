@@ -82,26 +82,30 @@
     ['palavra', 0.72, 'palavraCheia', 1.4, 'primaria', 1, 0, 1, 1],
     ['partes', 0.10, 'muitos', 0.0, 'primaria', 1, 1, 1.2, 1],
     ['partes', 0.46, 'muitos', 0.0, 'primaria', 1, 1, 1.2, 1],
-    ['partes', 0.86, 'pilulaCheia', 1.0, 'primaria', 1, 0, 1, 1],
-    ['pilula', 0.06, 'pilulaUnica', 0.2, 'primaria', 1, 0, 1, 1],
+    ['partes', 0.80, 'pilulaCheia', 1.0, 'primaria', 1, 0, 1, 0.4],
+    ['partes', 0.95, 'pilulaUnica', 0.1, 'primaria', 1, 0, 1, 1], // as partes fundidas viram um corpo só, liso
+    ['pilula', 0.06, 'pilulaUnica', 0.04, 'primaria', 1, 0, 1, 1],
     ['pilula', 0.30, 'pilulaUnica', 0.02, 'primaria', 1, 0, 1, 1],
     ['pilula', 0.38, 'contracao', 0.02, 'primaria', 1, 0, 1, 1],
     ['pilula', 0.56, 'grade9', 0.02, 'primaria', 1, 0, 1, 1],
     ['pilula', 0.64, 'grade9', 0.02, 'primaria', 1, 0, 1, 1],
-    ['pilula', 0.93, 'grade9', 0.02, 'primaria', 1, 0, 1, 1], // entre 0,64 e 0,93: o ciclo próprio (ver cicloPilula)
+    ['pilula', 0.93, 'pilulaUnica', 0.02, 'primaria', 1, 0, 1, 1], // entre 0,64 e 0,93: o ciclo próprio (ver cicloPilula), que termina na pílula
     ['respiro', 0.00, 'pilulaUnica', 0.02, 'primaria', 1, 0, 0, 0.6],
     ['respiro', 0.12, 'pilulaLogo', 0.0, 'primaria', 1, 0, 0, 0],
     ['respiro', 0.137, 'pilulaLogo', 0.0, 'primaria', 1, 0, 0, 0],
     ['respiro', 0.1375, 'pilulaLogo', 0.0, 'primaria', 0, 0, 0, 0],
     ['respiro', 0.45, 'graos', 0.0, 'areia', 0, 1, 0, 0],
-    ['respiro', 1.00, 'graos', 0.0, 'areia', 0, 1, 0, 0],
+    ['areia', 0.00, 'graos', 0.0, 'areia', 0, 1, 0, 0], // os grãos só aparecem depois que a logo saiu da tela
     ['areia', 0.08, 'graos', 0.0, 'areia', 1, 1, 0.6, 1],
     ['areia', 0.42, 'estratos', 0.0, 'areia', 1, 0, 0, 1],
     ['areia', 0.78, 'superficie', 1.0, 'chao', 1, 0, 0, 1],
     ['areia', 1.00, 'superficie', 1.0, 'chao', 1, 0, 0, 1],
-    ['grade', 0.16, 'grade', 0.0, 'suave', 1, 0, 1, 1],
+    ['grade', 0.00, 'superficie', 1.0, 'chao', 0, 0, 0, 0], // o chão se apaga onde está (nada atravessa o texto que chega)
+    ['grade', 0.06, 'grade', 0.0, 'suave', 0, 0, 0, 0],
+    ['grade', 0.18, 'grade', 0.0, 'suave', 1, 0, 1, 1],     // e a grade acende nos próprios pontos, em volta do texto
     ['grade', 1.00, 'grade', 0.0, 'suave', 1, 0, 1, 1],
-    ['luz', 0.10, 'grade', 0.0, 'suave', 0, 0, 0, 0],
+    ['luz', 0.00, 'grade', 0.0, 'suave', 1, 0, 1, 1], // a grade fica até a luz cobrir a tela inteira
+    ['luz', 0.02, 'grade', 0.0, 'suave', 0, 0, 0, 0],
     ['inteiro', 0.02, 'muitosFim', 0.0, 'primaria', 0, 1, 0, 0],
     ['inteiro', 0.12, 'muitosFim', 0.0, 'primaria', 1, 1, 0, 1],
     ['inteiro', 0.22, 'pilulaFinal', 1.0, 'primaria', 1, 0, 0, 0],
@@ -157,7 +161,7 @@
       muitosFim: F.muitos(tela, n, [], 97),
       pilulaFinal: F.pilulaNoLogo(noPalco(lf), n)
     };
-    Object.keys(forms).forEach(function (k) { forms[k].pares = paresVizinhos(forms[k].f, n); });
+    Object.keys(forms).forEach(function (k) { forms[k].pares = paresVizinhos(forms[k].f, n); forms[k].grande = poucasGrandes(forms[k].f, n); });
     campo.formacoes(forms);
     var cot = q('.cotas'); if (cot && pil.mapa) cot.style.setProperty('--S', pil.mapa.S.toFixed(4));
     prontas = true;
@@ -172,6 +176,12 @@
       if (d < 1.45 * Math.max(f[ia + 4], f[ib + 4])) pares.push([gr[a], gr[b]]);
     }
     return pares.length ? pares : null;
+  }
+  /* formação de peças grandes (de 1 a 40 cápsulas visíveis com mais de 14 px) */
+  function poucasGrandes(f, n) {
+    var P = G.PASSO, k = 0, vis = 0;
+    for (var i = 0; i < n; i++) { var e = f[i * P + 4]; if (e > 0.35) vis++; if (e > 14) k++; }
+    return k >= 1 && vis <= 40;
   }
   function sorteio(n) { var x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
   /* dois pescoços por vez, em ritmos desencontrados: um par se procura, se funde e se solta em 1,7 s */
@@ -192,11 +202,18 @@
    */
   var CICLO_PILULA = [['grade9', 'grade9', 2600], ['grade9', 'pilulaUnica', 900], ['pilulaUnica', 'pilulaUnica', 1300], ['pilulaUnica', 'contracao', 160], ['contracao', 'grade9', 1000]];
   var CICLO_T = CICLO_PILULA.reduce(function (s2, f2) { return s2 + f2[2]; }, 0);
-  function cicloPilula(agora) {
-    if (!M.ciclo0) M.ciclo0 = agora;
-    var ms = (agora - M.ciclo0) % CICLO_T, k = 0;
-    while (ms >= CICLO_PILULA[k][2]) { ms -= CICLO_PILULA[k][2]; k++; }
-    return { a: CICLO_PILULA[k][0], b: CICLO_PILULA[k][1], t: ms / CICLO_PILULA[k][2] };
+  function cicloPilula(agora, encerrar) {
+    var c = M.cic || (M.cic = { k: 0, t0: agora });
+    // perto do fim do capítulo o ciclo encerra: não se divide de novo e para na pílula
+    for (var guarda = 0; guarda < 6 && agora - c.t0 >= CICLO_PILULA[c.k][2]; guarda++) {
+      var prox = (c.k + 1) % CICLO_PILULA.length;
+      if (encerrar && c.k === 2) { c.t0 = agora - CICLO_PILULA[2][2]; break; }
+      c.t0 += CICLO_PILULA[c.k][2]; c.k = prox;
+      if (agora - c.t0 > 4 * CICLO_T) c.t0 = agora; // voltou de outra aba: recomeça
+    }
+    if (encerrar && c.k === 0) { c.k = 1; c.t0 = agora; }
+    var f = CICLO_PILULA[c.k];
+    return { a: f[0], b: f[1], t: clamp((agora - c.t0) / f[2], 0, 1) };
   }
   /* em que ponto da linha do tempo a rolagem está */
   function estadoCampo(y, agora) {
@@ -205,16 +222,22 @@
     var A = CHAVES[i], B = CHAVES[i + 1], t = clamp((y - ys[i]) / Math.max(1, ys[i + 1] - ys[i]), 0, 1);
     var na = A[2], nb = B[2];
     // o trecho entre 0,64 e 0,93 da pílula roda o ciclo próprio
-    if (A[0] === 'pilula' && na === 'grade9' && nb === 'grade9' && A[1] >= 0.64) { var cc = cicloPilula(agora); na = cc.a; nb = cc.b; t = cc.t; }
-    else M.ciclo0 = 0;
+    if (A[0] === 'pilula' && A[1] === 0.64) { var cc = cicloPilula(agora, CAP.pilula.p > 0.88); na = cc.a; nb = cc.b; t = cc.t; }
+    else M.cic = null;
     var fA = campo.forms[na], fB = campo.forms[nb];
     var corA = COR[A[4]], corB = COR[B[4]], ts = suave(t);
     var velK = Math.min(1, Math.abs(M.vel) / 2600) * 0.7;
-    // toda troca de forma passa por um meio líquido (as cápsulas se fundem e assentam no fim)
-    var ponte = na !== nb ? Math.sin(Math.PI * clamp(t, 0, 1)) * 0.7 : 0;
-    var kA = 0.9 + (A[3] + velK + ponte) * fA.esc, kB = 0.9 + (B[3] + velK + ponte) * fB.esc;
+    // troca entre peças grandes (a pílula, a contração, a grade de 9) passa por um meio líquido, como a
+    // divisão da logo; entre formações de muitas cápsulas, não (viraria mancha)
+    var ponte = na !== nb && fA.grande && fB.grande ? Math.sin(Math.PI * clamp(t, 0, 1)) * 0.5 : 0;
+    var kA = (A[3] + velK) * fA.esc, kB = (B[3] + velK) * fB.esc;
+    // a fusão se desfaz cedo quando as partes se separam e chega tarde quando elas se juntam
+    var kMix = kA + (kB - kA) * (kB < kA ? 1 - Math.pow(1 - t, 3) : t * t);
     var exata = EXATAS[nb] ? (na === nb ? 1 : clamp((t - 0.5) / 0.42, 0, 1)) : 0;
-    if (exata) { kA = 0.9 + (A[3] + ponte) * fA.esc * (1 - exata); kB = 0.9 + (B[3] + ponte) * fB.esc * (1 - exata); }
+    // invisível nos dois lados: as cápsulas vão direto para o lugar (ninguém vê, e nada chega atrasado)
+    if (A[5] === 0 && B[5] === 0) exata = 1;
+    kMix = 0.9 + (kMix + ponte * Math.max(fA.esc, fB.esc)) * (1 - exata);
+    kA = kB = kMix;
     var dono = t < 0.5 ? na : nb, cfg = CURSOR[dono], forcaCursor = lerp(A[7], B[7], ts);
     var vivoPont = agora - ponteiro.t < (ponteiro.toque ? 1400 : 4000) && ponteiro.x > -900;
     var molaK = Math.min(1, 0.12 + (agora - t0campo) / 2600), vida = lerp(A[8], B[8], ts) * (1 - exata);
@@ -444,8 +467,8 @@
       CAPS.forEach(function (c) {
         var p = clamp((y - c.topo) / Math.max(1, c.altura - vh), 0, 1);
         if (p !== c.p) { c.p = p; if (!TIMELINE) c.el.style.setProperty('--p', p.toFixed(4)); }
-        // depois do fim do capítulo o palco solta e sobe: o texto se apaga na primeira metade da subida
-        var saida = clamp((y - (c.topo + c.altura - vh)) / (vh * 0.45), 0, 1);
+        // depois do fim do capítulo o palco solta e sobe: o texto se apaga no primeiro quarto da subida, antes de passar sob o topo
+        var saida = clamp((y - (c.topo + c.altura - vh)) / (vh * 0.25), 0, 1);
         if (saida !== c.saida) { c.saida = saida; c.palco.style.setProperty('--saida', saida.toFixed(3)); }
       });
       atualizarMoldura(y);
