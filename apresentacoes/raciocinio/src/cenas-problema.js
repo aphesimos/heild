@@ -25,7 +25,7 @@
       var cards = qa(el, '.area'), lado = cards.map(function () { return 0; }), k = 0;
       if (api.parado) return;
       api.depois(1500, function () {
-        api.intervalo(function () { var i = k % cards.length; lado[i] = 1 - lado[i]; cards[i].classList.toggle('depois', !!lado[i]); k++; }, 1500);
+        api.intervalo(function () { var i = k % cards.length; lado[i] = 1 - lado[i]; cards[i].classList.toggle('depois', !!lado[i]); k++; }, 6000);
       });
     }
   };
@@ -154,7 +154,7 @@
         comum.classList.add('conferida'); marcarErro();
         for (var k = 0; k < marcas.length; k++) { await api.esperar(500); marcas[k].classList.add('on'); }
         await dir;
-        await api.esperar(7500);
+        await R.segurar(api, el);
       });
     }
   };
@@ -180,7 +180,7 @@
         }));
       }
       if (api.parado) { rodar(); return; }
-      R.laco(async function () { await api.esperar(500); await rodar(); await api.esperar(9000); });
+      R.laco(async function () { await api.esperar(500); await rodar(); await R.segurar(api, el); });
     }
   };
 

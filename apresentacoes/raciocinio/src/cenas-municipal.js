@@ -45,7 +45,7 @@
         });
         return true;
       });
-      R.laco(async function () { ns.forEach(function (n) { n.textContent = '0'; }); await api.esperar(600); await contar(); await api.esperar(9000); });
+      R.laco(async function () { ns.forEach(function (n) { n.textContent = '0'; }); await api.esperar(600); await contar(); await R.segurar(api, el); });
       api.aoSair(function () { gotas.innerHTML = ''; });
     }
   };
@@ -74,7 +74,7 @@
       ds.forEach(function (b, k) { api.ouvir(b, 'click', function () { mexeu = performance.now(); por(k); }); });
       por(0);
       if (api.parado) return;
-      api.intervalo(function () { if (performance.now() - mexeu < 9000) return; por((i + 1) % d.niveis.length); }, 3800);
+      api.intervalo(function () { if (performance.now() - mexeu < 9000) return; por((i + 1) % d.niveis.length); }, 8000);
     }
   };
 
@@ -137,7 +137,7 @@
         var fim = prev + '>cert', ff = fios[fim] || fios['rev>cert'];
         ff.classList.add('on'); await R.viajar(api, svg, ff, prev === 'rev' ? 1300 : 700);
         selo.innerHTML = R.selo(SELO[r.certeza][0], SELO[r.certeza][1]); nos.cert.classList.add('on');
-        await api.esperar(4200);
+        await R.segurar(api, el);
       });
     }
   };
@@ -214,7 +214,7 @@
       ps.forEach(function (p, k) { api.ouvir(p, 'click', function () { mexeu = performance.now(); por(k); }); });
       por(0);
       if (api.parado) return;
-      api.intervalo(function () { if (performance.now() - mexeu < 9000) return; por((i + 1) % ps.length); }, 3200);
+      api.intervalo(function () { if (performance.now() - mexeu < 9000) return; por((i + 1) % ps.length); }, 8000);
     }
   };
 })();

@@ -50,7 +50,7 @@
           await api.esperar(i < 6 ? 760 : 520);
         }
         lis[lis.length - 1].classList.remove('ativo'); lis[lis.length - 1].classList.add('feito');
-        await api.esperar(6500);
+        await R.segurar(api, el);
       });
     }
   };
@@ -89,7 +89,7 @@
         o.setAttribute('reaction', 'working');
         b.b4.classList.add('on'); await api.digitar(t4, d.final, 55);
         o.setAttribute('reaction', 'done');
-        await api.esperar(6500);
+        await R.segurar(api, el);
       });
     }
   };
@@ -168,7 +168,7 @@
           fund[f].classList.add('on');
           await api.esperar(200);
         }
-        await api.esperar(6500);
+        await R.segurar(api, el);
       });
     }
   };
@@ -203,7 +203,7 @@
           if (f >= 0) { cands[i].classList.add('fica'); await R.levar(api, cont, q(ficam[f], 'b'), centro(cands[i]), centro(q(ficam[f], 'b')), 800, 50); ficam[f].classList.add('on'); }
           else { cands[i].classList.add('lido'); restam--; cont2.textContent = restam; if (s >= 0) { saem[s].classList.add('on'); await api.esperar(300); } }
         }
-        await api.esperar(6000);
+        await R.segurar(api, el);
       });
     }
   };
@@ -231,7 +231,7 @@
         await api.esperar(900);
         await api.digitar(tso, d.frase_sem, 40);
         await api.esperar(900); so.classList.add('riscado');
-        await api.esperar(6500);
+        await R.segurar(api, el);
       });
     }
   };
@@ -250,7 +250,7 @@
       ms.forEach(function (m, k) { api.ouvir(m, 'pointerenter', function () { mexeu = performance.now(); por(k); }); });
       if (api.parado) return;
       api.depois(1400, function () { por(0); });
-      api.intervalo(function () { if (performance.now() - mexeu < 7000) return; por((i + 1) % ms.length); }, 2600);
+      api.intervalo(function () { if (performance.now() - mexeu < 7000) return; por((i + 1) % ms.length); }, 7000);
     }
   };
 })();

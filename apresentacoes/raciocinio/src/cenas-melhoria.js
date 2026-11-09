@@ -77,7 +77,7 @@
           else { g.setAttribute('class', 'no-a falhou'); r.classList.add('falhou'); await api.esperar(500); g.remove(); r.remove(); }
           await api.esperar(250);
         }
-        await api.esperar(5000);
+        await R.segurar(api, el);
       });
     }
   };
@@ -109,7 +109,7 @@
         await R.viajar(api, svg, 'M150 160 C 220 190, 260 130, 292 115', 1000);
         tr.classList.add('barrou'); await api.esperar(450); tr.classList.remove('barrou');
         await R.viajar(api, svg, 'M292 115 C 250 90, 180 60, 90 110', 1100);
-        await api.esperar(5000);
+        await R.segurar(api, el);
       });
     }
   };
@@ -126,7 +126,7 @@
     entrar: function (el, d, api) {
       var ls = qa(el, '.dif'), i = -1;
       if (api.parado) return;
-      api.depois(1500, function () { api.intervalo(function () { i = (i + 1) % ls.length; ls.forEach(function (l, j) { l.classList.toggle('foco', j === i); }); }, 1700); });
+      api.depois(1500, function () { api.intervalo(function () { i = (i + 1) % ls.length; ls.forEach(function (l, j) { l.classList.toggle('foco', j === i); }); }, 5000); });
     }
   };
 })();

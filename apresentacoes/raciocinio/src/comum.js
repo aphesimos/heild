@@ -39,6 +39,21 @@
   /* Um laço que se repete enquanto o slide está na tela (api.esperar não volta depois que ele sai). */
   R.laco = function (fn) { (async function () { for (;;) { await fn(); } })().catch(function () {}); };
 
+  /* Segura o estado final de uma cena o tempo de ler o que está na tela (cerca de 15 caracteres por segundo,
+     de 14 s a 30 s), apaga a cena em 0,45 s e devolve. A cena zera no começo da volta seguinte e acende de
+     novo no quadro depois disso, então o recomeço nunca é um corte seco. */
+  R.segurar = function (api, el, minimo) {
+    var vis = el.querySelector('.visual') || el;
+    var n = (vis.innerText || vis.textContent || '').replace(/\s+/g, ' ').trim().length;
+    var ms = Math.max(minimo || 14000, Math.min(30000, 3000 + n * 65));
+    return api.esperar(ms).then(function () {
+      vis.style.transition = 'opacity 450ms ease'; vis.style.opacity = '0';
+      return api.esperar(480);
+    }).then(function () {
+      requestAnimationFrame(function () { requestAnimationFrame(function () { vis.style.opacity = ''; }); });
+    });
+  };
+
   /* ---------- SVG ---------- */
   R.svg = function (tag, attrs, pai) {
     var e = document.createElementNS(NS, tag);

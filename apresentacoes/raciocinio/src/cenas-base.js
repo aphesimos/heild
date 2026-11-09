@@ -31,7 +31,7 @@
       bs.forEach(function (b) { api.ouvir(b, 'click', function () { mexeu = performance.now(); por(b.dataset.id); }); });
       por('p2');
       if (api.parado) return;
-      api.intervalo(function () { if (performance.now() - mexeu < 9000) return; k = (k + 1) % ordem.length; por(ordem[k]); }, 3400);
+      api.intervalo(function () { if (performance.now() - mexeu < 9000) return; k = (k + 1) % ordem.length; por(ordem[k]); }, 8000);
     }
   };
 
@@ -80,7 +80,7 @@
           evs[i].classList.remove('ativo'); evs[i].classList.add('feito');
           await api.esperar(700);
         }
-        await api.esperar(5500);
+        await R.segurar(api, el);
       });
     }
   };
@@ -175,7 +175,7 @@
           }));
           await api.esperar(500);
         }
-        await api.esperar(5200);
+        await R.segurar(api, el);
       });
     }
   };

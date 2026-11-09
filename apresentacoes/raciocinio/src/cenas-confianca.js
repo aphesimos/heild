@@ -49,7 +49,7 @@
           await api.esperar(a.r.every(function (v) { return v === 1; }) ? 700 : 2200);
         }
         lis.forEach(function (x) { x.classList.remove('atual'); });
-        await api.esperar(6000);
+        await R.segurar(api, el);
       });
     }
   };
@@ -82,7 +82,7 @@
       if (api.parado) { por(0, false); return; }
       R.laco(async function () {
         if (performance.now() - mexeu > 9000) await por(i, true);
-        await api.esperar(4200);
+        await api.esperar(9000);
         if (performance.now() - mexeu > 9000) i = (i + 1) % d.tipos.length;
       });
     }
@@ -117,7 +117,7 @@
         fecho.classList.add('on'); o.setAttribute('reaction', 'working');
         await api.digitar(t, d.fecho, 50);
         o.setAttribute('reaction', 'idle');
-        await api.esperar(7000);
+        await R.segurar(api, el);
       });
     }
   };
@@ -143,7 +143,7 @@
         ls.forEach(function (l) { l.classList.remove('on'); }); cheias.forEach(function (c) { c.style.transition = 'none'; c.style.strokeDashoffset = 76; });
         await api.esperar(900);
         for (var i = 0; i < ls.length; i++) { cheias[i].style.transition = ''; cheias[i].style.strokeDashoffset = 0; await api.esperar(500); ls[i].classList.add('on'); await api.esperar(1300); }
-        await api.esperar(7000);
+        await R.segurar(api, el);
       });
     }
   };
