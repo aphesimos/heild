@@ -197,7 +197,8 @@ var LINK_FILOSOFIA = '#';
   /* ---------- a forma: raios, sombras, espaço ---------- */
   (function () {
     var r = q('.raios');
-    if (r) r.innerHTML = G.RAIOS.map(function (x, i) { return '<div class="raio" style="--r:var(' + x[0] + ');--i:' + i + '"><span><b>' + x[0].slice(2) + '</b>' + x[1] + ' · ' + x[2] + '</span></div>'; }).join('');
+    // A forma de amostra fica separada do rótulo: o texto nunca encosta na curva do canto.
+    if (r) r.innerHTML = G.RAIOS.map(function (x, i) { return '<figure class="raio" style="--r:var(' + x[0] + ');--i:' + i + '"><div class="area-raio"><div class="forma-raio' + (x[0] === '--raio-pilula' ? ' pilula' : '') + '"></div></div><figcaption><b>' + x[0].slice(2) + '</b><span>' + x[1] + ' · ' + x[2] + '</span></figcaption></figure>'; }).join('');
     var s = q('.sombras');
     if (s) s.innerHTML = G.SOMBRAS.map(function (x) { return '<div class="sombra" style="--s:var(' + x[0] + ')"><b>' + x[0].slice(2) + '</b><span>' + x[1] + '</span></div>'; }).join('');
     var e = q('.espacos');
