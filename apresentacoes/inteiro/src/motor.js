@@ -164,9 +164,8 @@
     M.vw = window.innerWidth; M.vh = window.innerHeight; M.dpr = window.devicePixelRatio || 1;
     M.movel = M.vw < 860;
     M.campo.redimensionar(M.vw, M.vh, M.dpr);
-    var cs = getComputedStyle(raiz);
-    M.margem = M.movel ? 0 : (parseFloat(cs.getPropertyValue('--margem-w')) || 220) * (q('.margem') ? 1 : 1);
-    if (!M.movel) { var m = q('.folio.ativo .margem') || q('.margem'); if (m) M.margem = m.getBoundingClientRect().width || M.margem; }
+    M.margem = 0;
+    if (!M.movel) { var m = q('.folio.ativo .margem'); M.margem = (m && m.getBoundingClientRect().width) || Math.max(188, Math.min(252, M.vw * 0.155)); }
     M.gutter = M.movel ? 16 : 32;
     M.cabeca = M.movel ? 52 : 64;
     if (M.atual && M.atual.medir) M.atual.medir();
@@ -284,6 +283,7 @@
       M.atual = para; M.tLeitura = 0; M.concluido = false; M.tFim = 0; M.eventos = {};
       prepararGlosas(para);
       folioRotulo.textContent = NUM[id];
+      if (I.Som && I.Som.folio) I.Som.folio(id);
       try { history.replaceState(null, '', id === 'limiar' ? location.pathname + location.search : '#' + id); } catch (er) { /* sem histórico */ }
       medir();
       para.entrar(de ? de.id : null, modo || 'salto');

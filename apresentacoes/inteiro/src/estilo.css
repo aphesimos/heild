@@ -202,12 +202,17 @@ html.vivo .margem.esq { left: var(--gutter); }
 html.vivo .margem.dir { right: var(--gutter); }
 html.vivo .glosa { display: none; }
 html.vivo .glosa.visivel { display: block; animation: glosa-entra 700ms var(--sai) both; }
-html.vivo .glosa .ainda { color: transparent; }
+html.vivo .glosa .ainda, html.vivo .glosa .ainda * { color: transparent !important; text-decoration-color: transparent !important; }
 @keyframes glosa-entra { from { transform: translateY(4px); } to { transform: none; } }
 
 html.vivo .fala, html.vivo .colofao { opacity: 0; transition: opacity 900ms var(--sai), transform 900ms var(--sai); transform: translateY(4px); pointer-events: none; }
 html.vivo .fala.visivel, html.vivo .colofao.visivel { opacity: 1; transform: none; pointer-events: auto; }
 html.vivo .falas { position: absolute; left: 0; right: 0; z-index: 3; display: grid; justify-items: center; text-align: center; padding: 0 calc(var(--margem-w) + var(--gutter) * 2); }
+
+/* a saída de um fólio: o texto se apaga antes de o próximo entrar */
+html.vivo .folio.saindo .margem, html.vivo .folio.saindo .falas, html.vivo .folio.saindo .palco > *, html.vivo .folio.saindo .anel li, html.vivo .folio.saindo .sentidos li {
+  opacity: 0 !important; transition: opacity 400ms var(--sai) !important;
+}
 
 /* posições das falas, por câmara */
 html.vivo #limiar .falas { bottom: 14vh; }
