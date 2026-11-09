@@ -69,42 +69,56 @@
 
   /*
    * ---------- a linha do tempo do campo ----------
-   * [capítulo, p, formação, fusão (fração da escala da formação), cor, opacidade, deriva, cursor]
-   * Entre duas chaves, as cápsulas vão de uma formação à outra em cascata; a fusão sobe e desce junto.
+   * [capítulo, p, formação, fusão (fração da escala da formação), cor, opacidade, deriva, cursor, vida]
+   * Entre duas chaves, as cápsulas vão de uma formação à outra em cascata; no meio de toda troca de forma
+   * elas se fundem como líquido (como na divisão da logo) e assentam no fim. `vida` mantém o que assentou
+   * respirando: pulsação, pescoços entre vizinhas e o cursor.
+   * Nas duas passagens para o <heild-logo> (o respiro e o fim), o campo termina numa cápsula só, lisa, no
+   * pixel exato do I do componente; o componente aparece por cima de uma vez (as duas opacas, iguais) e o
+   * campo some logo depois. HE e LD entram por máscara a partir do I. O campo nunca desenha o wordmark.
    */
   var CHAVES = [
-    ['palavra', 0.00, 'palavraFina', 0.03, 'primaria', 1, 0, 1],
-    ['palavra', 0.72, 'palavraCheia', 1.4, 'primaria', 1, 0, 1],
-    ['partes', 0.10, 'muitos', 0.0, 'primaria', 1, 1, 1.2],
-    ['partes', 0.46, 'muitos', 0.0, 'primaria', 1, 1, 1.2],
-    ['partes', 0.86, 'pilulaCheia', 1.0, 'primaria', 1, 0, 0],
-    ['pilula', 0.06, 'pilulaUnica', 0.3, 'primaria', 1, 0, 0],
-    ['pilula', 0.34, 'pilulaUnica', 0.04, 'primaria', 1, 0, 0],
-    ['pilula', 0.42, 'contracao', 0.04, 'primaria', 1, 0, 0],
-    ['pilula', 0.62, 'grade9', 0.75, 'primaria', 1, 0, 0],
-    ['pilula', 0.76, 'grade9', 0.02, 'primaria', 1, 0, 0],
-    ['respiro', 0.03, 'grade9', 0.02, 'primaria', 1, 0, 0],
-    ['respiro', 0.17, 'marca', 0.95, 'primaria', 1, 0, 0],
-    ['respiro', 0.24, 'marca', 0.5, 'primaria', 0, 0, 0],
-    ['respiro', 0.45, 'graos', 0.0, 'areia', 0, 1, 0],
-    ['respiro', 1.00, 'graos', 0.0, 'areia', 0, 1, 0],
-    ['areia', 0.08, 'graos', 0.0, 'areia', 1, 1, 0.6],
-    ['areia', 0.42, 'estratos', 0.0, 'areia', 1, 0, 0],
-    ['areia', 0.78, 'superficie', 1.0, 'chao', 1, 0, 0],
-    ['areia', 1.00, 'superficie', 1.0, 'chao', 1, 0, 0],
-    ['grade', 0.16, 'grade', 0.0, 'suave', 1, 0, 1],
-    ['grade', 1.00, 'grade', 0.0, 'suave', 1, 0, 1],
-    ['luz', 0.10, 'grade', 0.0, 'suave', 0, 0, 0],
-    ['inteiro', 0.02, 'muitosFim', 0.0, 'primaria', 0, 1, 0],
-    ['inteiro', 0.12, 'muitosFim', 0.0, 'primaria', 1, 1, 0],
-    ['inteiro', 0.30, 'pilulaFinal', 1.0, 'primaria', 1, 0, 0],
-    ['inteiro', 0.40, 'pilulaFinal', 0.3, 'primaria', 0, 0, 0]
+    ['palavra', 0.00, 'palavraFina', 0.03, 'primaria', 1, 0, 1, 1],
+    ['palavra', 0.72, 'palavraCheia', 1.4, 'primaria', 1, 0, 1, 1],
+    ['partes', 0.10, 'muitos', 0.0, 'primaria', 1, 1, 1.2, 1],
+    ['partes', 0.46, 'muitos', 0.0, 'primaria', 1, 1, 1.2, 1],
+    ['partes', 0.86, 'pilulaCheia', 1.0, 'primaria', 1, 0, 1, 1],
+    ['pilula', 0.06, 'pilulaUnica', 0.2, 'primaria', 1, 0, 1, 1],
+    ['pilula', 0.30, 'pilulaUnica', 0.02, 'primaria', 1, 0, 1, 1],
+    ['pilula', 0.38, 'contracao', 0.02, 'primaria', 1, 0, 1, 1],
+    ['pilula', 0.56, 'grade9', 0.02, 'primaria', 1, 0, 1, 1],
+    ['pilula', 0.64, 'grade9', 0.02, 'primaria', 1, 0, 1, 1],
+    ['pilula', 0.93, 'grade9', 0.02, 'primaria', 1, 0, 1, 1], // entre 0,64 e 0,93: o ciclo próprio (ver cicloPilula)
+    ['respiro', 0.00, 'pilulaUnica', 0.02, 'primaria', 1, 0, 0, 0.6],
+    ['respiro', 0.12, 'pilulaLogo', 0.0, 'primaria', 1, 0, 0, 0],
+    ['respiro', 0.137, 'pilulaLogo', 0.0, 'primaria', 1, 0, 0, 0],
+    ['respiro', 0.1375, 'pilulaLogo', 0.0, 'primaria', 0, 0, 0, 0],
+    ['respiro', 0.45, 'graos', 0.0, 'areia', 0, 1, 0, 0],
+    ['respiro', 1.00, 'graos', 0.0, 'areia', 0, 1, 0, 0],
+    ['areia', 0.08, 'graos', 0.0, 'areia', 1, 1, 0.6, 1],
+    ['areia', 0.42, 'estratos', 0.0, 'areia', 1, 0, 0, 1],
+    ['areia', 0.78, 'superficie', 1.0, 'chao', 1, 0, 0, 1],
+    ['areia', 1.00, 'superficie', 1.0, 'chao', 1, 0, 0, 1],
+    ['grade', 0.16, 'grade', 0.0, 'suave', 1, 0, 1, 1],
+    ['grade', 1.00, 'grade', 0.0, 'suave', 1, 0, 1, 1],
+    ['luz', 0.10, 'grade', 0.0, 'suave', 0, 0, 0, 0],
+    ['inteiro', 0.02, 'muitosFim', 0.0, 'primaria', 0, 1, 0, 0],
+    ['inteiro', 0.12, 'muitosFim', 0.0, 'primaria', 1, 1, 0, 1],
+    ['inteiro', 0.22, 'pilulaFinal', 1.0, 'primaria', 1, 0, 0, 0],
+    ['inteiro', 0.30, 'pilulaFinal', 0.0, 'primaria', 1, 0, 0, 0],
+    ['inteiro', 0.322, 'pilulaFinal', 0.0, 'primaria', 1, 0, 0, 0],
+    ['inteiro', 0.3225, 'pilulaFinal', 0.0, 'primaria', 0, 0, 0, 0]
   ];
-  /* o cursor em cada formação: raio, força de empurrar, quanto cresce, quanto derrete */
+  /* formações que terminam no <heild-logo>: no fim da passagem a cápsula vai exata, sem mola */
+  var EXATAS = { pilulaLogo: 1, pilulaFinal: 1 };
+  /* o cursor em cada formação: raio, força (positiva afasta, negativa atrai), quanto cresce, quanto derrete */
   var CURSOR = {
     palavraFina: { r: 120, f: 1, cresce: 0, k: 12 }, palavraCheia: { r: 120, f: 1, cresce: 0, k: 12 },
     muitos: { r: 170, f: 1.2, cresce: 0, k: 0 }, graos: { r: 150, f: 0.9, cresce: 0, k: 0 },
-    grade: { r: 170, f: 0.45, cresce: 2.2, k: 0 }
+    grade: { r: 170, f: 0.45, cresce: 2.2, k: 0 },
+    // as peças grandes se inclinam para o cursor, fundem com a vizinha e soltam quando ele sai
+    pilulaCheia: { r: 260, f: -0.45, cresce: 0.05, k: 30 }, pilulaUnica: { r: 280, f: -0.5, cresce: 0.05, k: 46 },
+    contracao: { r: 280, f: -0.5, cresce: 0.05, k: 46 }, grade9: { r: 240, f: -0.55, cresce: 0.07, k: 52 }
   };
 
   /* ---------- o campo ---------- */
@@ -135,38 +149,98 @@
       pilulaUnica: pil,
       contracao: F.contracao(figura('pilula'), n),
       grade9: F.grade9(figura('pilula'), n),
-      marca: F.marca(noPalco(lp), n),
+      pilulaLogo: F.pilulaNoLogo(noPalco(lp), n),
       graos: F.graos(tela, n),
       estratos: F.estratos(tela, n),
       superficie: F.superficie(tela, n),
       grade: F.grade(tela, n, evitar('grade')),
       muitosFim: F.muitos(tela, n, [], 97),
-      pilulaFinal: F.pilulaFinal(noPalco(lf), n)
+      pilulaFinal: F.pilulaNoLogo(noPalco(lf), n)
     };
+    Object.keys(forms).forEach(function (k) { forms[k].pares = paresVizinhos(forms[k].f, n); });
     campo.formacoes(forms);
     var cot = q('.cotas'); if (cot && pil.mapa) cot.style.setProperty('--S', pil.mapa.S.toFixed(4));
     prontas = true;
+  }
+  /* pares de peças grandes vizinhas (a grade de 9): é entre elas que os pescoços se formam */
+  function paresVizinhos(f, n) {
+    var P = G.PASSO, gr = [], pares = [];
+    for (var i = 0; i < n; i++) if (f[i * P + 4] > 14) gr.push(i);
+    if (gr.length < 2 || gr.length > 40) return null;
+    for (var a = 0; a < gr.length; a++) for (var b = a + 1; b < gr.length; b++) {
+      var ia = gr[a] * P, ib = gr[b] * P, d = Math.hypot(f[ia] - f[ib], f[ia + 1] - f[ib + 1]);
+      if (d < 1.45 * Math.max(f[ia + 4], f[ib + 4])) pares.push([gr[a], gr[b]]);
+    }
+    return pares.length ? pares : null;
+  }
+  function sorteio(n) { var x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  /* dois pescoços por vez, em ritmos desencontrados: um par se procura, se funde e se solta em 1,7 s */
+  function pescocos(form, agora) {
+    var P = form && form.pares; if (!P) return null;
+    var T = agora / 1000, out = [];
+    [0, 0.5].forEach(function (off) {
+      var c = T / 1.7 + off, k = Math.floor(c), fr = c - k, w = Math.pow(Math.sin(Math.PI * fr), 2);
+      var par = P[Math.floor(sorteio(k * 7.31 + off * 13) * P.length)];
+      out.push([par[0], par[1], w]);
+    });
+    return out;
+  }
+  /*
+   * O ciclo próprio da pílula, enquanto o capítulo está na tela (não só pela rolagem): a grade vive (pulsa,
+   * forma pescoços), volta a ser a pílula, a pílula se contrai e se divide de novo, em loop. Os tempos são os
+   * do sistema de movimento: retorno 900 ms, contração 160 ms, divisão 1000 ms.
+   */
+  var CICLO_PILULA = [['grade9', 'grade9', 2600], ['grade9', 'pilulaUnica', 900], ['pilulaUnica', 'pilulaUnica', 1300], ['pilulaUnica', 'contracao', 160], ['contracao', 'grade9', 1000]];
+  var CICLO_T = CICLO_PILULA.reduce(function (s2, f2) { return s2 + f2[2]; }, 0);
+  function cicloPilula(agora) {
+    if (!M.ciclo0) M.ciclo0 = agora;
+    var ms = (agora - M.ciclo0) % CICLO_T, k = 0;
+    while (ms >= CICLO_PILULA[k][2]) { ms -= CICLO_PILULA[k][2]; k++; }
+    return { a: CICLO_PILULA[k][0], b: CICLO_PILULA[k][1], t: ms / CICLO_PILULA[k][2] };
   }
   /* em que ponto da linha do tempo a rolagem está */
   function estadoCampo(y, agora) {
     var ys = CHAVES.map(function (k) { var c = CAP[k[0]]; return c.topo + k[1] * Math.max(1, c.altura - vh); });
     var i = 0; while (i < CHAVES.length - 2 && y >= ys[i + 1]) i++;
     var A = CHAVES[i], B = CHAVES[i + 1], t = clamp((y - ys[i]) / Math.max(1, ys[i + 1] - ys[i]), 0, 1);
-    var fA = campo.forms[A[2]], fB = campo.forms[B[2]];
+    var na = A[2], nb = B[2];
+    // o trecho entre 0,64 e 0,93 da pílula roda o ciclo próprio
+    if (A[0] === 'pilula' && na === 'grade9' && nb === 'grade9' && A[1] >= 0.64) { var cc = cicloPilula(agora); na = cc.a; nb = cc.b; t = cc.t; }
+    else M.ciclo0 = 0;
+    var fA = campo.forms[na], fB = campo.forms[nb];
     var corA = COR[A[4]], corB = COR[B[4]], ts = suave(t);
     var velK = Math.min(1, Math.abs(M.vel) / 2600) * 0.7;
-    var kA = 0.9 + (A[3] + velK) * fA.esc, kB = 0.9 + (B[3] + velK) * fB.esc;
-    var dono = t < 0.5 ? A : B, cfg = CURSOR[dono[2]], forcaCursor = lerp(A[7], B[7], ts);
+    // toda troca de forma passa por um meio líquido (as cápsulas se fundem e assentam no fim)
+    var ponte = na !== nb ? Math.sin(Math.PI * clamp(t, 0, 1)) * 0.7 : 0;
+    var kA = 0.9 + (A[3] + velK + ponte) * fA.esc, kB = 0.9 + (B[3] + velK + ponte) * fB.esc;
+    var exata = EXATAS[nb] ? (na === nb ? 1 : clamp((t - 0.5) / 0.42, 0, 1)) : 0;
+    if (exata) { kA = 0.9 + (A[3] + ponte) * fA.esc * (1 - exata); kB = 0.9 + (B[3] + ponte) * fB.esc * (1 - exata); }
+    var dono = t < 0.5 ? na : nb, cfg = CURSOR[dono], forcaCursor = lerp(A[7], B[7], ts);
     var vivoPont = agora - ponteiro.t < (ponteiro.toque ? 1400 : 4000) && ponteiro.x > -900;
-    var molaK = Math.min(1, 0.12 + (agora - t0campo) / 2600);
+    var molaK = Math.min(1, 0.12 + (agora - t0campo) / 2600), vida = lerp(A[8], B[8], ts) * (1 - exata);
+    atualizarCotas(dono, na, nb, t);
     return {
-      a: A[2], b: B[2], t: t, kA: kA, kB: kB,
+      a: na, b: nb, t: t, kA: kA, kB: kB,
       cor: [lerp(corA[0], corB[0], ts), lerp(corA[1], corB[1], ts), lerp(corA[2], corB[2], ts)],
-      opac: lerp(A[5], B[5], ts), deriva: lerp(A[6], B[6], ts), molaK: molaK,
-      cursor: cfg && vivoPont && forcaCursor > 0 ? { x: ponteiro.x, y: ponteiro.y, forca: forcaCursor * cfg.f, r: cfg.r, cresce: cfg.cresce } : null,
+      opac: lerp(A[5], B[5], ts), deriva: lerp(A[6], B[6], ts), molaK: molaK, vida: vida, direto: exata,
+      cursor: cfg && vivoPont && forcaCursor > 0 && !exata ? { x: ponteiro.x, y: ponteiro.y, forca: forcaCursor * cfg.f, r: cfg.r, cresce: cfg.cresce } : null,
       kCursor: cfg ? cfg.k : 0,
-      pocos: dono[2] === 'grade' && B[5] > 0 ? pocosGrade(agora) : null
+      pescocos: vida > 0.3 ? pescocos(campo.forms[dono], agora) : null,
+      pocos: dono === 'grade' && B[5] > 0 ? pocosGrade(agora) : null
     };
+  }
+  /* as cotas da pílula seguem o que o campo mostra (a pílula ou a grade), também no ciclo próprio */
+  var cotas = null, cotaAtual = '';
+  function atualizarCotas(dono, na, nb, t) {
+    if (!cotas) cotas = q('.cotas'); if (!cotas || !CAP.pilula) return;
+    var c = CAP.pilula, y = M.y, pinado = y >= c.topo && y <= c.topo + c.altura - vh;
+    var v = '';
+    if (pinado) {
+      var parada = na === nb || t < 0.08 || t > 0.92, forma = t < 0.5 ? na : nb;
+      if (parada && (forma === 'pilulaUnica')) v = 'pilula';
+      if (parada && forma === 'grade9') v = 'grade';
+    }
+    if (v !== cotaAtual) { cotaAtual = v; cotas.setAttribute('data-cota', v); }
   }
   /* o chão respira sozinho: um ponto invisível passeia devagar pela grade e a afasta, mesmo sem cursor */
   function pocosGrade(agora) {
@@ -388,7 +462,7 @@
       if (mexeu || vivoPont || !campo.assentado || Math.abs(M.vel) > 0) {
         campo.assentado = !campo.quadro(agora, estadoCampo(y, agora));
       }
-      campo.governar(dt);
+      campo.governar(dt, agora);
     }
   }
 

@@ -302,7 +302,7 @@
         ['Parecer', 'Rascunho com fatos, normas, precedentes e ressalvas. Guarda as versões citadas; quem assina é o advogado.'],
         ['Pesquisa de jurisprudência', 'Mapa por órgão e data, com os tribunais cobertos declarados. Sem "chance de êxito".'],
         ['Revisão de contrato', 'Cada achado cita a cláusula. Achado sem citação é descartado, e ele diz quantos.'],
-        ['Vigilância', 'Lei nova publicada: quais casos e clientes ela afeta. Lei nova só alcança fato posterior.'],
+        ['Vigilância', 'Lei nova publicada: quais casos e clientes ela afeta, pela data de cada fato. Nada vai ao cliente sem uma pessoa.'],
         ['Segunda opinião', 'Confere a peça de risco, refaz as contas e anota "confere" ou "diverge". Nunca conclui.']
       ],
       nunca: 'Nunca assina, protocola, dá ciência de intimação ou conta prazo de cabeça.',
@@ -331,7 +331,7 @@
         { nome: 'Divergência', texto: 'Há posições diferentes e nenhuma vincula. Mostro cada uma; a escolha é sua.', pesquisei: ['Tema 1.113 do STJ', 'CTN, art. 38, com a LC 227/2026', 'Decisões posteriores'] },
         { nome: 'Precedente pendente', texto: 'O tema foi afetado e ainda não tem tese. Não aplico como regra.', pesquisei: ['Situação do tema no tribunal', 'Decisões com o tema afetado'] },
         { nome: 'Premissa falsa', texto: 'Essa premissa não se sustenta: a norma citada foi revogada.', pesquisei: ['Histórico de redações do dispositivo'] },
-        { nome: 'Sem base local', texto: 'Ainda não tenho a legislação de ISS de Cantagalo. Respondo pela regra federal: entre 2% e 5% (LC 116/2003, arts. 8º e 8º-A). Já pedi a inclusão.', pesquisei: ['LC 116/2003', 'Cobertura de Cantagalo: sem base local'] }
+        { nome: 'Sem base local', texto: 'Sem base local. Ainda não tenho a legislação de Cantagalo sobre ISS. Respondo pela regra federal, de 2% a 5% (LC 116/2003, arts. 8º e 8º-A); Cantagalo pode ter regra própria. Já pedi a inclusão.', pesquisei: ['LC 116/2003', 'Cobertura de Cantagalo: sem base local'] }
       ],
       fato: 'Avaliações que dão nota ao chute ensinam o modelo a chutar (Kalai et al., 2025). Aqui a abstenção é medida nos dois sentidos: errar por inventar e errar por calar.',
       notas: 'Os tipos de abstenção são do JU-04, seção 2.7, e do subplano 07, seção 7.4. Depois de se abster, ele não completa com o conhecimento do modelo: foi esse o vício que a Vals mediu nos chatbots, que diziam "não achei" e respondiam mesmo assim. A meta do benchmark pune os dois erros: inventar e dizer "não sei" quando havia resposta. Cantagalo é o exemplo que o próprio plano usa para fonte local fora da base.' },
@@ -384,8 +384,8 @@
         { id: 'C0', nome: 'Sem base local', texto: [['b', 'Sem base local.'], ['t', ' Ainda não tenho a legislação de '], ['v', 'ente'], ['t', ' sobre '], ['v', 'domínio'], ['t', '. Respondo pela regra federal; '], ['v', 'ente'], ['t', ' pode ter regra própria. Já pedi a inclusão.']] },
         { id: 'C1', nome: 'Só publicações novas', texto: [['b', 'Só publicações novas.'], ['t', ' Acompanho as publicações de '], ['v', 'ente'], ['t', ' desde '], ['v', 'data'], ['t', ', mas ainda não tenho o texto atualizado de '], ['v', 'norma'], ['t', '. Cito o ato publicado; não afirmo a regra vigente.']] },
         { id: 'C2', nome: 'Texto atual · sem histórico', texto: [['b', 'Texto atual · sem histórico.'], ['t', ' Tenho o texto atual de '], ['v', 'norma'], ['t', ' de '], ['v', 'ente'], ['t', ', conferido em '], ['v', 'data'], ['t', '. Para fatos antes de '], ['v', 'data da âncora'], ['t', ', não confirmo qual redação valia.']] },
-        { id: 'C3', nome: 'Com histórico de 5 anos', texto: [['b', 'Com histórico desde '], ['v', 'data'], ['b', '.'], ['t', ' Redação vigente em '], ['v', 'data do fato'], ['t', '. Com "certeza média" ou "certeza baixa" quando for o caso, e o motivo.']] },
-        { id: 'C4', nome: 'Amplo', texto: [['t', 'Igual ao C3, com os domínios jurídicos cobertos: urbanismo, posturas, servidores.']] }
+        { id: 'C3', nome: 'Com histórico de 5 anos', texto: [['b', 'Com histórico desde '], ['v', 'data'], ['b', '.'], ['t', ' Redação vigente em '], ['v', 'data do fato'], ['t', '.'], ['d', ' Mais "certeza média" ou "certeza baixa" quando for o caso, com o motivo.']] },
+        { id: 'C4', nome: 'Amplo', texto: [['d', 'Igual ao C3, com os domínios cobertos: urbanismo, posturas, servidores.']] }
       ],
       nfse: 'Variante da NFS-e: "{ente} cadastrou {X}% para este serviço no Sistema Nacional da NFS-e (consultado em {data}). É um parâmetro, não a lei."',
       notas: 'Os textos dos rótulos foram aprovados pelo dono em 9/11/2026 (seção 8.2 do plano). O nível sai de regras sobre o registro de cobertura: coletor parado rebaixa o nível sozinho. O grau de segurança da resposta é o menor entre o da afirmação, a certeza da versão citada e o nível de cobertura. A tabela da NFS-e Nacional, com alíquotas por subitem e vigência, entra como parâmetro rotulado, nunca como lei.' },

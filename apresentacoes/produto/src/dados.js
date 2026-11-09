@@ -94,13 +94,15 @@
       frase: 'O Consultor responde pela redação que vale na data do fato, com o trecho citado e o grau de segurança. Sem base, ele diz que não encontrou.',
       pergunta: 'A Clínica Sorriso pode usar o fator R em 2027?',
       resposta: 'Sim, se a Clínica optar pelo Simples Nacional em janeiro de 2027. Odontologia é atividade sujeita ao fator R e a folha da Clínica é 31,2% da receita dos últimos 12 meses, acima dos 28%. Com isso, ela seria tributada pelo Anexo III, e não pelo Anexo V.',
-      trecho: 'As atividades de prestação de serviços a que se refere o § 5º-I serão tributadas na forma do Anexo III desta Lei Complementar caso a razão entre a folha de salários e a receita bruta da pessoa jurídica seja igual ou superior a 28% (vinte e oito por cento).',
-      norma: 'LC 123/2006, art. 18, § 5º-J',
+      // Para odontologia, a regra é o § 5º-M, I, com o § 5º-B, XX (LC 155/2016, efeitos desde 01/01/2018).
+      // O § 5º-J, citado com frequência, vale só para as atividades do § 5º-I.
+      trecho: 'Quando a relação entre a folha de salários e a receita bruta da microempresa ou da empresa de pequeno porte for inferior a 28% (vinte e oito por cento), serão tributadas na forma do Anexo V desta Lei Complementar as atividades previstas: I - nos incisos XVI, XVIII, XIX, XX e XXI do § 5º-B deste artigo;',
+      norma: 'LC 123/2006, art. 18, § 5º-M, I, com o § 5º-B, XX (odontologia)',
       vigencia: 'vigente desde 01/01/2018',
       hierarquia: 'Lei complementar',
       grau: 'Segurança alta',
       calculo: 'Folha ÷ receita em 12 meses: 31,2%',
-      outra: { texto: 'O raciocínio do Consultor tem uma apresentação própria', href: 'https://claude.ai/artifact/KAoX3eHe3TXr3HmbLskqgU' },
+      outra: { texto: 'O raciocínio do Consultor tem uma apresentação própria', href: 'https://claude.ai/artifact/DL93Mxas4LUN96p23CTRxx' },
       notas: 'A mesma resposta da demonstração do site. O método do Consultor (base legal por vigência, citação conferida, abstenção) tem a apresentação própria, no link.'
     }
   };

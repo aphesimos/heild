@@ -69,7 +69,7 @@
         ds.forEach(function (b, j) { b.setAttribute('aria-pressed', String(j === k)); b.classList.toggle('abaixo', j < k); });
         rot.innerHTML = R.selo(k >= 3 ? 'sucesso' : k === 2 ? 'atencao' : 'neutro', n.id + ' · ' + n.nome);
         curto.textContent = n.nome;
-        tx.innerHTML = n.texto.map(function (p) { return p[0] === 'v' ? '<span class="var">' + h(p[1]) + '</span>' : p[0] === 'b' ? '<b>' + h(p[1]) + '</b>' : h(p[1]); }).join('');
+        tx.innerHTML = n.texto.map(function (p) { return p[0] === 'v' ? '<span class="var">' + h(p[1]) + '</span>' : p[0] === 'b' ? '<b>' + h(p[1]) + '</b>' : p[0] === 'd' ? '<span class="desc">' + h(p[1]) + '</span>' : h(p[1]); }).join('');
       }
       ds.forEach(function (b, k) { api.ouvir(b, 'click', function () { mexeu = performance.now(); por(k); }); });
       por(0);
@@ -143,10 +143,10 @@
   };
 
   /* ---------------- limite: as travas como fatias de queijo; poucos erros atravessam todas ---------------- */
-  var BURACOS = [[0.18, 0.62], [0.42, 0.8], [0.3, 0.58], [0.66, 0.2], [0.5], [0.36, 0.72], [0.56]];
+  var BURACOS = [[0.2, 0.62], [0.27, 0.7], [0.32, 0.56], [0.38, 0.8], [0.44], [0.36, 0.72], [0.5]];
   T.limite = {
     html: function (d) {
-      var X0 = 70, PASSO = 78, H0 = 40, H1 = 360, ALT = 0.11;
+      var X0 = 70, PASSO = 78, H0 = 40, H1 = 360, ALT = 0.13;
       var fatias = d.travas.map(function (t, i) {
         var x = X0 + i * PASSO, bs = BURACOS[i].slice().sort(), y = H0, seg = '';
         bs.forEach(function (b) { var yc = H0 + b * (H1 - H0), ya = yc - ALT * (H1 - H0) / 2; seg += '<rect x="' + (x - 13) + '" y="' + y.toFixed(1) + '" width="26" height="' + Math.max(0, ya - y).toFixed(1) + '" rx="8"/>'; y = ya + ALT * (H1 - H0); });
@@ -159,24 +159,27 @@
         '<div class="lim-rots">' + rots + '</div><p class="rotulo lim-leg">Cada ponto é um erro possível. Cada trava pega alguns; nenhuma pega todos.</p></div>') + '</div>';
     },
     entrar: function (el, d, api) {
-      var X0 = 70, PASSO = 78, H0 = 40, H1 = 360, ALT = 0.11, g = q(el, '.erros'), vivos = [], prox = 0, sem = 1;
+      var X0 = 70, PASSO = 78, H0 = 40, H1 = 360, ALT = 0.13, g = q(el, '.erros'), vivos = [], prox = 0, sem = 1;
       if (api.parado) return;
       function rnd() { var x = Math.sin(sem++ * 9301 + 49297) * 233280; return x - Math.floor(x); }
       function passa(i, y) { return BURACOS[i].some(function (b) { var yc = H0 + b * (H1 - H0); return Math.abs(y - yc) < ALT * (H1 - H0) / 2 - 4; }); }
       api.quadro(function (agora) {
         if (agora > prox) {
-          prox = agora + 170;
+          prox = agora + 80;
           // Escolhe a altura: uma parte mira num buraco da primeira trava, para alguns irem longe.
           var y = rnd() < 0.55 ? H0 + BURACOS[0][Math.floor(rnd() * 2)] * (H1 - H0) + (rnd() - 0.5) * 18 : H0 + 10 + rnd() * (H1 - H0 - 20);
           var c = R.svg('circle', { r: 4, cx: 10, cy: y.toFixed(1), 'class': 'erro-p' }, g);
-          vivos.push({ c: c, y: y, x: 10, vy: 0, parou: -1, t: agora });
+          vivos.push({ c: c, y: y, x: 10, vy: 0, parou: -1, t: agora, forca: rnd() });
         }
         vivos = vivos.filter(function (v) {
           if (v.parou >= 0) { var u = (agora - v.parou) / 700; v.c.style.opacity = (1 - u).toFixed(2); v.c.setAttribute('r', (4 + u * 6).toFixed(1)); if (u >= 1) { v.c.remove(); return false; } return true; }
-          v.x += 2.1;
-          // Entre as travas, o ponto busca um pouco o buraco seguinte (o erro "procura" a brecha).
+          v.x += 1.7;
+          // Entre as travas, o ponto busca a brecha mais perto da trava seguinte (o erro "procura" a brecha).
           var prox2 = Math.floor((v.x - X0 + 13) / PASSO) + 1;
-          if (prox2 >= 0 && prox2 < BURACOS.length && rnd() < 0.5) { var alvo = H0 + BURACOS[prox2][0] * (H1 - H0); v.y += (alvo - v.y) * 0.004; }
+          if (prox2 >= 0 && prox2 < BURACOS.length) {
+            var alvo = BURACOS[prox2].map(function (b) { return H0 + b * (H1 - H0); }).reduce(function (m, y) { return Math.abs(y - v.y) < Math.abs(m - v.y) ? y : m; });
+            if (Math.abs(alvo - v.y) < 70) v.y += (alvo - v.y) * 0.03 * v.forca;
+          }
           var i = Math.round((v.x - X0) / PASSO), xi = X0 + i * PASSO;
           if (i >= 0 && i < BURACOS.length && Math.abs(v.x - xi) < 13 && !passa(i, v.y)) { v.parou = agora; v.c.classList.add('pego'); return true; }
           v.c.setAttribute('cx', v.x.toFixed(1)); v.c.setAttribute('cy', v.y.toFixed(1));

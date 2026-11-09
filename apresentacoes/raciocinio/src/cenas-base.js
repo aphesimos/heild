@@ -101,7 +101,8 @@
           '<g class="td-alca"><circle r="8" cy="37"/><circle class="miolo" r="3" cy="37"/><text class="td-data" y="25" text-anchor="middle"></text></g></svg>' +
           '<div class="td-rs">' + lados + '</div></div>';
       }).join('');
-      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(1152, 400, '<div class="tres-datas">' + faixas +
+      var ret = R.retrato();
+      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(ret ? 580 : 1152, ret ? 760 : 400, '<div class="tres-datas">' + faixas +
         '<p class="td-rod">' + R.marca('nada') + '<span>' + h(d.rodape) + '</span></p></div>') + '</div>';
     },
     entrar: function (el, d, api) {

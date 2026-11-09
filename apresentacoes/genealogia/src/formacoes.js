@@ -120,7 +120,7 @@
     return pts.map(function (p) { return { x: p[0], y: p[1], a: a || 0, e: sx * (kE || 0.56), c: sy * (kC || 0.88), g: g == null ? -1 : g }; });
   }
   /* formação de poucas cápsulas grandes: o resto fica guardado dentro delas, espalhado pela área */
-  function deGrandes(n, grandes, al) {
+  function deGrandes(n, grandes, al, centro) {
     var area = 0; grandes.forEach(function (c) { area += c.e * (c.c - c.e) + Math.PI * c.e * c.e / 4; });
     var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
     grandes.forEach(function (c) { var r = c.c / 2; minX = Math.min(minX, c.x - r); minY = Math.min(minY, c.y - r); maxX = Math.max(maxX, c.x + r); maxY = Math.max(maxY, c.y + r); });
@@ -132,7 +132,18 @@
       grandes.forEach(function (c) { var d = Math.hypot(c.x - p[0], c.y - p[1]); if (d < best) { best = d; dono = c; } });
       return { x: p[0], y: p[1], a: dono.a, c: 0, e: 0, g: -1 };
     });
-    return montar(n, grandes.map(function (c) { return { x: c.x, y: c.y, a: c.a, c: c.c, e: c.e, g: -1 }; }).concat(guard), al);
+    var f = montar(n, grandes.map(function (c) { return { x: c.x, y: c.y, a: c.a, c: c.c, e: c.e, g: -1 }; }).concat(guard), al);
+    return fixarCentro(f, n, grandes[centro == null ? 0 : centro]);
+  }
+  /* A cápsula grande do centro (a pílula, o ponto do meio da grade) fica sempre no índice n/2, em todas as
+     formações de peças grandes: assim a mesma cápsula atravessa a passagem de uma para outra (a pílula desliza
+     e muda de tamanho, a grade nasce dela e volta para ela), em vez de uma sumir enquanto outra nasce. */
+  function fixarCentro(f, n, c) {
+    var alvo = Math.floor(n / 2), achou = -1;
+    for (var i = 0; i < n; i++) { var o = i * PASSO; if (Math.abs(f[o + 4] - c.e) < 0.01 && Math.abs(f[o] - c.x) < 0.01 && Math.abs(f[o + 1] - c.y) < 0.01) { achou = i; break; } }
+    if (achou < 0 || achou === alvo) return f;
+    for (var d = 0; d < PASSO; d++) { var t = f[alvo * PASSO + d]; f[alvo * PASSO + d] = f[achou * PASSO + d]; f[achou * PASSO + d] = t; }
+    return f;
   }
 
   /* inclinação da itálica, medida na própria fonte: o centro da tinta de um "l" no alto e embaixo */
@@ -216,23 +227,7 @@
   F.grade9 = function (caixa, n) {
     var m = mapaMeet(caixa, VB_PILULA), g = [];
     for (var j = -1; j <= 1; j++) for (var i = -1; i <= 1; i++) g.push(noMapa(m, capLogo(CX + i * STEP, CY + j * STEP, U, U)));
-    return { f: deGrandes(n, g, aleatorio(43)), esc: 30 * m.S, mapa: m };
-  };
-
-  /* HE, a pílula e LD, amostrados dos traçados oficiais (window.Heild.paths), na caixa exata do <heild-logo> */
-  F.marca = function (caixaLogo, n) {
-    var P = window.Heild && window.Heild.paths, al = aleatorio(53);
-    if (!P) return F.pilulaUnica(caixaLogo, n);
-    var S = caixaLogo.w / 1259;
-    var am = amostrarDesenho(caixaLogo, n, function (ctx) {
-      ctx.save(); ctx.scale(S, S);
-      ctx.fill(new Path2D(P.HE)); ctx.fill(new Path2D(P.LD), 'evenodd');
-      var px = P.pill.cx - P.pill.width / 2, py = P.pill.cy - P.pill.height / 2, r = P.pill.width / 2;
-      ctx.beginPath(); ctx.moveTo(px + r, py); ctx.arc(px + r, py + r, r, Math.PI, 0); ctx.lineTo(px + 2 * r, py + P.pill.height - r);
-      ctx.arc(px + r, py + P.pill.height - r, r, 0, Math.PI); ctx.closePath(); ctx.fill();
-      ctx.restore();
-    }, al, 1.6);
-    return { f: montar(n, capsulasDe(am.pts, am.sx, am.sy, 0, 0.6, 0.86), al), esc: am.s * 1.15 };
+    return { f: deGrandes(n, g, aleatorio(43), 4), esc: 30 * m.S, mapa: m };
   };
 
   /* areia: grãos soltos no ar, depois assentados em estratos, depois uma superfície só */
@@ -280,8 +275,9 @@
     return { f: montar(n, itens, al), esc: 2, passo: s };
   };
 
-  /* o fim: tudo volta para a pílula do <heild-logo> final */
-  F.pilulaFinal = function (caixaLogo, n) {
+  /* uma cápsula só, lisa, exatamente no I de um <heild-logo> (caixa = o retângulo do elemento): é nela que o
+     campo termina antes de o componente de verdade aparecer no mesmo pixel. O campo nunca desenha HE e LD. */
+  F.pilulaNoLogo = function (caixaLogo, n) {
     var S = caixaLogo.w / 1259;
     var p = { x: caixaLogo.x + CX * S, y: caixaLogo.y + CY * S, e: PW * S, c: H * S, a: 0 };
     return { f: deGrandes(n, [p], aleatorio(79)), esc: Math.max(6, 40 * S) };

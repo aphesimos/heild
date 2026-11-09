@@ -209,9 +209,9 @@ html.no-escuro .cursor { color: var(--areia-100); }
 .cotas path { fill: none; stroke: var(--texto-suave); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .cotas text { fill: var(--texto-suave); font-family: var(--font-texto); font-size: calc(13px / var(--S, 1)); text-anchor: middle; font-variant-numeric: tabular-nums; }
 .cotas text.lateral { text-anchor: end; }
-.cota { transition: none; }
-.cota-pilula { --vis: clamp(0, min(calc((var(--p) - 0.1) * 12), calc((0.38 - var(--p)) * 12)), 1); opacity: var(--vis); }
-.cota-grade { --vis: clamp(0, calc((var(--p) - 0.74) * 10), 1); opacity: var(--vis); }
+/* as cotas seguem o que o campo mostra agora (o motor escreve data-cota: pilula, grade ou nada), também no ciclo próprio */
+.cota { opacity: 0; transition: opacity 0.35s var(--sai); }
+.cotas[data-cota="pilula"] .cota-pilula, .cotas[data-cota="grade"] .cota-grade { opacity: 1; transition-delay: 0.12s; }
 
 /* ---------- 4. o respiro ---------- */
 .cap-respiro .palco { display: grid; grid-template-rows: minmax(0, 0.9fr) auto minmax(0, 0.6fr); grid-template-columns: minmax(0, 1fr); justify-items: center; }
@@ -233,8 +233,20 @@ html.no-escuro .cursor { color: var(--areia-100); }
 .fase[data-fase="divisao"] { font-weight: calc(900 - 700 * var(--q, 0)); }
 .fase[data-fase="pausa"] { font-weight: 100; }
 .fase[data-fase="retorno"] { font-weight: calc(100 + 300 * var(--q, 0)); letter-spacing: calc(0.12em - 0.16em * var(--q, 0)); }
-.logo-caixa { grid-row: 2; grid-column: 1; align-self: center; position: relative; z-index: 1; width: min(60vw, 840px, 120vh); line-height: 0; color: var(--primaria); opacity: clamp(0, calc((var(--p) - 0.19) * 16), 1); }
-.logo-caixa heild-logo { width: 100%; }
+/* A passagem do campo para a logo: o campo termina numa cápsula lisa no pixel exato do I. Em 0,135 o
+   <heild-logo> aparece de uma vez (sem opacidade parcial), mostrando só a faixa do I, igual à do campo; o
+   campo some em 0,1375. Depois HE e LD se abrem a partir do I, por máscara (--rev de 0 a 1). A faixa do I
+   no viewBox vai de 44,53% a 56,23% da largura; a máscara deixa 0,3% de folga dos dois lados. */
+.logo-caixa {
+  grid-row: 2; grid-column: 1; align-self: center; position: relative; z-index: 1; width: min(60vw, 840px, 120vh); line-height: 0; color: var(--primaria);
+  opacity: clamp(0, calc((var(--p) - 0.135) * 5000), 1);
+  --rev: clamp(0, calc((var(--p) - 0.15) / 0.09), 1);
+}
+.logo-caixa heild-logo, .logo-caixa-fim heild-logo {
+  width: 100%;
+  --rev-s: calc(1 - (1 - var(--rev)) * (1 - var(--rev)));
+  clip-path: inset(-30% calc(43.4% - 73.4% * var(--rev-s)) -30% calc(44.2% - 74.2% * var(--rev-s)));
+}
 .legenda-respiro { grid-row: 3; grid-column: 1; align-self: end; position: relative; z-index: 2; display: flex; align-items: baseline; gap: 12px; font-size: 15px; line-height: 22px; color: var(--texto-suave); opacity: clamp(0, calc((var(--p) - 0.24) * 12), 1); min-height: 22px; text-align: center; }
 .legenda-respiro .n { font-variant-numeric: tabular-nums; color: var(--texto); }
 .legenda-respiro .desc { transition: opacity 0.4s var(--sai); }
@@ -299,8 +311,12 @@ html.no-escuro .cursor { color: var(--areia-100); }
 
 /* ---------- 8. o inteiro ---------- */
 .cap-inteiro .palco { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0; }
-.logo-caixa-fim { width: min(46vw, 560px, 80vh); line-height: 0; color: var(--primaria); margin-bottom: 7vh; opacity: clamp(0, calc((var(--p) - 0.3) * 14), 1); }
-.logo-caixa-fim heild-logo { width: 100%; cursor: pointer; border-radius: var(--raio-cartao); }
+.logo-caixa-fim {
+  width: min(46vw, 560px, 80vh); line-height: 0; color: var(--primaria); margin-bottom: 7vh;
+  opacity: clamp(0, calc((var(--p) - 0.32) * 5000), 1);
+  --rev: clamp(0, calc((var(--p) - 0.33) / 0.09), 1);
+}
+.logo-caixa-fim heild-logo { cursor: pointer; border-radius: var(--raio-cartao); }
 .citacao-fim { --vis: clamp(0, calc((var(--p) - 0.42) * 10), 1); opacity: var(--vis); padding-left: 0; max-width: 26ch; margin: 0; }
 .citacao-fim::before { display: none; }
 .citacao-fim p { font-size: clamp(24px, min(2.6vw, 4.4vh), 40px); }
@@ -381,6 +397,8 @@ html.no-escuro .cursor { color: var(--areia-100); }
 .parado .cena, .parado .beat, .parado .abre, .parado .verbete, .parado .medidas > div, .parado .texto-respiro,
 .parado .cota-grade, .parado .legenda-respiro, .parado .logo-caixa, .parado .logo-caixa-fim, .parado .citacao-fim,
 .parado .eco, .parado .voltar, .parado .dica-grade, .parado .dica-luz, .parado .texto-pilula { opacity: 1 !important; transform: none !important; }
+.parado .logo-caixa heild-logo, .parado .logo-caixa-fim heild-logo { clip-path: none; }
+.parado .cota-grade { opacity: 1 !important; }
 .parado .cota-pilula, .parado .dica-rolar, .parado .respiros, .parado .fases, .parado .dica-grade, .parado .dica-luz { display: none; }
 .parado .titulo-peca, .parado .sub, .parado .verbete { animation: none; }
 .parado .cap-palavra .palco { grid-template-rows: minmax(40vh, 1fr) auto auto; grid-template-areas: "fig fig" "abre verbete" "beat beat"; }
