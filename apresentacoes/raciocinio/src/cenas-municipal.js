@@ -165,7 +165,7 @@
       function passa(i, y) { return BURACOS[i].some(function (b) { var yc = H0 + b * (H1 - H0); return Math.abs(y - yc) < ALT * (H1 - H0) / 2 - 4; }); }
       api.quadro(function (agora) {
         if (agora > prox) {
-          prox = agora + 260;
+          prox = agora + 170;
           // Escolhe a altura: uma parte mira num buraco da primeira trava, para alguns irem longe.
           var y = rnd() < 0.55 ? H0 + BURACOS[0][Math.floor(rnd() * 2)] * (H1 - H0) + (rnd() - 0.5) * 18 : H0 + 10 + rnd() * (H1 - H0 - 20);
           var c = R.svg('circle', { r: 4, cx: 10, cy: y.toFixed(1), 'class': 'erro-p' }, g);
@@ -193,7 +193,8 @@
     html: function (d) {
       var ps = d.pacotes.map(function (p, i) { return '<button type="button" class="pacote" data-i="' + i + '" aria-pressed="false">' + h(p[1]) + '</button>'; }).join('');
       var bs = d.blocos.map(function (b, i) { return '<li class="bloco" data-i="' + i + '"><span class="codigo">' + h(b[0]) + '</span><b>' + h(b[1]) + '</b></li>'; }).join('');
-      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(1152, 410, '<div class="blocos-box">' +
+      var ret = R.retrato();
+      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(ret ? 640 : 1152, ret ? 880 : 410, '<div class="blocos-box">' +
         '<div class="pacotes" role="group" aria-label="Pacotes">' + ps + '</div>' +
         '<ol class="blocos">' + bs + '</ol>' +
         '<div class="legenda-b"><span><i class="lg-i"></i>Inteiro: o bloco todo, com os avisos de mudança</span><span><i class="lg-f"></i>Fatia: só os dispositivos que o pacote cita</span><span class="conta-b tnum"></span></div>' +

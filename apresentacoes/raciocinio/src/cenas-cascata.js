@@ -14,7 +14,8 @@
       }).join('');
       var pontos = d.etapas.map(function (e, i) { return '<circle class="ponto-c" data-i="' + i + '" cx="18" cy="' + (RY0 + i * PASSO) + '" r="5"/>'; }).join('');
       var cits = d.citacoes.map(function (c) { return '<li class="aparece"><b>' + h(c.norma) + '</b><span>' + h(c.vig) + '</span></li>'; }).join('');
-      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(1152, 430, '<div class="cascata">' +
+      var ret = R.retrato();
+      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(ret ? 700 : 1152, ret ? 880 : 430, '<div class="cascata">' +
         '<div class="casc-perg"><span class="rotulo">Pergunta</span><p><span class="t-perg"></span></p></div>' +
         '<svg class="casc-trilho" viewBox="0 0 40 430" aria-hidden="true"><line class="trilho-c" x1="18" y1="' + RY0 + '" x2="18" y2="' + (RY0 + (d.etapas.length - 1) * PASSO) + '"/>' + pontos + '</svg>' +
         '<ol class="etapas-c">' + etapas + '</ol>' +
@@ -39,7 +40,7 @@
         await api.digitar(tp, d.pergunta, 36);
         o.setAttribute('reaction', 'thinking'); est.textContent = 'pesquisando';
         for (var i = 0; i < lis.length; i++) {
-          var y0 = i === 0 ? 30 : RY0 + (i - 1) * PASSO, y1 = RY0 + i * PASSO;
+          var y0 = i === 0 ? 74 : RY0 + (i - 1) * PASSO, y1 = RY0 + i * PASSO;
           await R.viajar(api, svg, 'M18 ' + y0 + ' L18 ' + y1, i === 0 ? 600 : 520);
           if (i > 0) { lis[i - 1].classList.remove('ativo'); lis[i - 1].classList.add('feito'); }
           lis[i].classList.add('ativo'); pts[i].classList.add('on');
@@ -144,7 +145,8 @@
         return '<div class="lista-h ' + cls + '"><p class="rotulo">' + h(titulo) + '</p><ol>' + itens.map(function (t, i) { return '<li><span class="n tnum">' + (i + 1) + '</span><span class="t">' + h(t) + '</span></li>'; }).join('') + '</ol></div>';
       }
       var fund = '<div class="lista-h fund"><p class="rotulo">Lista fundida, pela posição em cada uma</p><ol>' + d.fundida.map(function (t, i) { return '<li><span class="n tnum">' + (i + 1) + '</span><span class="t">' + h(t) + '</span></li>'; }).join('') + '</ol></div>';
-      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(1152, 400, '<div class="hibrida">' +
+      var ret = R.retrato();
+      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(ret ? 600 : 1152, ret ? 860 : 400, '<div class="hibrida">' +
         '<p class="h-perg"><span class="rotulo">Pergunta</span><span class="t-perg"></span></p>' +
         lista('pal', 'Palavras exatas · BM25', d.palavras) + lista('sig', 'Significado · multivetorial', d.significado) + fund +
         '<ul class="h-fatos">' + d.fatos.map(function (f) { return '<li>' + h(f) + '</li>'; }).join('') + '</ul></div>') + '</div>';

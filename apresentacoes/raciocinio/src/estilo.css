@@ -606,6 +606,22 @@ svg text { font-family: var(--font-texto); }
 .dif.foco { background: var(--superficie); box-shadow: var(--sombra-cartao); }
 
 /* ---------- retrato: ajustes ---------- */
+.retrato .dif-cab { display: none; }
+.retrato .dif .comum::before { content: "IA comum: "; }
+.retrato .cascata { width: 700px; height: 880px; }
+.retrato .casc-perg { width: 700px; }
+.retrato .casc-resp { left: 40px; top: 450px; width: 660px; height: 420px; }
+.retrato .hibrida { width: 600px; grid-template-columns: minmax(0, 1fr); }
+.retrato .verif { width: 640px; }
+.retrato .verif-cab, .retrato .afirm { grid-template-columns: minmax(0, 1fr) 62px 62px 62px; gap: 6px; padding: 0 12px; }
+.retrato .verif-cab span:last-child { display: none; }
+.retrato .afirm { height: auto; padding: 8px 12px; row-gap: 6px; }
+.retrato .saida-af { grid-column: 1 / -1; }
+.retrato .portao .pal { display: none; }
+.retrato .blocos-box { width: 640px; }
+.retrato .pacotes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.retrato .blocos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.retrato .legenda-b { flex-wrap: wrap; gap: 8px 16px; }
 .retrato .s-tresareas .area { padding: 16px; gap: 8px; }
 .retrato .s-tresareas .area-resps { min-height: 128px; }
 

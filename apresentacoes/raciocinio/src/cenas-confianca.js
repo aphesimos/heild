@@ -14,7 +14,8 @@
           PORTOES.map(function (p, k) { return '<span class="portao" data-k="' + k + '"><span class="m"></span><span class="pal"></span></span>'; }).join('') +
           '<span class="saida-af"></span></li>';
       }).join('');
-      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(1152, 410, '<div class="verif">' +
+      var ret = R.retrato();
+      return '<div class="empilhado">' + R.cab(d, '', true) + R.encaixe(ret ? 640 : 1152, ret ? 820 : 410, '<div class="verif">' +
         '<p class="rotulo verif-ctx">' + h(d.contexto) + '</p>' +
         '<div class="verif-cab"><span>Afirmação do rascunho</span>' + PORTOES.map(function (p) { return '<span>' + h(p) + '</span>'; }).join('') + '<span>Saída</span></div>' +
         '<ol class="afirms">' + linhas + '</ol>' +
