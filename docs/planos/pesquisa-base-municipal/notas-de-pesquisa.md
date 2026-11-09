@@ -141,3 +141,11 @@ Universo: 1.295 leis e 5.024 decretos publicados no mês por 293 municípios [te
 - Preços de modelos (Anthropic, conferidos na referência da API em 9/11/2026): Haiku 5.5 US$ 0,10/0,50 por milhão de tokens (até 100 mil tokens de prompt), Sonnet 5.5 US$ 2/10, Opus 5.5 US$ 4/20; lote com 50% de desconto.
 - OCR: olmOCR (Ai2) estima menos de US$ 200 por milhão de páginas em GPU própria; olmOCR-Bench: olmOCR 2 82,4; Marker 1.10.1 76,1; Mistral OCR API 72,0 [busca: arXiv 2502.18443 e resumos]; Mistral OCR 4 (jun/2026): US$ 4 por mil páginas, US$ 2 em lote [busca: usagepricing.com, captura de 6/7/2026; confirmar na página da Mistral].
 - S3 Standard-IA em São Paulo: US$ 0,0221 por GB-mês (pesquisa 01 do repositório de trabalho, 20/10/2026).
+
+## 14. Acréscimos da versão 0.3 (revisão pela IA)
+
+- Kim, Garg, Peng, Garg, "Correlated Errors in Large Language Models", ICML 2025 (PMLR 267, pp. 30038–30066; arXiv 2506.07962): mais de 350 modelos; "on one leaderboard dataset, models agree 60% of the time when both models err"; modelos maiores e mais precisos têm erros altamente correlacionados, mesmo com arquiteturas e fornecedores diferentes [busca: resumo e página do PMLR, https://proceedings.mlr.press/v267/kim25e.html].
+- Prior et al. (NLLP 2025), introdução: uma lei alemã em vigor desde 14/05/2024 ainda não estava no texto consolidado oficial em 30/07/2025 [lido]. Mostra que o ouro oficial também atrasa.
+- Desenho original do dono no repositório de trabalho: Plano de Ingestão, seções 2 (princípios), 4.2 (extrator primário, extrator independente com outro modelo, validador, revisor, reconciliador, consolidador, conferente), 4.5 (portões), 4.6 (ponto cego comum); pesquisa 02, 6.2 (Opus 5.5, GPT-6.1-sol, Sonnet 5.5, reconciliador Opus) [lido].
+- Preços de OpenAI e Google usados na conta (pesquisa 02, 4/11/2026, marcados como confirmados lá): GPT-6.1-sol US$ 2/10; Gemini 4 Argon US$ 2/10 até 30/11/2026 e US$ 4/20 a partir de 1/12/2026; lote 50%.
+- LAI: 2 a 6 horas internas por pedido, incluindo recurso (pesquisa 04, 6.4) [lido].
