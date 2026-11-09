@@ -231,8 +231,10 @@
     // divisão da logo; entre formações de muitas cápsulas, não (viraria mancha)
     var ponte = na !== nb && fA.grande && fB.grande ? Math.sin(Math.PI * clamp(t, 0, 1)) * 0.5 : 0;
     var kA = (A[3] + velK) * fA.esc, kB = (B[3] + velK) * fB.esc;
-    // a fusão se desfaz cedo quando as partes se separam e chega tarde quando elas se juntam
-    var kMix = kA + (kB - kA) * (kB < kA ? 1 - Math.pow(1 - t, 3) : t * t);
+    // a fusão se desfaz cedo quando as partes se separam e chega tarde quando elas se juntam; quando o
+    // destino é uma peça lisa (a pílula, a grade), a fusão segura até a peça estar formada
+    var curva = fB.grande && !fA.grande ? t * t * t : kB < kA ? 1 - Math.pow(1 - t, 3) : t * t;
+    var kMix = kA + (kB - kA) * curva;
     var exata = EXATAS[nb] ? (na === nb ? 1 : clamp((t - 0.5) / 0.42, 0, 1)) : 0;
     // invisível nos dois lados: as cápsulas vão direto para o lugar (ninguém vê, e nada chega atrasado)
     if (A[5] === 0 && B[5] === 0) exata = 1;
