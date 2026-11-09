@@ -74,7 +74,7 @@
         p1.por({ x: cx, y: cy, a: VERTICAL, c: 0, e: 0, k: 1, cor: cor });
         return;
       }
-      var gap = abre * T * 0.34, k = 1 + abre * T * 0.2;
+      var gap = abre * T * 0.13, k = 1 + abre * T * 0.27;
       var top0 = cy - Hr / 2, bot1 = cy + Hr / 2;
       var topIn = cy + Tr / 2 - abre * (Tr + gap) / 2, botIn = cy - Tr / 2 + abre * (Tr + gap) / 2;
       var inc = (M.p.ativo ? clamp((M.p.x - cx) / (P.Hp * 2), -1, 1) : 0) * abre * 0.06;
@@ -150,7 +150,7 @@
     function cores() {
       var c = M.COR;
       return {
-        papel: [[0, 0, 0, 0], c['areia-950'].concat(0.42), c['areia-950'].concat(0.58), c['areia-950'].concat(0.7), c['areia-950'].concat(0.8), c['areia-950'].concat(0.88)],
+        papel: [[0, 0, 0, 0], c['areia-950'].concat(0.3), c['areia-950'].concat(0.42), c['areia-950'].concat(0.52), c['areia-950'].concat(0.6), c['areia-950'].concat(0.68)],
         tinta: [c['areia-100'], c['areia-300'], c['areia-400'], c['areia-500'], c['areia-600'], c['areia-50']]
       };
     }
@@ -167,8 +167,11 @@
         var e = estratos[j], raiz = j === NC - 1, tam = raiz ? S * 0.92 : S * (j === 0 ? 1.08 : 1);
         var vert = e.giro !== 0;
         if (vert && M.movel) tam = Math.min(tam, M.vh * 0.11);
+        // as linhas pequenas: o texto da camada, repetido como num fólio pautado (numa folha à parte,
+        // que some nas bordas, para não passar sob as glosas das margens nem sob o cabeçalho)
+        var lc = document.createElement('canvas'); lc.width = W; lc.height = H;
+        var g0 = g; g = lc.getContext('2d'); g.setTransform(dc, 0, 0, dc, 0, 0); g.textAlign = 'center'; g.textBaseline = 'middle';
         g.save(); g.translate(cx, cy); if (vert) g.rotate(e.giro * Math.PI / 180);
-        // as linhas pequenas: o texto da camada, repetido como num fólio pautado
         g.font = 'italic 400 ' + (M.movel ? 13 : 15) + 'px "PP Neue Montreal Text"';
         g.fillStyle = 'rgb(140,140,140)';
         var larg = vert ? M.vh : M.vw, passo = M.movel ? 22 : 26, linhas = vert ? 9 : 6;
@@ -179,6 +182,18 @@
           g.fillText(frase, (n * 37) % 90 - 45, lado * o);
           g.restore();
         }
+        g.restore();
+        var x0 = M.movel ? 0 : M.margem + M.gutter * 2, x1 = M.movel ? M.vw : M.vw - x0, fx = M.movel ? 28 : 90;
+        var y0 = M.cabeca + 8, y1 = M.movel ? M.vh - 150 : M.vh - 24;
+        g.globalCompositeOperation = 'destination-in';
+        var gh = g.createLinearGradient(x0, 0, x1, 0), fr = Math.min(0.45, fx / Math.max(1, x1 - x0));
+        gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(fr, '#000'); gh.addColorStop(1 - fr, '#000'); gh.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = gh; g.fillRect(0, 0, M.vw, M.vh);
+        var gv = g.createLinearGradient(0, y0, 0, y1), fv = Math.min(0.45, 60 / Math.max(1, y1 - y0));
+        gv.addColorStop(0, 'rgba(0,0,0,0)'); gv.addColorStop(fv, '#000'); gv.addColorStop(1 - fv, '#000'); gv.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = gv; g.fillRect(0, 0, M.vw, M.vh);
+        g = g0; g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(lc, 0, 0); g.setTransform(dc, 0, 0, dc, 0, 0);
+        g.save(); g.translate(cx, cy); if (vert) g.rotate(e.giro * Math.PI / 180);
         g.font = (raiz ? '300 ' : '200 ') + tam.toFixed(1) + 'px "PP Neue Montreal"';
         if ('letterSpacing' in g) g.letterSpacing = (-0.03 * tam).toFixed(2) + 'px';
         g.fillStyle = '#fff';
@@ -255,13 +270,24 @@
       } else ultimo = null;
       if (teclaRaspa && !M.concluido) raspar(M.vw / 2 + Math.sin(M.agora * 2.1) * 60, M.vh / 2 + Math.cos(M.agora * 1.3) * 18, M.vw / 2 + Math.sin(M.agora * 2.1 + 0.3) * 60, M.vh / 2, 30, dt * 2.4);
       for (var j = 1; j < NC; j++) if (!M.eventos['estrato-' + j] && contagem[j] > 16) { M.evento('estrato-' + j); som('estrato', j); }
-      if (mudou) { M.campo.profundidade(bytes, cols, lins, CEL); mudou = false; contarRaiz(); }
       if (!M.concluido && raizCheias / raizN > 0.2) { M.concluir(); som('achado'); }
       if (M.concluido) {
         tFim += dt;
+        // achada a raiz, ela termina de aparecer sozinha: a raspagem se abre em volta da palavra
+        if (tFim < 1.8 && raizCaixa) {
+          var rx = (raizCaixa.x1 - raizCaixa.x0) / 2 + 26, ry = (raizCaixa.y1 - raizCaixa.y0) / 2 + 22, mx = (raizCaixa.x0 + raizCaixa.x1) / 2, my = (raizCaixa.y0 + raizCaixa.y1) / 2;
+          var a0 = Math.max(0, Math.floor((mx - rx) / CEL)), a1 = Math.min(cols - 1, Math.ceil((mx + rx) / CEL)), b0 = Math.max(0, Math.floor((my - ry) / CEL)), b1 = Math.min(lins - 1, Math.ceil((my + ry) / CEL));
+          for (var yy = b0; yy <= b1; yy++) for (var xx = a0; xx <= a1; xx++) {
+            var ux = (xx * CEL + CEL / 2 - mx) / rx, uy = (yy * CEL + CEL / 2 - my) / ry, d2 = ux * ux * ux * ux + uy * uy * uy * uy;
+            if (d2 >= 1) continue;
+            var ii2 = yy * cols + xx, alvoD = (NC - 0.02) * Math.min(1, (1 - d2) * 3);
+            if (D[ii2] < alvoD) { D[ii2] = Math.min(alvoD, D[ii2] + dt * 4.5); bytes[ii2] = Math.round(D[ii2] / NC * 255); mudou = true; }
+          }
+        }
         if (tFim > 4.2 && !saindo) { saindo = true; alvoOpac = 0; }
         if (tFim > 5.2 && !M.trocando && M.atual === C) M.ir('ii', 'fluxo');
       }
+      if (mudou) { M.campo.profundidade(bytes, cols, lins, CEL); mudou = false; contarRaiz(); }
     };
     var teclaRaspa = false;
     C.tecla = function (e, desce) { if (e.key === ' ') { e.preventDefault(); teclaRaspa = desce; } };
@@ -281,7 +307,7 @@
     var fam = { a: qa('[data-familia="a"] .palavra', sec), b: qa('[data-familia="b"] .palavra', sec) };
     var sentidos = qa('.sentidos li', sec);
     var ancora = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } }, casa = { a: null, b: null }, d0 = 1;
-    var larg = { a: [], b: [] }, E = 36, fundido = [false, false, false, false, false], arrasto = null, auto = 0, tEntrada = 0, tFim = 0, saiu = false;
+    var meio = null, rotAlvo = { a: [], b: [] }, rotPos = { a: [], b: [] }, autoDe = 'b', larg = { a: [], b: [] }, E = 36, fundido = [false, false, false, false, false], arrasto = null, auto = 0, tEntrada = 0, tFim = 0, saiu = false;
     var deriva = aleatorio(11);
     function pecaDe(f, i) { return M.pecas[(f === 'a' ? 0 : 6) + i]; } // i = 0 raiz, 1..5 palavras
     function offsets(f) {
@@ -306,7 +332,7 @@
     };
     function comp(f, i) { return larg[f][i] + E + 18; }
     C.entrar = function (de, modo) {
-      fundido = [false, false, false, false, false]; arrasto = null; auto = 0; tEntrada = 0; tFim = 0; saiu = false;
+      fundido = [false, false, false, false, false]; arrasto = null; auto = 0; tEntrada = 0; tFim = 0; saiu = false; meio = null; rotPos = { a: [], b: [] };
       sentidos.forEach(function (s) { s.classList.remove('visivel'); });
       C.medir();
       ancora.a = { x: casa.a.x, y: casa.a.y }; ancora.b = { x: casa.b.x, y: casa.b.y };
@@ -340,23 +366,30 @@
       if (Math.hypot(p.x - arrasto.x0, p.y - arrasto.y0) > 4) arrasto.moveu = true;
       ancora[arrasto.f].x = clamp(p.x + arrasto.dx, 40, M.vw - 40); ancora[arrasto.f].y = clamp(p.y + arrasto.dy, M.cabeca + 60, M.vh - 60);
     };
-    C.cima = function () { if (arrasto && !arrasto.moveu) auto = 0.0001; arrasto = null; };
+    C.cima = function () { if (arrasto && (!arrasto.moveu || aproximacao() > 0.3)) { auto = 0.0001; autoDe = arrasto.f; } arrasto = null; };
     C.tecla = function (e, desce) { if (desce && (e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('.palavra')) { e.preventDefault(); auto = 0.0001; } };
     function aproximacao() {
+      if (fundido.some(Boolean)) return 1; // o que se ligou não se solta
       var d = Math.hypot(ancora.a.x - ancora.b.x, ancora.a.y - ancora.b.y);
-      return clamp((d0 * 0.7 - d) / (d0 * 0.45), 0, 1);
+      return clamp((d0 * 0.86 - d) / (d0 * 0.46), 0, 1);
     }
     C.quadro = function (dt) {
       tEntrada += dt;
-      if (auto > 0 && !arrasto) { // um toque sem arrastar: a família de baixo vem sozinha
+      if (auto > 0 && !arrasto) { // um toque sem arrastar, ou soltar perto: a família vem sozinha
         auto += dt;
-        var alvoB = { x: lerp(casa.b.x, ancora.a.x, 0.86), y: lerp(casa.b.y, ancora.a.y, 0.86) };
-        ancora.b.x += (alvoB.x - ancora.b.x) * Math.min(1, dt * 1.6); ancora.b.y += (alvoB.y - ancora.b.y) * Math.min(1, dt * 1.6);
+        var mv = autoDe === 'a' ? 'a' : 'b', fixo = mv === 'a' ? 'b' : 'a';
+        var alvoM = { x: lerp(ancora[mv].x, ancora[fixo].x, 0.9), y: lerp(ancora[mv].y, ancora[fixo].y, 0.9) };
+        ancora[mv].x += (alvoM.x - ancora[mv].x) * Math.min(1, dt * 1.8); ancora[mv].y += (alvoM.y - ancora[mv].y) * Math.min(1, dt * 1.8);
         if (auto > 3) auto = 0;
       }
       var s = sai(aproximacao()), mx = (ancora.a.x + ancora.b.x) / 2, my = (ancora.a.y + ancora.b.y) / 2;
       if (M.movel) my = clamp(my, M.cabeca + 230, M.vh - 290);
       else my = clamp(my, M.cabeca + 240, M.vh - 230);
+      // ligadas, as duas famílias vão juntas para o meio da página
+      if (!meio) meio = { x: mx, y: my, f: 0 };
+      if (fundido.some(Boolean)) meio.f = Math.min(1, meio.f + dt * 0.7);
+      meio.x = mx; meio.y = my;
+      mx = lerp(mx, M.vw / 2, suave(meio.f)); my = lerp(my, M.movel ? M.vh * 0.45 : M.vh * 0.5, suave(meio.f));
       var row = M.movel ? 58 : 68, t = M.agora;
       ['a', 'b'].forEach(function (f) {
         var off = offsets(f);
@@ -371,29 +404,41 @@
             var j = i - 1, ca = comp('a', i), cb = comp('b', i), ha = (ca - E) / 2, hb = (cb - E) / 2;
             var gap = fundido[j] ? 0 : (1 - s) * 90 + 26;
             tx = f === 'a' ? mx - hb - gap / 2 : mx + ha + gap / 2; ty = my + (j - 2) * row;
+            rotAlvo[f][j] = { x: tx, y: ty };
+            if (fundido[j]) { // ligadas, viram uma cápsula só (a de cima cobre as duas; a outra se recolhe dentro)
+              if (f === 'a') { p.alvo({ x: mx, y: ty, c: ca + cb - E, k: 1.2 }); } else { p.alvo({ x: tx, y: ty, e: 0, c: 0, k: 1 }); }
+              continue;
+            }
           }
           p.alvo({ x: lerp(bx, tx, s), y: lerp(by, ty, s), k: i && !fundido[i - 1] ? 1.2 + s * 16 : 1.2 });
         }
       });
       // a fusão: quando o par chega perto o bastante, fica
       for (var j = 0; j < 5; j++) {
-        if (fundido[j] || s < 0.96) continue;
+        if (fundido[j] || s < 0.92) continue;
         var pa = pecaDe('a', j + 1), pb = pecaDe('b', j + 1);
         var junta = (pb.x - pb.c / 2) - (pa.x + pa.c / 2);
+        if (Math.abs(pa.y - pb.y) > 14) continue;
         if (junta < 30) { fundido[j] = true; sentidos[j].classList.add('visivel'); som('liga', j); }
       }
       if (!M.concluido && fundido.every(Boolean)) M.concluir();
       if (M.concluido) { tFim += dt; if (tFim > 8.5 && !saiu && M.atual === C) { saiu = true; M.ir('iii', 'fluxo'); } }
     };
-    C.depois = function () {
+    C.depois = function (dt) {
       ['a', 'b'].forEach(function (f) {
         fam[f].forEach(function (el, i) {
-          var p = pecaDe(f, i), op = p.t.e > 0 ? clamp((p.e / p.t.e - 0.6) / 0.4, 0, 1) : 0;
-          rotulo(el, p.x, p.y, 0, op);
+          var p = pecaDe(f, i), op = p.t.e > 0 ? clamp((p.e / p.t.e - 0.6) / 0.4, 0, 1) : 0, x = p.x, y = p.y;
+          if (i && fundido[i - 1]) { // o rótulo fica no lugar dele dentro da cápsula única
+            var L = rotPos[f][i - 1], a = rotAlvo[f][i - 1];
+            if (!L) L = rotPos[f][i - 1] = { x: x, y: y };
+            L.x += (a.x - L.x) * Math.min(1, dt * 10); L.y += (a.y - L.y) * Math.min(1, dt * 10);
+            x = L.x; y = L.y; op = 1;
+          } else if (i) rotPos[f][i - 1] = { x: x, y: y };
+          rotulo(el, x, y, 0, op);
         });
       });
       sentidos.forEach(function (el, j) {
-        var pa = pecaDe('a', j + 1), pb = pecaDe('b', j + 1), xm = ((pa.x - pa.c / 2) + (pb.x + pb.c / 2)) / 2;
+        var pa = pecaDe('a', j + 1), xm = fundido[j] ? pa.x : (pa.x + pecaDe('b', j + 1).x) / 2;
         rotulo(el, xm, pa.y + E / 2 + 13);
       });
     };
@@ -433,7 +478,7 @@
       aneis.forEach(function (a) { a.larg = a.li.map(function (l) { return larguraTexto(l); }); });
       frase.style.top = (cy + R0 + E / 2 + (M.movel ? 26 : 34)) + 'px';
       hen.style.top = (cy - 54) + 'px';
-      var f = q('.falas', sec); if (f) { f.style.top = (cy + 28) + 'px'; f.style.transform = 'none'; }
+      var f = q('.falas', sec); if (f) { f.style.top = (cy + 46) + 'px'; f.style.transform = 'none'; }
     };
     function comp(r, j) { var a = aneis[r]; return Math.min(a.larg[j] + E + 10, a.R * PASSO * 0.9); }
     function posicionar(imediato, atrasoBase) {
@@ -539,7 +584,7 @@
             for (var j = 0; j < 9; j++) {
               var p = M.pecas[r * 9 + j], th = A.ang + j * PASSO - VERTICAL + r * PASSO / 3;
               p.K = 70; p.amort = 0.8;
-              p.alvo({ x: cx + Math.cos(th) * R, y: cy + Math.sin(th) * R, a: th + VERTICAL, c: R * PASSO / 3 * 1.6 + Ef, e: Ef * 0.96, k: 1.2 }, (r * 9 + j) * 0.012);
+              p.alvo({ x: cx + Math.cos(th) * R, y: cy + Math.sin(th) * R, a: th + VERTICAL, c: 2 * Math.sqrt(2 * R * 0.02 * Ef) + Ef * 0.96, e: Ef * 0.96, k: 1.2 }, (r * 9 + j) * 0.012);
             }
           });
           M.pecas[27].alvo({ e: 0, c: 0 });
@@ -565,7 +610,8 @@
     };
     C.depois = function () {
       aneis.forEach(function (A, r) {
-        A.li.forEach(function (el, j) { var p = M.pecas[r * 9 + j]; rotulo(el, p.x, p.y, p.a, null); });
+        var funde = estado !== 'roda';
+        A.li.forEach(function (el, j) { var p = M.pecas[r * 9 + j]; rotulo(el, p.x, p.y, p.a, funde ? 0 : clamp((p.e / E - 0.75) / 0.25, 0, 1)); });
       });
     };
     C.sair = function () { C.fundiu = false; };
@@ -638,10 +684,13 @@
     };
     C.quadro = function (dt) {
       var parado = M.parado || !M.p.ativo, t = M.agora, todos = true;
+      // na virada, as que entram esperam as que saem sumirem (nunca duas palavras se cruzando a meio tom)
+      var saindo = pal.some(function (w) { return !w.alvo[fase - 1] && w.op > 0.06; });
       pal.forEach(function (w) {
         var alvoF = w.alvo[fase - 1], ativo = !!alvoF;
-        var opAlvo = ativo ? 1 : 0;
-        w.op += (opAlvo - w.op) * Math.min(1, dt * (opAlvo ? 1.6 : 2.6));
+        var novo = ativo && fase === 2 && w.f === '2';
+        var opAlvo = ativo && !(novo && saindo) ? 1 : 0;
+        w.op += (opAlvo - w.op) * Math.min(1, dt * (opAlvo ? 1.6 : 4));
         var tx, ty, tr;
         if (parado && ativo) { tx = alvoF.x; ty = alvoF.y; tr = 0; }
         else {
@@ -696,9 +745,9 @@
     /* a forma de cada substância em volta do centro (ox, oy), com a compressão `cmp` (1 solta, menor junta) */
     function forma(nome, ox, oy, cmp, t) {
       var lista = [];
-      if (nome === 'sal') { // cristais: um hexágono de pequenas cápsulas de pé
-        lista.push({ x: ox, y: oy, a: VERTICAL, c: 34 * z, e: 21 * z });
-        for (var i = 0; i < 6; i++) { var a = i * Math.PI / 3 + Math.PI / 6; lista.push({ x: ox + Math.cos(a) * 27 * z * cmp, y: oy + Math.sin(a) * 27 * z * cmp, a: VERTICAL, c: 30 * z, e: 19 * z }); }
+      if (nome === 'sal') { // cristais: um hexágono de pequenas cápsulas de pé, separadas
+        lista.push({ x: ox, y: oy, a: VERTICAL, c: 28 * z, e: 16 * z });
+        for (var i = 0; i < 6; i++) { var a = i * Math.PI / 3; lista.push({ x: ox + Math.cos(a) * 31 * z * cmp, y: oy + Math.sin(a) * 31 * z * cmp, a: VERTICAL, c: 24 * z, e: 15 * z }); }
       } else if (nome === 'mercurio') { // gotas que não param
         var D = [34, 26, 22, 18, 29, 14];
         for (var j = 0; j < 6; j++) {
@@ -706,10 +755,10 @@
           lista.push({ x: ox + Math.cos(an) * rr, y: oy + Math.sin(an) * rr * 0.86, a: 0, c: D[j] * z, e: D[j] * z });
         }
       } else { // chamas: cápsulas de pé, de alturas diferentes, que balançam
-        var Hs = [42, 68, 92, 64, 40], base = oy + 40 * z;
+        var Hs = [40, 66, 90, 62, 38], base = oy + 40 * z;
         for (var k = 0; k < 5; k++) {
-          var h = Hs[k] * z * (1 + Math.sin(t * 2.1 + k * 1.3) * 0.06) * (0.55 + 0.45 * cmp);
-          lista.push({ x: ox + (k - 2) * 15 * z * cmp + Math.sin(t * 1.7 + k) * 2.4 * z, y: base - h / 2, a: VERTICAL + Math.sin(t * 1.4 + k * 0.8) * 0.05, c: h, e: 20 * z });
+          var h = Hs[k] * z * (1 + Math.sin(t * 2.1 + k * 1.3) * 0.06) * (0.7 + 0.3 * cmp);
+          lista.push({ x: ox + (k - 2) * 23 * z * cmp + Math.sin(t * 1.7 + k) * 2.4 * z, y: base - h / 2, a: VERTICAL + Math.sin(t * 1.4 + k * 0.8) * 0.05, c: h, e: 16 * z });
         }
       }
       return lista;
@@ -751,19 +800,21 @@
         var e = suave(F), alvoP = ponto || { x: cx, y: cy };
         alvoP = { x: clamp(alvoP.x, 80, M.vw - 80), y: clamp(alvoP.y, M.cabeca + 80, M.vh - 90) };
         if (!segura && F <= 0) ponto = null;
-        var cmp = 1 - 0.62 * e, tr = Math.sin(Math.PI * clamp(F, 0, 1)) * (F < 1 ? 1 : 0) * 5 * z;
+        var cmp = 1 - 0.3 * e, tr = Math.sin(Math.PI * clamp(F, 0, 1)) * (F < 1 ? 1 : 0) * 5 * z;
+        var ANG = { sal: Math.PI / 2, mercurio: Math.PI * 7 / 6, enxofre: -Math.PI / 6 }, rl = 44 * z;
         ['sal', 'mercurio', 'enxofre'].forEach(function (n) {
-          var c = casas[n], ox = lerp(c.x, alvoP.x, Math.pow(e, 1.1)), oy = lerp(c.y, alvoP.y, Math.pow(e, 1.1));
+          var c = casas[n], px = alvoP.x + Math.cos(ANG[n]) * rl, py = alvoP.y + Math.sin(ANG[n]) * rl * 0.9 - (n === 'enxofre' || n === 'mercurio' ? 0 : 6 * z);
+          var ox = lerp(c.x, px, Math.pow(e, 1.1)), oy = lerp(c.y, py, Math.pow(e, 1.1));
           var fo = forma(n, ox, oy, cmp, t), corN = cor(n);
           for (var i = GR[n][0]; i < GR[n][1]; i++) {
             var p = M.pecas[i], f = fo[i - GR[n][0]], tm = tremor[i];
             tm.x += ((Math.random() - 0.5) * 2 * tr - tm.x) * Math.min(1, dt * 18); tm.y += ((Math.random() - 0.5) * 2 * tr - tm.y) * Math.min(1, dt * 18);
             if (p.atraso > 0) continue;
-            var mist = F > 0.82 ? (F - 0.82) / 0.18 : 0;
-            p.alvo({ x: f.x + tm.x, y: f.y + tm.y, a: f.a, c: f.c, e: f.e, k: 3 + e * 26 * z, cor: mix(corN, M.COR['areia-500'], mist * 0.5) });
+            p.alvo({ x: f.x + tm.x, y: f.y + tm.y, a: f.a, c: f.c, e: f.e, k: 2 + Math.pow(e, 2) * 22 * z, cor: corN });
           }
         });
         som('obraNivel', F);
+        Object.keys(rot).forEach(function (k) { rot[k].classList.toggle('some', F > 0.32); });
         if (F >= 0.999) tCheio += dt; else tCheio = 0;
         if (tCheio > 1.1) { // coagula: as três viram uma, e a uma é a pílula
           estado = 'coagula'; tEstado = 0; segura = false; M.concluir(); som('coagula');
@@ -771,13 +822,13 @@
           var P = pilula(M), px = alvoP.x, py = alvoP.y;
           C.pedra = { x: px, y: py };
           for (var j = 0; j < 18; j++) {
-            var pc = M.pecas[j]; pc.K = 120; pc.amort = 0.66;
+            var pc = M.pecas[j]; pc.K = 120; pc.amort = 0.66; pc.taxaCor = 7;
             if (j === 0) pc.alvo({ x: px, y: py, a: VERTICAL, c: P.Hp, e: P.T, k: 1, cor: M.corPrimaria }, 0.15);
             else pc.alvo({ x: px, y: py + (j % 2 ? -1 : 1) * P.Hp * 0.18, a: VERTICAL, c: P.T * 0.8, e: P.T * 0.6, k: 10, cor: M.corPrimaria }, j * 0.02);
           }
         }
       } else if (estado === 'coagula') {
-        if (tEstado > 0.9) for (var j2 = 1; j2 < 18; j2++) M.pecas[j2].alvo({ e: 0, c: 0, k: 1 });
+        if (tEstado > 0.45) for (var j2 = 1; j2 < 18; j2++) M.pecas[j2].alvo({ e: 0, c: 0, k: 1 });
         if (tEstado > 1.6) { M.pecas[0].alvo({ x: cx, y: M.vh * (M.movel ? 0.42 : 0.47) }); }
         if (M.concluido) { tFim += dt; if (tFim > 10 && !saiu && M.atual === C) { saiu = true; M.ir('vi', 'fluxo'); } }
       }

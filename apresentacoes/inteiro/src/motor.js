@@ -69,7 +69,7 @@
     }
     else if (acao === 'fechar-fontes') { e.preventDefault(); fontes.classList.remove('aberta'); if (I.M && I.M.atual) history.replaceState(null, '', '#' + I.M.atual.id); }
     else if (acao === 'codice') { e.preventDefault(); fecharIndice(); if (I.M) I.M.parar(); parado(); window.scrollTo(0, 0); }
-    else if (acao === 'recomecar') { e.preventDefault(); if (I.M && I.M.vivo) I.M.ir('limiar', 'salto'); }
+    else if (acao === 'recomecar') { e.preventDefault(); if (I.M && I.M.vivo) I.M.ir('limiar', 'salto'); else window.scrollTo(0, 0); }
     else if (acao === 'som') { e.preventDefault(); var on = I.Som && I.Som.alternar(); el.setAttribute('aria-pressed', on ? 'true' : 'false'); }
   });
   document.addEventListener('keydown', function (e) {
@@ -278,7 +278,7 @@
     if (de) { de.sec.classList.add('saindo'); if (de.sair) de.sair(para, modo); }
     var entrar = function () {
       if (de) { de.sec.classList.remove('ativo', 'saindo'); }
-      if (modo !== 'fluxo' || !de) M.pal = null;
+      if (modo !== 'fluxo' && modo !== 'seguir' || !de) M.pal = null;
       para.sec.classList.add('ativo');
       M.atual = para; M.tLeitura = 0; M.concluido = false; M.tFim = 0; M.eventos = {};
       prepararGlosas(para);
@@ -354,6 +354,7 @@
     var escAlvo = interativo ? 2.6 : (M.p.baixo ? 0.8 : 1);
     if (M.atual && M.atual.cursorEsc) escAlvo = M.atual.cursorEsc(escAlvo);
     cursor.esc += (escAlvo - cursor.esc) * Math.min(1, dt * 14);
+    cursor.el.classList.toggle('anel', escAlvo > 2);
     var vel = Math.hypot(cursor.vx, cursor.vy), estica = Math.min(26, vel * 0.016), ang = Math.atan2(cursor.vy, cursor.vx) * 180 / Math.PI + 90;
     cursor.el.style.transform = 'translate3d(' + cursor.x.toFixed(1) + 'px,' + cursor.y.toFixed(1) + 'px,0) rotate(' + (estica > 0.6 ? ang : 0).toFixed(1) + 'deg)';
     cursor.i.style.width = (10 * cursor.esc).toFixed(1) + 'px'; cursor.i.style.height = ((10 + estica) * cursor.esc).toFixed(1) + 'px';
@@ -363,6 +364,7 @@
   var raf = 0, ultimo = 0;
   function quadro(agoraMs) {
     raf = requestAnimationFrame(quadro);
+    var t0js = performance.now();
     var dtMs = ultimo ? agoraMs - ultimo : 16.7; ultimo = agoraMs;
     var dt = Math.min(0.05, dtMs / 1000);
     M.agora = agoraMs / 1000;
@@ -371,18 +373,29 @@
     if (C) {
       M.tLeitura += dt * (M.parado || !M.p.ativo ? 1 : 0.4);
       if (M.concluido) M.tFim += dt;
+      if (C.sec._fim !== M.concluido) { C.sec._fim = M.concluido; C.sec.classList.toggle('concluido', M.concluido); }
       if (C.quadro) C.quadro(dt, M);
       for (var i = 0; i < M.pecas.length; i++) M.pecas[i].passo(dt);
       if (C.depois) C.depois(dt, M);
-      M.campo.limpar();
-      if (M.pal && M.pal.opac > 0.002) M.campo.palimpsesto(M.pal.papel, M.pal.tinta, M.pal.opac);
-      M.campo.pecas(M.pecas, 1);
+      if (M.pal && C.id !== 'i') { M.pal.opac = Math.max(0, M.pal.opac - dt * 1.6); if (M.pal.opac <= 0) M.pal = null; }
+      // só redesenha o campo se algo mudou (sem desenhar, o canvas guarda o último quadro)
+      var h = (M.campo.versao || 0) * 7.13 + (M.pal ? M.pal.opac * 1000 + 3 : 0);
+      for (var j = 0; j < M.pecas.length; j++) { var pc = M.pecas[j]; if (pc.e > 0.35) h += (j + 1) * (pc.x * 1.31 + pc.y * 1.73 + pc.a * 97 + pc.c * 2.11 + pc.e * 2.93 + pc.k * 0.71 + pc.anel * 1.17 + (pc.cor[0] + pc.cor[1] * 3 + pc.cor[2] * 5) * 50); }
+      if (h !== M.hashCampo) {
+        M.hashCampo = h;
+        M.campo.limpar();
+        if (M.pal && M.pal.opac > 0.002) M.campo.palimpsesto(M.pal.papel, M.pal.tinta, M.pal.opac);
+        M.campo.pecas(M.pecas, 1);
+        M.desenhou = (M.desenhou || 0) + 1;
+      }
       glosas(C, dt);
       if (!M.concluido && !M.trocando && M.tLeitura >= (C.seguir || 30)) mostrarSeguir(true);
       if (M.concluido && !M.trocando && M.tFim >= (C.seguirFim || 3)) mostrarSeguir(true);
     }
     andarCursor(dt);
-    M.campo.governar(dtMs, agoraMs);
+    if (M.hashCampo !== M.hashGov) M.campo.governar(dtMs, agoraMs); // só conta os quadros em que o campo pintou
+    M.hashGov = M.hashCampo;
+    M.msJS = (M.msJS || 0) * 0.92 + (performance.now() - t0js) * 0.08; // custo do quadro na CPU (para medir)
   }
   M.parar = function () { M.vivo = false; cancelAnimationFrame(raf); raf = 0; M.campo.limpar(); if (I.Som) I.Som.desligar(); if (cursor) cursor.el.remove(); raiz.classList.remove('cursor-proprio'); };
   document.addEventListener('visibilitychange', function () {
@@ -391,6 +404,7 @@
     else if (!raf) { ultimo = 0; raf = requestAnimationFrame(quadro); if (I.Som) I.Som.pausar(false); }
   });
   M.campo.aoRestaurar = function () { if (M.atual && M.atual.restaurar) M.atual.restaurar(); };
+  M.campo.aoDensidade = function () { if (M.atual && M.atual.restaurar) M.atual.restaurar(); };
 
   /* ---------- começa ---------- */
   medir();

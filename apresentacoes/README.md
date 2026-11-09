@@ -7,6 +7,7 @@ Cada apresentação é uma pasta, com o mesmo build e os mesmos tokens do design
 | [`produto/`](produto) | A marca e o produto, com uma versão por plataforma (principal, Heild Contábil, Heild BPO), montadas no mesmo molde |
 | [`diretrizes/`](diretrizes) | As diretrizes da marca: a identidade sozinha, slide a slide (logo, movimento, cor, orbs, tipografia, forma, voz, aplicações) |
 | [`diretrizes-web/`](diretrizes-web) | As diretrizes da marca numa página de rolagem, para o site: o nome, a ideia, a logo, o movimento, a cor, os orbs, a tipografia, a forma, a voz e as aplicações, com o campo de cápsulas feito do material da logo |
+| [`inteiro/`](inteiro) | Do inteiro: a filosofia da marca como uma experiência em câmaras, que se descobre (o nome raspado até a raiz, as duas raízes, a roda de Llull, os brancos, a obra de corpo, alma e espírito, o selo), com as fontes à parte |
 | [`raciocinio/`](raciocinio) | O raciocínio do Consultor: como ele responde com a lei certa, na data certa, com a prova, e por que é diferente de uma IA comum; para advocacia, contabilidade e BPO |
 | `comum/` | O que todas usam: os tokens do design system (`tokens.css`) |
 

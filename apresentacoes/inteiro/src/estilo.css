@@ -157,7 +157,7 @@ html.vivo .estratos { display: none; }
 html:not(.vivo) .fontes .fechar { display: none; }
 
 /* ---------- o índice ---------- */
-.indice { position: fixed; inset: 0; z-index: 20; background: var(--fundo); color: var(--texto); display: grid; place-items: center; overflow-y: auto; }
+.indice { position: fixed; inset: 0; z-index: 20; background: var(--fundo); color: var(--texto); display: grid; place-items: center; overflow-y: auto; touch-action: pan-y; }
 .indice-caixa { padding: 96px var(--gutter); width: min(560px, 100%); }
 .indice ol { list-style: none; margin: 0 0 40px; padding: 0; }
 .indice ol a {
@@ -319,6 +319,7 @@ html:not(.vivo) .seguir { display: none; }
 .cursor { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; opacity: 0; transition: opacity 200ms; }
 .cursor.visivel { opacity: 1; }
 .cursor i { position: absolute; left: 0; top: 0; width: 10px; height: 10px; border-radius: 9999px; background: var(--texto); transform: translate(-50%, -50%); }
+.cursor.anel i { background: transparent; box-shadow: inset 0 0 0 1.5px var(--texto); }
 html.cursor-proprio.vivo, html.cursor-proprio.vivo * { cursor: none !important; }
 html.cursor-proprio.vivo .indice, html.cursor-proprio.vivo .indice *, html.cursor-proprio.vivo .fontes, html.cursor-proprio.vivo .fontes * { cursor: auto !important; }
 html.cursor-proprio.vivo .indice a, html.cursor-proprio.vivo .fontes a, html.cursor-proprio.vivo .indice button, html.cursor-proprio.vivo .fontes button { cursor: pointer !important; }
@@ -345,5 +346,6 @@ html.vivo .fontes.aberta { display: block; }
   html.vivo .palavra { font-size: 15px; line-height: 20px; padding: 4px 10px; }
   html.vivo .anel li { font-size: 12px; line-height: 16px; }
   html.vivo .logo-selo { width: min(64vw, 300px); }
+  html.vivo #vi.concluido .margem { display: none; } /* no celular, o colofão fica sozinho */
   html.vivo .seguir { bottom: calc(18px + env(safe-area-inset-bottom)); }
 }

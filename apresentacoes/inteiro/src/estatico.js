@@ -85,16 +85,16 @@
       var s = svg('0 0 800 380', 'Sal, mercúrio e enxofre; corpo, espírito e alma; e a pedra');
       var c = function (n) { return 'var(--' + n + ')'; };
       // sal: cristais
-      var sx = 150, sy = 250; capsula(s, sx, sy, 34, 21, 90, c('areia-650'));
-      for (var i = 0; i < 6; i++) { var a = i * Math.PI / 3 + Math.PI / 6; capsula(s, sx + Math.cos(a) * 27, sy + Math.sin(a) * 27, 30, 19, 90, c('areia-650')); }
+      var sx = 150, sy = 250; capsula(s, sx, sy, 28, 16, 90, c('areia-650'));
+      for (var i = 0; i < 6; i++) { var a = i * Math.PI / 3; capsula(s, sx + Math.cos(a) * 31, sy + Math.sin(a) * 31, 24, 15, 90, c('areia-650')); }
       texto(s, sx, sy + 64, 'sal, o corpo', 13, { cor: 'var(--texto-suave)', peso: 400 });
       // mercúrio: gotas
       var mx = 120, my = 100, D = [34, 26, 22, 18, 29, 14];
       D.forEach(function (d, j) { var an = j * Math.PI * 2 / 6, rr = 22 + (j % 3) * 9; el('circle', { cx: mx + Math.cos(an) * rr, cy: my + Math.sin(an) * rr * 0.86, r: d / 2, style: 'fill:' + c('orb-bpo-conciliacao') }, s); });
       texto(s, mx, my + 70, 'mercúrio, o espírito', 13, { cor: 'var(--texto-suave)', peso: 400 });
       // enxofre: chamas
-      var ex = 300, ey = 100, Hs = [42, 68, 92, 64, 40];
-      Hs.forEach(function (h, k) { capsula(s, ex + (k - 2) * 15, ey + 40 - h / 2, h, 20, 90, c('orb-fiscal')); });
+      var ex = 300, ey = 100, Hs = [40, 66, 90, 62, 38];
+      Hs.forEach(function (h, k) { capsula(s, ex + (k - 2) * 23, ey + 40 - h / 2, h, 16, 90, c('orb-fiscal')); });
       texto(s, ex, ey + 70, 'enxofre, a alma', 13, { cor: 'var(--texto-suave)', peso: 400 });
       // a pedra
       var H = 220, T = H * L.PW / L.PH;

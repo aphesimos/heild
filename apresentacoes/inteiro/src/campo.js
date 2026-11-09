@@ -41,15 +41,17 @@
     '  for (int i = 0; i < ' + MAX + '; i++) {\n' +
     '    if (i >= uN) break;\n' +
     '    vec4 a = uA[i], b = uB[i];\n' +
-    '    float d;\n' +
+    '    float d, m = b.x + b.y;\n' +
+    // fora da caixa da peça (com a cauda), nada a somar: sai cedo (a maior parte dos pixels, na maior parte das peças)
     '    if (b.z > 0.5) { d = abs(length(p - a.xy) - a.z) - b.x; }\n' +
-    '    else { vec2 q = p - (a.xy - a.zw), v = 2.0 * a.zw; float t = clamp(dot(q, v) / max(dot(v, v), 1e-6), 0.0, 1.0); d = length(q - v * t) - b.x; }\n' +
+    '    else { vec2 dp = abs(p - a.xy); if (dp.x > abs(a.z) + m || dp.y > abs(a.w) + m) continue;\n' +
+    '      vec2 q = p - (a.xy - a.zw), v = 2.0 * a.zw; float t = clamp(dot(q, v) / max(dot(v, v), 1e-6), 0.0, 1.0); d = length(q - v * t) - b.x; }\n' +
     '    float u = d / b.y;\n' +
     '    if (u >= 1.0) continue;\n' +
     // fora: a cauda (é ela que funde as vizinhas); dentro: a mesma inclinação, até 1
     '    float f = u > 0.0 ? ' + LIM.toFixed(2) + ' * (1.0 - u) * (1.0 - u) : min(1.0, ' + LIM.toFixed(2) + ' * (1.0 - 2.0 * u));\n' +
     '    F += f;\n' +
-    '    float w = f * f * uC[i].a; C += uC[i].rgb * w; W += w;\n' +
+    '    float w = f * f * f * f * uC[i].a; C += uC[i].rgb * w; W += w;\n' +
     '  }\n' +
     '  float aa = max(fwidth(F) * 0.55, 0.0015);\n' +
     '  float al = smoothstep(' + LIM.toFixed(2) + ' - aa, ' + LIM.toFixed(2) + ' + aa, F) * uOpac;\n' +
@@ -59,15 +61,14 @@
 
   var FS_PAL = '#version 300 es\n' +
     'precision highp float;\n' +
-    'uniform sampler2D uProf, uT0, uT1, uT2, uT3, uT4, uT5;\n' +
+    'uniform sampler2D uProf, uT0, uT1, uT2, uT3, uT4, uT5, uRuido;\n' +
     'uniform vec2 uTela, uEscProf;\n' +       // tamanho do canvas (px) e escala da grade de profundidade
     'uniform vec4 uPapel[' + NC + '];\n' +     // cor do pergaminho de cada camada (pré-multiplicada)
     'uniform vec3 uTinta[' + NC + '];\n' +
     'uniform float uOpac, uSemente;\n' +
     'out vec4 cor;\n' +
-    'float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }\n' +
-    'float ruido(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);\n' +
-    '  return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }\n' +
+    // ruído de valor: uma textura pequena de acaso, lida com filtro linear (barato, inclusive sem GPU)
+    'float ruido(vec2 p) { return texture(uRuido, (p + 0.5) / 256.0).r; }\n' +
     'vec4 camada(int j, float cob) {\n' +
     '  vec4 pp = uPapel[j];\n' +
     '  return mix(vec4(pp.rgb * pp.a, pp.a), vec4(uTinta[j], 1.0), cob);\n' +
@@ -83,11 +84,11 @@
     '  D += (n - 0.5) * 0.9 * smoothstep(0.02, 0.7, D);\n' +
     '  float aa = max(fwidth(D) * 0.6, 1e-4);\n' +
     '  vec4 c = camada(0, texelFetch(uT0, tx, 0).r);\n' +
-    '  c = mix(c, camada(1, texelFetch(uT1, tx, 0).r), smoothstep(1.0 - aa, 1.0 + aa, D));\n' +
-    '  c = mix(c, camada(2, texelFetch(uT2, tx, 0).r), smoothstep(2.0 - aa, 2.0 + aa, D));\n' +
-    '  c = mix(c, camada(3, texelFetch(uT3, tx, 0).r), smoothstep(3.0 - aa, 3.0 + aa, D));\n' +
-    '  c = mix(c, camada(4, texelFetch(uT4, tx, 0).r), smoothstep(4.0 - aa, 4.0 + aa, D));\n' +
-    '  c = mix(c, camada(5, texelFetch(uT5, tx, 0).r), smoothstep(5.0 - aa, 5.0 + aa, D));\n' +
+    '  float s1 = smoothstep(1.0 - aa, 1.0 + aa, D); if (s1 > 0.0) c = mix(c, camada(1, texelFetch(uT1, tx, 0).r), s1);\n' +
+    '  float s2 = smoothstep(2.0 - aa, 2.0 + aa, D); if (s2 > 0.0) c = mix(c, camada(2, texelFetch(uT2, tx, 0).r), s2);\n' +
+    '  float s3 = smoothstep(3.0 - aa, 3.0 + aa, D); if (s3 > 0.0) c = mix(c, camada(3, texelFetch(uT3, tx, 0).r), s3);\n' +
+    '  float s4 = smoothstep(4.0 - aa, 4.0 + aa, D); if (s4 > 0.0) c = mix(c, camada(4, texelFetch(uT4, tx, 0).r), s4);\n' +
+    '  float s5 = smoothstep(5.0 - aa, 5.0 + aa, D); if (s5 > 0.0) c = mix(c, camada(5, texelFetch(uT5, tx, 0).r), s5);\n' +
     '  cor = c * uOpac;\n' +
     '}\n';
 
@@ -119,7 +120,14 @@
     this.pP = compilar(gl, FS_PECAS); this.pL = compilar(gl, FS_PAL);
     var u = function (p, n) { return gl.getUniformLocation(p, n); };
     this.uP = { A: u(this.pP, 'uA'), B: u(this.pP, 'uB'), C: u(this.pP, 'uC'), N: u(this.pP, 'uN'), alt: u(this.pP, 'uAlt'), opac: u(this.pP, 'uOpac') };
-    this.uL = { prof: u(this.pL, 'uProf'), tela: u(this.pL, 'uTela'), esc: u(this.pL, 'uEscProf'), papel: u(this.pL, 'uPapel'), tinta: u(this.pL, 'uTinta'), opac: u(this.pL, 'uOpac'), semente: u(this.pL, 'uSemente'), t: [] };
+    this.texRuido = gl.createTexture();
+    var acaso = new Uint8Array(256 * 256), sem = 1234567;
+    for (var ai = 0; ai < acaso.length; ai++) { sem ^= sem << 13; sem >>>= 0; sem ^= sem >>> 17; sem ^= sem << 5; sem >>>= 0; acaso[ai] = sem & 255; }
+    gl.bindTexture(gl.TEXTURE_2D, this.texRuido); gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, 256, 256, 0, gl.RED, gl.UNSIGNED_BYTE, acaso);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    this.uL = { ruido: u(this.pL, 'uRuido'), prof: u(this.pL, 'uProf'), tela: u(this.pL, 'uTela'), esc: u(this.pL, 'uEscProf'), papel: u(this.pL, 'uPapel'), tinta: u(this.pL, 'uTinta'), opac: u(this.pL, 'uOpac'), semente: u(this.pL, 'uSemente'), t: [] };
     for (var i = 0; i < NC; i++) this.uL.t.push(u(this.pL, 'uT' + i));
     this.vao = gl.createVertexArray();
     var self = this;
@@ -130,12 +138,12 @@
     });
   };
 
-  /* densidade: cheia (a do aparelho, até 3x), depois 2x, 1,5x e 1x se o governador pedir */
+  /* densidade: cheia (a do aparelho, até 3x); se o governador pedir, 3/4 dela, depois metade, depois 1x */
   Campo.prototype.redimensionar = function (w, h, dpr) {
     this.w = w; this.h = h; this.dpr = dpr;
-    var dc = [Math.min(dpr, 3), Math.min(dpr, 2), Math.min(dpr, 1.5), 1][this.qualidade];
+    var d0 = Math.min(dpr, 3), dc = [d0, Math.max(1, d0 * 0.75), Math.max(1, d0 * 0.5), 1][this.qualidade];
     this.dc = dc;
-    this.canvas.width = Math.max(1, Math.round(w * dc)); this.canvas.height = Math.max(1, Math.round(h * dc));
+    this.canvas.width = Math.max(1, Math.round(w * dc)); this.canvas.height = Math.max(1, Math.round(h * dc)); this.versao = (this.versao || 0) + 1;
     if (this.ctx) this.ctx.setTransform(dc, 0, 0, dc, 0, 0);
     if (this.aoRedimensionar) this.aoRedimensionar();
   };
@@ -151,52 +159,57 @@
    */
   Campo.prototype.pecas = function (lista, opac) {
     if (this.perdido) return;
-    var n = 0, dc = this.dc, A = this.A, B = this.B, C = this.C;
-    var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-    for (var i = 0; i < lista.length && n < MAX; i++) {
+    var dc = this.dc, vis = [], cx0 = [], cy0 = [], cx1 = [], cy1 = [];
+    for (var i = 0; i < lista.length && vis.length < MAX; i++) {
       var p = lista[i];
       if (!(p.e > 0.35)) continue;
-      var r = p.e / 2, k = Math.max(p.k || 1, 0.8), o = n * 4, ext;
-      if (p.anel) {
-        A[o] = p.x * dc; A[o + 1] = p.y * dc; A[o + 2] = p.anel * dc; A[o + 3] = 0;
-        B[o] = r * dc; B[o + 1] = k * dc; B[o + 2] = 1; B[o + 3] = 0;
-        ext = p.anel + r + k;
-        x0 = Math.min(x0, p.x - ext); x1 = Math.max(x1, p.x + ext); y0 = Math.min(y0, p.y - ext); y1 = Math.max(y1, p.y + ext);
-      } else {
-        var hm = Math.max(0, (p.c - p.e) / 2), ca = Math.cos(p.a), sa = Math.sin(p.a);
-        A[o] = p.x * dc; A[o + 1] = p.y * dc; A[o + 2] = ca * hm * dc; A[o + 3] = sa * hm * dc;
-        B[o] = r * dc; B[o + 1] = k * dc; B[o + 2] = 0; B[o + 3] = 0;
-        var ex = Math.abs(ca * hm) + r + k, ey = Math.abs(sa * hm) + r + k;
-        x0 = Math.min(x0, p.x - ex); x1 = Math.max(x1, p.x + ex); y0 = Math.min(y0, p.y - ey); y1 = Math.max(y1, p.y + ey);
+      var r = p.e / 2, k = Math.max(p.k || 1, 0.8), ex, ey;
+      if (p.anel) { ex = ey = p.anel + r + k; }
+      else { var hm = Math.max(0, (p.c - p.e) / 2); ex = Math.abs(Math.cos(p.a) * hm) + r + k; ey = Math.abs(Math.sin(p.a) * hm) + r + k; }
+      vis.push(p); cx0.push(p.x - ex - 2); cx1.push(p.x + ex + 2); cy0.push(p.y - ey - 2); cy1.push(p.y + ey + 2);
+    }
+    if (!vis.length) return;
+    if (!this.gl) { if (this.ctx) desenhar2D(this.ctx, vis, opac == null ? 1 : opac); return; }
+    /* grupos: peças cujas caixas (com a cauda) não se tocam não podem se fundir; cada grupo vai num
+       passe só dele, recortado na sua caixa. O resultado é idêntico, e a área pintada é bem menor. */
+    var n = vis.length, pai = [];
+    for (i = 0; i < n; i++) pai.push(i);
+    var raiz = function (a) { while (pai[a] !== a) { pai[a] = pai[pai[a]]; a = pai[a]; } return a; };
+    for (i = 0; i < n; i++) for (var j = i + 1; j < n; j++) {
+      if (cx0[i] < cx1[j] && cx0[j] < cx1[i] && cy0[i] < cy1[j] && cy0[j] < cy1[i]) { var a = raiz(i), b = raiz(j); if (a !== b) pai[a] = b; }
+    }
+    var grupos = {};
+    for (i = 0; i < n; i++) { var g = raiz(i); (grupos[g] || (grupos[g] = [])).push(i); }
+    var gl = this.gl, W = this.canvas.width, H = this.canvas.height, A = this.A, B = this.B, C = this.C;
+    gl.viewport(0, 0, W, H);
+    gl.useProgram(this.pP);
+    gl.uniform1f(this.uP.alt, H); gl.uniform1f(this.uP.opac, opac == null ? 1 : opac);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.SCISSOR_TEST); gl.bindVertexArray(this.vao);
+    for (var chave in grupos) {
+      var idx = grupos[chave], x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      for (var m = 0; m < idx.length; m++) {
+        var q = idx[m], pc = vis[q], o = m * 4, rr = pc.e / 2, kk = Math.max(pc.k || 1, 0.8);
+        x0 = Math.min(x0, cx0[q]); x1 = Math.max(x1, cx1[q]); y0 = Math.min(y0, cy0[q]); y1 = Math.max(y1, cy1[q]);
+        if (pc.anel) { A[o] = pc.x * dc; A[o + 1] = pc.y * dc; A[o + 2] = pc.anel * dc; A[o + 3] = 0; B[o + 2] = 1; }
+        else { var h2 = Math.max(0, (pc.c - pc.e) / 2); A[o] = pc.x * dc; A[o + 1] = pc.y * dc; A[o + 2] = Math.cos(pc.a) * h2 * dc; A[o + 3] = Math.sin(pc.a) * h2 * dc; B[o + 2] = 0; }
+        B[o] = rr * dc; B[o + 1] = kk * dc; B[o + 3] = 0;
+        var cor = pc.cor || [0, 0, 0]; C[o] = cor[0]; C[o + 1] = cor[1]; C[o + 2] = cor[2]; C[o + 3] = pc.peso == null ? 1 : pc.peso;
       }
-      var cor = p.cor || [0, 0, 0];
-      C[o] = cor[0]; C[o + 1] = cor[1]; C[o + 2] = cor[2]; C[o + 3] = p.peso == null ? 1 : p.peso;
-      n++;
+      var sx0 = Math.max(0, Math.floor(x0 * dc)), sx1 = Math.min(W, Math.ceil(x1 * dc)), sy0 = Math.max(0, Math.floor(y0 * dc)), sy1 = Math.min(H, Math.ceil(y1 * dc));
+      if (sx1 <= sx0 || sy1 <= sy0) continue;
+      gl.scissor(sx0, H - sy1, sx1 - sx0, sy1 - sy0);
+      gl.uniform4fv(this.uP.A, A.subarray(0, idx.length * 4)); gl.uniform4fv(this.uP.B, B.subarray(0, idx.length * 4)); gl.uniform4fv(this.uP.C, C.subarray(0, idx.length * 4));
+      gl.uniform1i(this.uP.N, idx.length);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
-    if (!n) return;
-    var gl = this.gl;
-    if (gl) {
-      var W = this.canvas.width, H = this.canvas.height;
-      var sx0 = Math.max(0, Math.floor(x0 * dc) - 2), sx1 = Math.min(W, Math.ceil(x1 * dc) + 2);
-      var sy0 = Math.max(0, Math.floor(y0 * dc) - 2), sy1 = Math.min(H, Math.ceil(y1 * dc) + 2);
-      if (sx1 <= sx0 || sy1 <= sy0) return;
-      gl.viewport(0, 0, W, H);
-      gl.enable(gl.SCISSOR_TEST); gl.scissor(sx0, H - sy1, sx1 - sx0, sy1 - sy0);
-      gl.useProgram(this.pP);
-      gl.uniform4fv(this.uP.A, A); gl.uniform4fv(this.uP.B, B); gl.uniform4fv(this.uP.C, C);
-      gl.uniform1i(this.uP.N, n); gl.uniform1f(this.uP.alt, H); gl.uniform1f(this.uP.opac, opac == null ? 1 : opac);
-      gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-      gl.bindVertexArray(this.vao); gl.drawArrays(gl.TRIANGLES, 0, 3);
-      gl.disable(gl.BLEND); gl.disable(gl.SCISSOR_TEST);
-    } else if (this.ctx) {
-      desenhar2D(this.ctx, lista, opac == null ? 1 : opac);
-    }
+    gl.disable(gl.BLEND); gl.disable(gl.SCISSOR_TEST);
   };
 
   /* ---------- o palimpsesto ---------- */
   /* camadas(canvases): seis canvases do tamanho do campo, com o texto branco sobre preto (cobertura) */
   Campo.prototype.camadas = function (canvases) {
-    this.fontesPal = canvases;
+    this.fontesPal = canvases; this.versao = (this.versao || 0) + 1;
     var gl = this.gl; if (!gl) return;
     if (!this.texturas) { this.texturas = []; for (var i = 0; i < NC; i++) this.texturas.push(gl.createTexture()); }
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
@@ -210,7 +223,7 @@
   };
   /* profundidade(dados, colunas, linhas, celula): a grade de profundidade (0 a 1 = 0 a 6 camadas) */
   Campo.prototype.profundidade = function (bytes, cols, lins, cel) {
-    this.prof = { bytes: bytes, cols: cols, lins: lins, cel: cel };
+    this.prof = { bytes: bytes, cols: cols, lins: lins, cel: cel }; this.versao = (this.versao || 0) + 1;
     var gl = this.gl; if (!gl) return;
     if (!this.texProf) this.texProf = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.texProf);
@@ -236,6 +249,7 @@
     gl.useProgram(this.pL);
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.texProf); gl.uniform1i(this.uL.prof, 0);
     for (var i = 0; i < NC; i++) { gl.activeTexture(gl.TEXTURE1 + i); gl.bindTexture(gl.TEXTURE_2D, this.texturas[i]); gl.uniform1i(this.uL.t[i], 1 + i); }
+    gl.activeTexture(gl.TEXTURE7); gl.bindTexture(gl.TEXTURE_2D, this.texRuido); gl.uniform1i(this.uL.ruido, 7);
     gl.uniform2f(this.uL.tela, W, H);
     var pr = this.prof;
     gl.uniform2f(this.uL.esc, this.w / (pr.cols * pr.cel), this.h / (pr.lins * pr.cel));
@@ -253,8 +267,9 @@
     if (!this.nascido) this.nascido = agora;
     if (agora - this.nascido < 4000 || dt > 250) return;
     this.custo = this.custo ? this.custo * 0.95 + dt * 0.05 : dt; this.amostras++;
-    if (this.amostras > 120 && this.custo > 30 && this.qualidade < 3) {
+    if (this.amostras > 60 && this.custo > 30 && this.qualidade < 3) {
       this.qualidade++; this.amostras = 0; this.custo = 0; this.redimensionar(this.w, this.h, this.dpr);
+      if (this.aoDensidade) this.aoDensidade();
     }
   };
 

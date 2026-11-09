@@ -4,7 +4,7 @@
  * LINK_FILOSOFIA: o endereço da outra aba, a peça sobre a ideia da marca ("o inteiro"). Preencha ao
  * publicar; com '#', os links aparecem mas não levam a lugar nenhum.
  */
-var LINK_FILOSOFIA = '#';
+var LINK_FILOSOFIA = 'https://claude.ai/artifact/Ac3gktJEVzTg6oL1AuTMPH';
 
 (function () {
   'use strict';
