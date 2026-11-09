@@ -1,4 +1,4 @@
-# Apresentação da Heild
+# Apresentação de produto da Heild
 
 A apresentação de marca e de produto da Heild, animada e interativa, num HTML só. Funciona como o site: uma versão principal, genérica, e uma versão por plataforma, todas montadas no mesmo molde.
 
@@ -31,10 +31,10 @@ No toque, arraste para os lados. Os controles somem com o mouse parado.
 
 ```bash
 git fetch origin design-system prototipo
-python3 apresentacao/build.py
+python3 apresentacoes/build.py produto
 ```
 
-Gera `apresentacao/dist/heild-apresentacao.html` (fora do git), que abre direto no navegador, sem internet. As fontes PP Neue Montreal e o `<heild-logo>` vêm do branch `design-system`; o `<orb-avatar>`, da cópia do protótipo (branch `prototipo`). Nada disso é copiado para cá: cada build pega a versão atual.
+Gera `apresentacoes/dist/heild-produto.html` (fora do git), que abre direto no navegador, sem internet. As fontes PP Neue Montreal e o `<heild-logo>` vêm do branch `design-system`; o `<orb-avatar>`, da cópia do protótipo (branch `prototipo`). Nada disso é copiado para cá: cada build pega a versão atual.
 
 ## Arquivos
 
@@ -43,15 +43,15 @@ Gera `apresentacao/dist/heild-apresentacao.html` (fora do git), que abre direto 
 | `src/dados.js` | O conteúdo: integrantes, formas do I, plataformas, o molde de uma versão de plataforma e a versão principal. **É o arquivo que se edita.** |
 | `src/slides.js` | Os tipos de slide: cada um desenha o HTML a partir dos dados e liga a sua cena (o que anima, o que responde ao clique) |
 | `src/motor.js` | O palco, a navegação, os passos, as versões pelo endereço, a visão geral, as notas e a troca de tema |
-| `src/estilo.css` | Os tokens do design system (copiados de `design-system/tokens.css`) e o estilo de cada tipo de slide |
+| `src/estilo.css` | O estilo de cada tipo de slide (os tokens do design system ficam em `../comum/tokens.css`) |
 | `src/modelo.html` | A página, com as marcas que o build preenche |
-| `build.py` | Junta tudo num HTML só |
+| `../build.py` | Junta tudo num HTML só (o mesmo build das outras apresentações) |
 
 ## Uma área nova (Jurídico, Seguros…)
 
 1. Em `src/dados.js`, copie a entrada `contabil` ou `bpo` dentro de `plataformas`, troque o `id` e preencha. O esqueleto está comentado no fim de `plataformas`.
 2. `forma` é a forma do I da logo para a área (`juridico` já existe no `<heild-logo>`; uma forma nova nasce no branch `design-system`).
-3. Integrante novo entra em `integrantes`, com a cor do orb como token (`--orb-…`) em `src/estilo.css`, e a mesma cor no `design-system/tokens.json`.
+3. Integrante novo entra em `integrantes`, com a cor do orb como token (`--orb-…`) em `../comum/tokens.css`, e a mesma cor no `design-system/tokens.json`.
 4. `recursos` são os slides próprios da área, com os tipos que já existem: `tela` (uma tela do produto com abas), `conversa` (o CRM), `timesheet`, `app` (o app do cliente), `regras`. Um tipo novo é uma entrada a mais em `src/slides.js`.
 5. `chamada` é como a área aparece "por cima" na versão de outra; `tambem: ['bpo']` põe a chamada da Heild BPO na versão Contábil.
 6. Rode o build. A versão nova entra sozinha no menu, no endereço (`#juridico`) e no slide "Uma Heild para cada operação" da principal.

@@ -1,0 +1,104 @@
+/* Apresentações da Heild — os tokens comuns a todas.
+   Cópia fiel de design-system/tokens.css (branch design-system), no formato que as apresentações usam:
+   claro na raiz; escuro quando a pessoa prefere (prefers-color-scheme) ou escolhe (data-theme="dark").
+   .forca-claro e .forca-escuro aplicam um modo num pedaço da tela (o comparador de claro e escuro).
+   Mudou um token no design system? Traga a mudança para cá. */
+
+:root,
+.forca-claro {
+  --areia-50: #fefbf9; --areia-100: #faf6f3; --areia-150: #f4efeb; --areia-200: #ede7e1;
+  --areia-300: #d9d2cc; --areia-400: #bdb6b0; --areia-500: #9a948f; --areia-600: #7e7975;
+  --areia-650: #696663; --areia-700: #585552; --areia-800: #3a3735; --areia-850: #2e2b28;
+  --areia-900: #24211f; --areia-925: #1b1917; --areia-950: #13110f;
+
+  --fundo: #fefbf9; --fundo-fim: #d9d2cc;
+  --lateral: #f4efeb; --lateral-fim: #bdb6b0;
+  --rebaixada: #ede7e1; --rebaixada-fim: #d9d2cc;
+  --superficie: #faf6f3; --elevada: #fefbf9; --borda: #d9d2cc;
+  --texto: #2e2b28; --texto-suave: #696663;
+  --primaria: #24211f; --texto-sobre-primaria: #ffffff;
+  --anel-foco: #7b7876;
+  --destaque: #4f5bf5; --destaque-texto: #4a56e6; --texto-sobre-destaque: #ffffff;
+  --erro: #c8402f; --erro-texto: #ba3c2c;
+  --sucesso: #2f9e72; --sucesso-texto: #237554;
+  --atencao: #b7791f; --atencao-texto: #8f5e18;
+  --grade-ponto: #d9d2cc;
+  --tinta-sombra: 46, 43, 40;
+
+  --orb-assistente: #2e2b28; --olho-assistente: #fefbf9;
+  --orb-fiscal: #f7a335; --orb-dp: #3d86f7; --orb-contabil: #4fc9a8; --orb-consultor: #6e5cf2;
+  --orb-societario: #e86a8a; --orb-notas: #f2d04b; --orb-atendimento: #5bc0eb; --orb-financeiro: #9bc53d;
+  --orb-bpo: #f08a5d; --orb-bpo-pagar: #f08a5d; --orb-bpo-receber: #4cb782;
+  --orb-bpo-conciliacao: #7c8cf8; --orb-bpo-gerencial: #c46fd6;
+
+  --sombra-contorno: 0 0 0 1px rgba(var(--tinta-sombra), 0.07);
+  --sombra-cartao: 0 1px 2px rgba(var(--tinta-sombra), 0.06), 0 0 0 1px rgba(var(--tinta-sombra), 0.06);
+  --sombra-painel: 0 1px 3px rgba(var(--tinta-sombra), 0.08), 0 0 0 1px rgba(var(--tinta-sombra), 0.07);
+  --sombra-campo: 0 2px 10px rgba(var(--tinta-sombra), 0.10), 0 0 0 1px rgba(var(--tinta-sombra), 0.05);
+  --sombra-pilula: 0 1px 3px rgba(var(--tinta-sombra), 0.15), 0 0 0 1px rgba(var(--tinta-sombra), 0.05);
+  --sombra-md: 0 4px 12px rgba(var(--tinta-sombra), 0.12);
+  --sombra-lg: 0 10px 30px rgba(var(--tinta-sombra), 0.16);
+  --sombra-2xl: 0 24px 60px rgba(var(--tinta-sombra), 0.28);
+  --sombra-trilho: inset 0 1px 2px rgba(var(--tinta-sombra), 0.10);
+  --sombra-orb: 0 1px 2px rgba(var(--tinta-sombra), 0.22);
+
+  --gradiente-fundo: linear-gradient(180deg, var(--fundo) 0%, var(--fundo-fim) 100%);
+  --gradiente-lateral: linear-gradient(180deg, var(--lateral) 0%, var(--lateral-fim) 100%);
+  --gradiente-rebaixada: linear-gradient(180deg, var(--rebaixada) 0%, var(--rebaixada-fim) 100%);
+  --listras-estimado: repeating-linear-gradient(135deg, var(--areia-500) 0 4px, transparent 4px 8px);
+  --mascara-esmaecer: linear-gradient(to bottom, transparent 0, #000 24px);
+
+  --raio-sm: 8.5px; --raio-md: 12.75px; --raio-lg: 17px; --raio-cartao: 20px;
+  --raio-campo: 24px; --raio-xl: 25.5px; --raio-painel: 34px; --raio-pilula: 9999px;
+  --espaco-1: 4px; --espaco-2: 8px; --espaco-3: 12px; --espaco-4: 16px;
+  --espaco-5: 20px; --espaco-6: 24px; --espaco-8: 32px;
+
+  --font-titulo: "PP Neue Montreal", ui-sans-serif, system-ui, sans-serif;
+  --font-texto: "PP Neue Montreal Text", "PP Neue Montreal", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Movimento: a entrada da marca (sobe e aparece, com desaceleração) e a mola das cápsulas. */
+  --sai: cubic-bezier(0.22, 1, 0.36, 1);
+  --vai-volta: cubic-bezier(0.65, 0, 0.35, 1);
+  --assenta: cubic-bezier(0.34, 1.3, 0.64, 1);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fundo: #24211f; --fundo-fim: #13110f;
+    --lateral: #2e2b28; --lateral-fim: #1b1917;
+    --rebaixada: #1b1917; --rebaixada-fim: #13110f;
+    --superficie: #2e2b28; --elevada: #3a3735; --borda: #3a3735;
+    --texto: #faf6f3; --texto-suave: #bdb6b0;
+    --primaria: #faf6f3; --texto-sobre-primaria: #0b0b0f;
+    --anel-foco: #a4a19e;
+    --destaque-texto: #9098f9;
+    --erro-texto: #dd8a80; --sucesso-texto: #59b18e;
+    --atencao: #e2a845; --atencao-texto: #e2a845;
+    --grade-ponto: #3a3735;
+    --tinta-sombra: 0, 0, 0;
+    --orb-assistente: #faf6f3; --olho-assistente: #24211f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"],
+.forca-escuro {
+  --fundo: #24211f; --fundo-fim: #13110f;
+  --lateral: #2e2b28; --lateral-fim: #1b1917;
+  --rebaixada: #1b1917; --rebaixada-fim: #13110f;
+  --superficie: #2e2b28; --elevada: #3a3735; --borda: #3a3735;
+  --texto: #faf6f3; --texto-suave: #bdb6b0;
+  --primaria: #faf6f3; --texto-sobre-primaria: #0b0b0f;
+  --anel-foco: #a4a19e;
+  --destaque-texto: #9098f9;
+  --erro-texto: #dd8a80; --sucesso-texto: #59b18e;
+  --atencao: #e2a845; --atencao-texto: #e2a845;
+  --grade-ponto: #3a3735;
+  --tinta-sombra: 0, 0, 0;
+  --orb-assistente: #faf6f3; --olho-assistente: #24211f;
+  color-scheme: dark;
+}
+.forca-claro { color-scheme: light; }
+
