@@ -1,0 +1,53 @@
+<title>Identidade da Heild</title>
+<meta charset="utf-8">
+<meta name="description" content="A identidade visual da Heild: a logo modular, o sistema de movimento, a areia, os orbs dos integrantes, a tipografia, a forma, a voz e as aplicações reais.">
+<style>
+/*{{FONTES}}*/
+/*{{ARQ:../comum/tokens.css}}*/
+/*{{ARQ:src/base.css}}*/
+/*{{ARQ:src/cenas.css}}*/
+</style>
+
+<div class="janela">
+  <main class="palco">
+    <div class="moldura" aria-hidden="true">
+      <div class="rodape"><heild-logo label="Heild"></heild-logo><span class="onde"></span></div>
+      <div class="progresso"><i></i></div>
+    </div>
+  </main>
+</div>
+
+<nav class="controles" aria-label="Controles da apresentação">
+  <button type="button" data-acao="voltar" aria-label="Voltar (seta para a esquerda)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button type="button" data-acao="avancar" aria-label="Avançar (seta para a direita)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button type="button" data-acao="geral" aria-label="Visão geral (O)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></button>
+  <button type="button" data-acao="notas" aria-label="Notas (N)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M5 6.5h14M5 11.5h14M5 16.5h9"/></svg></button>
+  <button type="button" data-acao="tema" aria-label="Trocar entre claro e escuro (T)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
+  <button type="button" data-acao="cheia" aria-label="Tela cheia (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</nav>
+
+<section class="visao-geral" aria-label="Visão geral dos slides" hidden>
+  <div class="vg-topo"><p class="titulo-pagina vg-titulo"></p><button type="button" class="botao botao--fantasma vg-fechar">Fechar</button></div>
+  <ol></ol>
+</section>
+
+<div class="notas" role="note" hidden></div>
+<div class="ir-para" hidden></div>
+<p class="dica">→ avança · O visão geral · T claro e escuro · N notas · R repete · F tela cheia</p>
+
+<!-- As imagens animadas do README do repositório (assets/readme), nos dois temas: o slide do README as mostra como estão. -->
+<template id="readme-hero-claro">/*{{ARQ:../../assets/readme/hero-claro.svg}}*/</template>
+<template id="readme-hero-escuro">/*{{ARQ:../../assets/readme/hero-escuro.svg}}*/</template>
+<template id="readme-time-claro">/*{{ARQ:../../assets/readme/time-claro.svg}}*/</template>
+<template id="readme-time-escuro">/*{{ARQ:../../assets/readme/time-escuro.svg}}*/</template>
+
+<script>/*{{HEILD_LOGO}}*/</script>
+<script>/*{{ORB_AVATAR}}*/</script>
+<script>/*{{ARQ:src/comum.js}}*/</script>
+<script>/*{{ARQ:src/cenas-abertura-logo.js}}*/</script>
+<script>/*{{ARQ:src/cenas-movimento.js}}*/</script>
+<script>/*{{ARQ:src/cenas-cor.js}}*/</script>
+<script>/*{{ARQ:src/cenas-orbs.js}}*/</script>
+<script>/*{{ARQ:src/cenas-tipo-forma-voz.js}}*/</script>
+<script>/*{{ARQ:src/cenas-aplicacoes.js}}*/</script>
+<script>/*{{ARQ:src/motor.js}}*/</script>

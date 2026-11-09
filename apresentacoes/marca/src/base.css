@@ -1,0 +1,446 @@
+/* Identidade da Heild — base: palco, slide, tipografia, moldura e controles.
+   Os tokens do design system ficam em ../comum/tokens.css; aqui só se usa var(--…). */
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--font-texto);
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: normal;
+}
+::selection { background: color-mix(in srgb, var(--destaque) 25%, transparent); color: var(--texto); }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--anel-foco); outline-offset: 2px; }
+.so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- janela e palco ---------- */
+.janela { position: fixed; inset: 0; overflow: hidden; background: var(--fundo); }
+.palco {
+  --pw: 1280px; --ph: 720px;
+  --m-lado: 64px; --m-topo: 56px; --m-pe: 76px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--pw);
+  height: var(--ph);
+  transform: translate(-50%, -50%) scale(var(--escala, 1));
+  transform-origin: 50% 50%;
+  background: var(--fundo);
+  overflow: hidden;
+  contain: layout paint;
+}
+.retrato .palco { --pw: 540px; --ph: 960px; --m-lado: 28px; --m-topo: 48px; --m-pe: 76px; }
+
+/* ---------- slide ---------- */
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: var(--m-topo) var(--m-lado) var(--m-pe);
+  display: none;
+  flex-direction: column;
+  gap: 28px;
+  opacity: 0;
+  transition: opacity 480ms var(--sai);
+}
+.slide.ativo, .slide.saindo { display: flex; }
+.slide.ativo.visivel { opacity: 1; z-index: 2; }
+.slide.saindo { opacity: 0; z-index: 1; pointer-events: none; }
+
+/* A grade de pontos: chão do material de marca, a cada 24 px (espaco-6). Fica sob o desenho; sob texto, área lisa. */
+.slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, var(--grade-ponto) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+  background-position: 12px 12px;
+  -webkit-mask-image: radial-gradient(ellipse 44% 64% at 76% 54%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 44% 64% at 76% 54%, #000 25%, transparent 78%);
+}
+.retrato .slide::before {
+  -webkit-mask-image: radial-gradient(ellipse 80% 38% at 50% 68%, #000 25%, transparent 80%);
+  mask-image: radial-gradient(ellipse 80% 38% at 50% 68%, #000 25%, transparent 80%);
+}
+.slide[data-grade="toda"]::before {
+  -webkit-mask-image: radial-gradient(ellipse 36% 32% at 50% 50%, transparent 55%, #000 100%);
+  mask-image: radial-gradient(ellipse 36% 32% at 50% 50%, transparent 55%, #000 100%);
+}
+.slide[data-grade="centro"]::before {
+  -webkit-mask-image: radial-gradient(ellipse 56% 62% at 50% 56%, #000 20%, transparent 80%);
+  mask-image: radial-gradient(ellipse 56% 62% at 50% 56%, #000 20%, transparent 80%);
+}
+.slide[data-grade="esquerda"]::before {
+  -webkit-mask-image: radial-gradient(ellipse 44% 64% at 26% 54%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 44% 64% at 26% 54%, #000 25%, transparent 78%);
+}
+.slide[data-grade="cheia"]::before { -webkit-mask-image: none; mask-image: none; }
+.slide[data-grade="nenhuma"]::before { display: none; }
+.slide > * { position: relative; z-index: 1; }
+
+/* ---------- modo forçado num pedaço da tela ----------
+   Os tokens compostos (gradientes e sombras) são resolvidos onde são declarados: num .forca-escuro dentro de
+   uma página clara eles chegariam prontos, com os valores do claro. Aqui eles são declarados de novo, com as
+   mesmas fórmulas de ../comum/tokens.css, para valerem com as camadas do modo forçado. */
+.forca-escuro, .forca-claro {
+  --sombra-contorno: 0 0 0 1px rgba(var(--tinta-sombra), 0.07);
+  --sombra-cartao: 0 1px 2px rgba(var(--tinta-sombra), 0.06), 0 0 0 1px rgba(var(--tinta-sombra), 0.06);
+  --sombra-painel: 0 1px 3px rgba(var(--tinta-sombra), 0.08), 0 0 0 1px rgba(var(--tinta-sombra), 0.07);
+  --sombra-campo: 0 2px 10px rgba(var(--tinta-sombra), 0.10), 0 0 0 1px rgba(var(--tinta-sombra), 0.05);
+  --sombra-pilula: 0 1px 3px rgba(var(--tinta-sombra), 0.15), 0 0 0 1px rgba(var(--tinta-sombra), 0.05);
+  --sombra-md: 0 4px 12px rgba(var(--tinta-sombra), 0.12);
+  --sombra-lg: 0 10px 30px rgba(var(--tinta-sombra), 0.16);
+  --sombra-2xl: 0 24px 60px rgba(var(--tinta-sombra), 0.28);
+  --sombra-trilho: inset 0 1px 2px rgba(var(--tinta-sombra), 0.10);
+  --sombra-orb: 0 1px 2px rgba(var(--tinta-sombra), 0.22);
+  --gradiente-fundo: linear-gradient(180deg, var(--fundo) 0%, var(--fundo-fim) 100%);
+  --gradiente-lateral: linear-gradient(180deg, var(--lateral) 0%, var(--lateral-fim) 100%);
+  --gradiente-rebaixada: linear-gradient(180deg, var(--rebaixada) 0%, var(--rebaixada-fim) 100%);
+  color: var(--texto);
+}
+
+/* ---------- tipografia ---------- */
+/* O título de cada slide é o estilo hero do design system: PP Neue Montreal 500, -0,04em (o mínimo permitido). */
+.titulo {
+  margin: 0;
+  font-family: var(--font-titulo);
+  font-size: var(--t, 64px);
+  line-height: 1.04;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: var(--texto);
+  text-wrap: balance;
+}
+.retrato .titulo { font-size: var(--tr, 44px); }
+/* Tipo grande e leve (números, palavras de capítulo): 300, -0,025em, como os títulos grandes do produto. */
+.gigante {
+  margin: 0;
+  font-family: var(--font-titulo);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 0.92;
+  font-variant-numeric: tabular-nums;
+}
+.frase {
+  margin: 0;
+  font-family: var(--font-texto);
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--texto-suave);
+  max-width: 42ch;
+  text-wrap: pretty;
+}
+.retrato .frase { font-size: 18px; line-height: 25px; }
+.display { margin: 0; font-family: var(--font-titulo); font-size: 48px; line-height: 48px; font-weight: 300; letter-spacing: -0.025em; }
+.titulo-pagina { margin: 0; font-family: var(--font-titulo); font-size: 30px; line-height: 36px; font-weight: 300; letter-spacing: -0.025em; }
+.titulo-secao { margin: 0; font-family: var(--font-titulo); font-size: 24px; line-height: 32px; font-weight: 300; letter-spacing: -0.025em; }
+.numero-grande { font-family: var(--font-titulo); font-size: 36px; line-height: 40px; font-weight: 300; font-variant-numeric: tabular-nums; }
+.titulo-bloco { margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; }
+.corpo-grande { margin: 0; font-size: 16px; line-height: 24px; }
+.corpo { margin: 0; font-size: 14px; line-height: 20px; }
+.enfase { font-weight: 500; }
+.rotulo { margin: 0; font-size: 12px; line-height: 16px; color: var(--texto-suave); }
+.suave { color: var(--texto-suave); }
+.codigo { font-family: var(--font-mono); font-size: 12px; line-height: 16px; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ---------- composição ---------- */
+.cab { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.dividido {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+}
+.dividido--meio { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.dividido--estreito { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
+.dividido > .cab { align-self: start; padding-top: 4px; }
+.retrato .dividido { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 22px; align-items: stretch; }
+.empilhado { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 24px; }
+.centralizado { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 22px; }
+.visual { position: relative; min-width: 0; min-height: 0; height: 100%; display: flex; align-items: center; justify-content: center; }
+.encaixe { position: relative; flex: none; width: var(--w); height: var(--h); transform-origin: 50% 50%; }
+.cresce { flex: 1; min-height: 0; }
+
+.pilula {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--raio-pilula);
+  background: var(--elevada);
+  box-shadow: var(--sombra-contorno);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.pilula--contorno { background: var(--fundo); box-shadow: inset 0 0 0 1px var(--borda); color: var(--texto); }
+.ico { width: 16px; height: 16px; flex: none; }
+
+/* Selo de estado: fundo do estado a 15%, texto em texto, ícone na cor do estado. Sempre com palavra. */
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px 0 8px;
+  border-radius: var(--raio-pilula);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--texto);
+  background: color-mix(in srgb, var(--texto-suave) 14%, transparent);
+}
+.selo .ico { width: 14px; height: 14px; color: var(--texto-suave); }
+.selo--sucesso { background: color-mix(in srgb, var(--sucesso) 15%, transparent); }
+.selo--sucesso .ico { color: var(--sucesso); }
+.selo--atencao { background: color-mix(in srgb, var(--atencao) 17%, transparent); }
+.selo--atencao .ico { color: var(--atencao); }
+.selo--erro { background: color-mix(in srgb, var(--erro) 15%, transparent); }
+.selo--erro .ico { color: var(--erro); }
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: var(--raio-pilula);
+  background: var(--primaria);
+  color: var(--texto-sobre-primaria);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: transform 160ms var(--sai), background 200ms, color 200ms;
+}
+.botao:active, .botao.apertado { transform: scale(0.96); }
+.botao--fantasma { background: transparent; color: var(--texto); box-shadow: var(--sombra-contorno); }
+.botao--pequeno { height: 32px; padding: 0 14px; font-size: 12px; }
+
+/* Chips de escolha (formas, estados, temas): pílula em elevada; escolhido em primária. */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--raio-pilula);
+  background: var(--elevada);
+  box-shadow: var(--sombra-contorno);
+  color: var(--texto);
+  font-size: 13px;
+  white-space: nowrap;
+  transition: background 220ms var(--sai), color 220ms var(--sai), box-shadow 220ms var(--sai);
+}
+.chip[aria-pressed="true"] { background: var(--primaria); color: var(--texto-sobre-primaria); box-shadow: none; }
+.chip:hover:not([aria-pressed="true"]) { background: var(--superficie); }
+
+.cartao { position: relative; border-radius: var(--raio-cartao); background: var(--superficie); box-shadow: var(--sombra-cartao); }
+.painel { position: relative; border-radius: var(--raio-painel); background: var(--superficie); box-shadow: var(--sombra-painel); }
+orb-avatar { display: block; flex: none; filter: drop-shadow(var(--sombra-orb)); }
+heild-logo { display: block; color: var(--primaria); }
+
+/* ---------- entradas ---------- */
+/* O conteúdo entra uma vez, ao chegar no slide: sobe e aparece, com desaceleração. */
+[data-e] {
+  transition: opacity 640ms var(--sai), transform 760ms var(--sai), filter 760ms var(--sai);
+  transition-delay: var(--d, 0ms);
+}
+.slide:not(.entrou) [data-e] { opacity: 0; transform: translateY(10px); transition: none; }
+.slide:not(.entrou) [data-e="esq"] { transform: translateX(-16px); }
+.slide:not(.entrou) [data-e="dir"] { transform: translateX(16px); }
+.slide:not(.entrou) [data-e="zoom"] { transform: scale(0.96); filter: blur(6px); }
+.slide:not(.entrou) [data-e="fade"] { transform: none; }
+/* O título entra palavra por palavra, saindo do desfoque (como no hero do site). */
+.titulo .p { display: inline-block; transition: opacity 700ms var(--sai), transform 820ms var(--sai), filter 820ms var(--sai); transition-delay: calc(var(--dt, 0ms) + var(--i, 0) * 55ms); }
+.slide:not(.entrou) .titulo .p { opacity: 0; transform: translateY(16px); filter: blur(10px); transition: none; }
+[data-passo] { transition: opacity 560ms var(--sai), transform 640ms var(--sai); }
+.slide [data-passo]:not(.visto) { opacity: 0; transform: translateY(8px); pointer-events: none; }
+
+/* ---------- moldura: rodapé e progresso ---------- */
+.moldura { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
+.rodape {
+  position: absolute;
+  left: var(--m-lado);
+  right: var(--m-lado);
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: opacity 400ms var(--sai);
+}
+.rodape heild-logo { width: 72px; }
+.rodape .onde { font-size: 12px; line-height: 16px; color: var(--texto-suave); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.moldura.sem-logo .rodape heild-logo { visibility: hidden; }
+.moldura.oculta .rodape { opacity: 0; }
+.moldura.sobre-faixa .rodape .onde { padding: 4px 10px; border-radius: var(--raio-pilula); background: var(--fundo); color: var(--texto); }
+.progresso { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; }
+.progresso i { display: block; height: 100%; background: var(--texto-suave); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); transition: transform 700ms var(--sai); }
+
+/* ---------- controles (fora do palco, na tela) ---------- */
+.controles {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border-radius: var(--raio-pilula);
+  background: var(--elevada);
+  box-shadow: var(--sombra-campo);
+  transition: opacity 400ms var(--sai), transform 400ms var(--sai);
+}
+.controles button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  color: var(--texto);
+}
+.controles button:hover { background: var(--rebaixada); }
+.controles svg { width: 18px; height: 18px; }
+html.parado .controles { opacity: 0; transform: translateY(6px); pointer-events: none; }
+
+.visao-geral {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: auto;
+  padding: max(28px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px));
+  background: var(--fundo);
+}
+.visao-geral .vg-topo { max-width: 1152px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.visao-geral ol { list-style: none; margin: 0 auto; padding: 0; max-width: 1152px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 12px; }
+.visao-geral li button {
+  width: 100%;
+  min-height: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: var(--raio-cartao);
+  background: var(--superficie);
+  box-shadow: var(--sombra-cartao);
+  text-align: left;
+}
+.visao-geral li button[aria-current="true"] { box-shadow: var(--sombra-cartao), inset 0 0 0 2px var(--texto); }
+.visao-geral li .n { font-size: 12px; color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+.visao-geral li .t { font-family: var(--font-titulo); font-size: 18px; line-height: 22px; font-weight: 400; letter-spacing: -0.02em; }
+.visao-geral .capitulo { grid-column: 1 / -1; margin: 14px 4px 0; font-size: 12px; color: var(--texto-suave); }
+
+.notas {
+  position: fixed;
+  left: 50%;
+  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 60px);
+  transform: translateX(-50%);
+  z-index: 39;
+  width: min(760px, calc(100vw - 32px));
+  max-height: 34vh;
+  overflow: auto;
+  padding: 16px 20px;
+  border-radius: var(--raio-xl);
+  background: var(--elevada);
+  box-shadow: var(--sombra-lg);
+  font-size: 15px;
+  line-height: 23px;
+}
+.notas b { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 400; color: var(--texto-suave); }
+.dica {
+  position: fixed;
+  left: 50%;
+  top: max(16px, env(safe-area-inset-top, 0px));
+  transform: translateX(-50%);
+  z-index: 38;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: var(--raio-pilula);
+  background: var(--elevada);
+  box-shadow: var(--sombra-md);
+  font-size: 13px;
+  color: var(--texto-suave);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 600ms var(--sai);
+}
+.dica.some { opacity: 0; pointer-events: none; }
+.ir-para { position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%); z-index: 60; padding: 10px 20px; border-radius: var(--raio-pilula); background: var(--elevada); box-shadow: var(--sombra-lg); font-variant-numeric: tabular-nums; }
+
+/* Troca de tema em onda (View Transitions), como no site. */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+/* ---------- a luz: manchas nas cores dos integrantes que se juntam numa faixa (hero e fechamento do site) ---------- */
+.luz {
+  --mistura: multiply; --luz-nucleo: rgb(255 255 255 / 0.85);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 66%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 66%, transparent);
+}
+.luz .mancha {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 560px;
+  aspect-ratio: 1.5;
+  background: radial-gradient(closest-side, var(--c), color-mix(in oklab, var(--c) 40%, transparent) 45%, transparent);
+  mix-blend-mode: var(--mistura);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.luz .nucleo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 90%;
+  height: 22%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, var(--luz-nucleo), transparent);
+  animation: nucleo 2.6s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes nucleo { from { opacity: 0; transform: translate(-50%, -50%) scaleX(0.2); } to { opacity: 1; transform: translate(-50%, -50%) scaleX(1); } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .luz { --mistura: screen; --luz-nucleo: rgb(255 244 230 / 0.22); } }
+:root[data-theme="dark"] .luz, .forca-escuro .luz { --mistura: screen; --luz-nucleo: rgb(255 244 230 / 0.22); }
+
+.cursor-texto { display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -0.12em; background: var(--texto); animation: pisca 1s steps(1) infinite; }
+@keyframes pisca { 50% { opacity: 0; } }
+@keyframes entra { from { opacity: 0; transform: translateY(4px); } }
+
+/* ---------- movimento reduzido: tudo no estado final ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; transition-delay: 0ms !important; }
+  .slide:not(.entrou) [data-e], .slide:not(.entrou) .titulo .p { opacity: 1; transform: none; filter: none; }
+}
