@@ -31,6 +31,17 @@
   function q(el, s) { return el.querySelector(s); }
   function qa(el, s) { return Array.prototype.slice.call(el.querySelectorAll(s)); }
   function plano(lista) { return lista.reduce(function (a, g) { return a.concat(g.ids); }, []); }
+  /* A logo em loop numa forma. O clique toca a forma na hora; quando ela volta à pílula, o loop recomeça. */
+  function logoEmLoop(api, logo, forma, comClique) {
+    var ligar = function () { if (!api.vivo()) return; logo.removeAttribute('animation'); logo.setAttribute('loop', ''); logo.setAttribute('animation', forma); };
+    var tocar = function () { var p = logo.play(forma); if (p && p.then) p.then(ligar); };
+    tocar();
+    if (comClique !== false) {
+      api.ouvir(logo, 'click', tocar);
+      api.ouvir(logo, 'keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); tocar(); } });
+    }
+    api.aoSair(function () { logo.removeAttribute('animation'); logo.removeAttribute('loop'); if (logo.stop) logo.stop(); });
+  }
 
   /* A luz da Heild: uma mancha por integrante, espalhadas, que se juntam numa faixa e seguem respirando. */
   function luzHtml(ids) { return '<div class="luz" aria-hidden="true">' + (ids || []).map(function (id) { return '<span style="--c:var(' + I[id].cor + ')"></span>'; }).join('') + '</div>'; }
@@ -104,9 +115,7 @@
     },
     entrar: function (el, d, api) {
       var logo = q(el, 'heild-logo');
-      api.depois(1300, function () { logo.play('centralizar'); });
-      api.ouvir(logo, 'click', function () { logo.play('centralizar'); });
-      api.ouvir(logo, 'keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); logo.play('centralizar'); } });
+      api.depois(1100, function () { logoEmLoop(api, logo, 'centralizar'); });
     }
   };
 
@@ -131,8 +140,8 @@
     },
     passo: function (el, p, api) {
       var n = q(el, '.nuvem'), logo = q(el, '.junta-logo');
-      if (p >= 1) { n.classList.add('junta'); api.depois(1400, function () { logo.play('centralizar'); }); }
-      else { n.classList.remove('junta'); logo.stop && logo.stop(); }
+      if (p >= 1) { n.classList.add('junta'); api.depois(1400, function () { if (n.classList.contains('junta')) logoEmLoop(api, logo, 'centralizar', false); }); }
+      else { n.classList.remove('junta'); logo.removeAttribute('animation'); logo.removeAttribute('loop'); if (logo.stop) logo.stop(); }
     }
   };
 
@@ -155,9 +164,13 @@
       var p = q(el, '.pilha');
       p.classList.add('inicio'); p.classList.remove('junto');
       api.depois(80, function () { p.classList.remove('inicio'); });
-      api.depois(2200, function () { p.classList.add('junto'); });
-      api.ouvir(p, 'click', function () { p.classList.toggle('junto'); });
-      api.ouvir(p, 'keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); p.classList.toggle('junto'); } });
+      var mexeu = 0;
+      api.depois(2200, function () {
+        p.classList.add('junto');
+        api.intervalo(function () { if (performance.now() - mexeu < 8000) return; p.classList.toggle('junto'); }, 4600);
+      });
+      api.ouvir(p, 'click', function () { mexeu = performance.now(); p.classList.toggle('junto'); });
+      api.ouvir(p, 'keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); mexeu = performance.now(); p.classList.toggle('junto'); } });
     },
     sair: function (el) { var p = q(el, '.pilha'); p.classList.add('inicio'); p.classList.remove('junto'); }
   };
@@ -165,22 +178,24 @@
   /* ---------------- logo: a construção ---------------- */
   T.logo = {
     html: function () {
-      var k = 600 / 1259, X = function (v) { return (80 + v * k).toFixed(1); }, Y = function (v) { return (140 + v * k).toFixed(1); };
+      // A logo tem 520 de largura em (120, 155) dentro de 760 × 470: sobra espaço para HE e LD se afastarem
+      // (até ~9% da largura para cada lado) sem a área livre sair do desenho.
+      var L = 520, LX = 120, LY = 155, k = L / 1259, X = function (v) { return (LX + v * k).toFixed(1); }, Y = function (v) { return (LY + v * k).toFixed(1); };
       var pw = 147.3 * k;
       var anot =
         '<svg class="anot" viewBox="0 0 760 470" aria-hidden="true">' +
-        '<rect class="area traco-area" x="' + (80 - pw).toFixed(1) + '" y="' + (140 - pw).toFixed(1) + '" width="' + (600 + 2 * pw).toFixed(1) + '" height="' + (387 * k + 2 * pw).toFixed(1) + '" rx="6" fill="none" style="stroke:var(--texto-suave);stroke-width:1.2"/>' +
-        '<text class="t2 aparece" style="--d:2200ms" x="' + (680 + pw).toFixed(1) + '" y="' + (140 - pw - 8).toFixed(1) + '" text-anchor="end">área livre: a largura da pílula</text>' +
-        '<line class="traco" style="--l:96;--d:500ms" x1="' + X(258) + '" y1="' + Y(10) + '" x2="' + X(258) + '" y2="44"/><circle class="aparece" style="--d:500ms" cx="' + X(258) + '" cy="' + Y(10) + '" r="3"/>' +
-        '<text class="aparece" style="--d:900ms" x="' + X(258) + '" y="32" text-anchor="middle">H e E dividem a haste</text>' +
-        '<line class="traco" style="--l:96;--d:900ms" x1="' + X(634.3) + '" y1="' + Y(0) + '" x2="' + X(634.3) + '" y2="44"/><circle class="aparece" style="--d:900ms" cx="' + X(634.3) + '" cy="' + Y(0) + '" r="3"/>' +
+        '<rect class="area traco-area" data-x="' + (LX - pw).toFixed(1) + '" data-w="' + (L + 2 * pw).toFixed(1) + '" x="' + (LX - pw).toFixed(1) + '" y="' + (LY - pw).toFixed(1) + '" width="' + (L + 2 * pw).toFixed(1) + '" height="' + (387 * k + 2 * pw).toFixed(1) + '" rx="6" fill="none" style="stroke:var(--texto-suave);stroke-width:1.2"/>' +
+        '<text class="t2 rot-area traco-area" data-x="' + (LX + L + pw).toFixed(1) + '" x="' + (LX + L + pw).toFixed(1) + '" y="' + (LY - pw - 8).toFixed(1) + '" text-anchor="end">área livre: a largura da pílula</text>' +
+        '<g data-lado="he"><line class="traco" style="--l:110;--d:500ms" x1="' + X(258) + '" y1="' + Y(10) + '" x2="' + X(258) + '" y2="44"/><circle class="aparece" style="--d:500ms" cx="' + X(258) + '" cy="' + Y(10) + '" r="3"/>' +
+        '<text class="aparece" style="--d:900ms" x="' + X(258) + '" y="32" text-anchor="middle">H e E dividem a haste</text></g>' +
+        '<line class="traco" style="--l:110;--d:900ms" x1="' + X(634.3) + '" y1="' + Y(0) + '" x2="' + X(634.3) + '" y2="44"/><circle class="aparece" style="--d:900ms" cx="' + X(634.3) + '" cy="' + Y(0) + '" r="3"/>' +
         '<text class="aparece" style="--d:1300ms" x="' + X(634.3) + '" y="32" text-anchor="middle">O I fica sozinho: a pílula</text>' +
-        '<line class="traco" style="--l:110;--d:1300ms" x1="' + X(900) + '" y1="' + Y(348) + '" x2="' + X(900) + '" y2="436"/><circle class="aparece" style="--d:1300ms" cx="' + X(900) + '" cy="' + Y(348) + '" r="3"/>' +
-        '<text class="aparece" style="--d:1700ms" x="' + X(900) + '" y="456" text-anchor="middle">L e D dividem a base</text>' +
+        '<g data-lado="ld"><line class="traco" style="--l:140;--d:1300ms" x1="' + X(900) + '" y1="' + Y(348) + '" x2="' + X(900) + '" y2="436"/><circle class="aparece" style="--d:1300ms" cx="' + X(900) + '" cy="' + Y(348) + '" r="3"/>' +
+        '<text class="aparece" style="--d:1700ms" x="' + X(900) + '" y="456" text-anchor="middle">L e D dividem a base</text></g>' +
         '</svg>';
       var regras = '<ul class="regras">' + [
         ['Uma cor só', 'A primária sobre o fundo. Sem gradiente, sombra ou segunda cor, nem no I.'],
-        ['Área livre', 'Em volta, pelo menos a largura da pílula: cerca de 12% da logo.'],
+        ['Área livre', 'Em volta, pelo menos a largura da pílula: cerca de 12% da logo. Quando ela anima, a área acompanha.'],
         ['72 px no mínimo', 'Abaixo disso, só a pílula, como ícone.'],
         ['Não faça', 'Esticar, inclinar, colorir o I ou trocar a pílula por um I comum.']
       ].map(function (r, i) { return '<li data-e style="--d:' + (500 + i * 90) + 'ms">' + h(r[0]) + '<span>' + h(r[1]) + '</span></li>'; }).join('') + '</ul>';
@@ -188,9 +203,27 @@
         encaixe(760, 470, '<div class="construcao">' + anot + '<heild-logo label="Heild" tabindex="0" role="button" aria-label="Tocar a forma orb"></heild-logo></div>') + '</div>';
     },
     entrar: function (el, d, api) {
-      var logo = q(el, 'heild-logo');
-      api.ouvir(logo, 'click', function () { logo.play('orb'); });
-      api.ouvir(logo, 'keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); logo.play('orb'); } });
+      var logo = q(el, 'heild-logo'), svg = q(el, 'svg.anot'), k = 520 / 1259;
+      var area = q(svg, 'rect.area'), rot = q(svg, '.rot-area'), he = q(svg, '[data-lado="he"]'), ld = q(svg, '[data-lado="ld"]');
+      var ax = +area.dataset.x, aw = +area.dataset.w, rx = +rot.dataset.x, ultimo = -1;
+      // A área livre é um contêiner da logo: lê, a cada quadro, quanto HE e LD se afastaram e acompanha.
+      api.quadro(function () {
+        var s = (typeof logo._lastL === 'number' ? logo._lastL : 0) * k;
+        if (Math.abs(s - ultimo) > 0.05) {
+          ultimo = s;
+          area.setAttribute('x', (ax - s).toFixed(2)); area.setAttribute('width', (aw + 2 * s).toFixed(2));
+          rot.setAttribute('x', (rx + s).toFixed(2));
+          he.setAttribute('transform', 'translate(' + (-s).toFixed(2) + ' 0)'); ld.setAttribute('transform', 'translate(' + s.toFixed(2) + ' 0)');
+        }
+        return true;
+      });
+      // A logo toca o orb e descansa como pílula um tempo, para a construção ser lida; o clique toca na hora.
+      var tocando = false;
+      function tocar() { if (tocando) return; tocando = true; var p = logo.play('orb'); (p && p.then ? p : Promise.resolve()).then(function () { tocando = false; }); }
+      api.depois(2800, tocar);
+      api.intervalo(tocar, 9000);
+      api.ouvir(logo, 'click', function () { tocando = false; tocar(); });
+      api.ouvir(logo, 'keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); tocando = false; tocar(); } });
     }
   };
 
@@ -311,7 +344,13 @@
       function por(x) { v = Math.max(4, Math.min(96, x)); c.style.setProperty('--corte', v + '%'); alca.setAttribute('aria-valuenow', Math.round(v)); }
       por(88);
       var t0 = performance.now();
-      api.quadro(function (agora) { if (mexeu) return false; var t = Math.min(1, (agora - t0 - 700) / 1400); if (t < 0) return true; por(88 - 38 * (1 - Math.pow(1 - t, 3))); return t < 1; });
+      api.quadro(function (agora) {
+        if (mexeu) return false;
+        var ms = agora - t0 - 700; if (ms < 0) return true;
+        if (ms < 1400) { var t = ms / 1400; por(88 - 38 * (1 - Math.pow(1 - t, 3))); return true; }
+        por(50 - 24 * Math.sin((ms - 1400) / 1000 * Math.PI * 2 / 7));
+        return true;
+      });
       var arrastando = false;
       function mover(e) { var r = c.getBoundingClientRect(); por((e.clientX - r.left) / r.width * 100); }
       api.ouvir(c, 'pointerdown', function (e) { mexeu = arrastando = true; c.setPointerCapture(e.pointerId); mover(e); });
@@ -355,14 +394,17 @@
     },
     entrar: function (el, d, api) {
       var dep = q(el, '.depois'), msg = q(el, '.texto-msg'), o = q(el, '.msg orb-avatar');
-      dep.textContent = ''; msg.textContent = ''; o.setAttribute('reaction', 'working');
-      api.depois(1200, function () {
-        api.digitar(dep, 'Conciliei 41 de 44 lançamentos.', 30).then(function () {
-          return api.esperar(500);
-        }).then(function () {
-          return api.digitar(msg, 'Conferi as DCTFWeb de outubro dos 6 clientes. Cinco batem com a folha; a da Rota Sul tem R$ 312,40 a menos de INSS. Corrigi o rascunho e deixei na fila de transmissão.', 55);
-        }).then(function () { o.setAttribute('reaction', 'done'); }).catch(function () {});
-      });
+      (async function () {
+        await api.esperar(1200);
+        for (;;) {
+          dep.textContent = ''; msg.textContent = ''; o.setAttribute('reaction', 'working');
+          await api.digitar(dep, 'Conciliei 41 de 44 lançamentos.', 30);
+          await api.esperar(500);
+          await api.digitar(msg, 'Conferi as DCTFWeb de outubro dos 6 clientes. Cinco batem com a folha; a da Rota Sul tem R$ 312,40 a menos de INSS. Corrigi o rascunho e deixei na fila de transmissão.', 55);
+          o.setAttribute('reaction', 'done');
+          await api.esperar(5000);
+        }
+      })().catch(function () {});
     }
   };
 
@@ -438,7 +480,7 @@
       rolo.innerHTML = ''; campo.textContent = 'Peça ao Assistente…'; campo.classList.add('suave');
       elos.forEach(function (e) { estado(e, 'disponivel'); });
       function estado(e, est, txt) { q(e, 'orb-avatar').setAttribute('reaction', REACAO[est]); q(e, '.estado').textContent = txt || ESTADO_PALAVRA[est]; }
-      function add(html) { var w = document.createElement('div'); w.className = 'entra-msg'; w.innerHTML = html; rolo.appendChild(w); while (rolo.children.length > 8) rolo.removeChild(rolo.firstChild); return w; }
+      function add(html) { var w = document.createElement('div'); w.className = 'entra-msg'; w.innerHTML = html; rolo.appendChild(w); api.colorir(w); while (rolo.children.length > 8) rolo.removeChild(rolo.firstChild); return w; }
       function fala(id, extra) { return add('<div class="fala">' + orb(id, { tamanho: 26, estatico: true, extras: false }) + '<div><span class="autor">' + h(I[id].nome) + '</span><span class="t"></span>' + (extra || '') + '</div></div>'); }
       function centro(e) { var r = e.getBoundingClientRect(), rc = cadeia.getBoundingClientRect(), k = rc.width / cadeia.offsetWidth || 1; return { x: (r.left - rc.left + r.width / 2) / k - 6, y: (r.top - rc.top + r.height / 2) / k - 6 }; }
       function viajar(a, b) {
@@ -450,6 +492,9 @@
       }
       var e0 = elos[0];
       (async function () {
+       for (;;) {
+        rolo.innerHTML = ''; campo.textContent = 'Peça ao Assistente…'; campo.classList.add('suave'); viaj.style.opacity = '0';
+        elos.forEach(function (e) { estado(e, 'disponivel'); });
         await api.esperar(900);
         campo.classList.remove('suave'); campo.textContent = '';
         await api.digitar(campo, d.pedido, 32, true);
@@ -482,7 +527,8 @@
           d.cartao.campos.map(function (c) { return '<dt>' + h(c[0]) + '</dt><dd>' + h(c[1]) + '</dd>'; }).join('') + '</dl>' +
           '<div style="display:flex;gap:8px;align-items:center">' + (d.cartao.selo ? seloHtml('atencao', d.cartao.selo) : '<span class="botao botao--pequeno">Aprovar</span><span class="botao botao--pequeno botao--fantasma">Editar e aprovar</span>') + '</div></div>');
         estado(eloCartao, 'precisa_de_voce'); estado(e0, 'concluido', 'acompanhou até o fim');
-        api.colorir(rolo);
+        await api.esperar(7000);
+       }
       })().catch(function () {});
     }
   };
@@ -546,9 +592,11 @@
     },
     entrar: function (el, d, api) {
       var tp = q(el, '.t-perg'), tr = q(el, '.t-resp'), o = q(el, '.resposta orb-avatar'), est = q(el, '.est-lei');
-      var partes = qa(el, '.aparece'); partes.forEach(function (p) { p.classList.remove('on'); });
-      tp.textContent = ''; tr.textContent = ''; o.setAttribute('reaction', 'thinking'); est.textContent = 'pensando';
+      var partes = qa(el, '.aparece');
       (async function () {
+       for (;;) {
+        partes.forEach(function (p) { p.classList.remove('on'); });
+        tp.textContent = ''; tr.textContent = ''; o.setAttribute('reaction', 'thinking'); est.textContent = 'pensando';
         await api.esperar(800);
         await api.digitar(tp, d.pergunta, 32, true);
         await api.esperar(300);
@@ -558,6 +606,8 @@
         await api.digitar(tr, d.resposta, 55);
         o.setAttribute('reaction', 'idle'); est.textContent = 'respondeu';
         for (var k of ['.r-trecho', '.r-norma', '.r-rod']) { await api.esperar(260); q(el, k).classList.add('on'); }
+        await api.esperar(7000);
+       }
       })().catch(function () {});
     }
   };
@@ -621,10 +671,12 @@
           '<div class="ficha-cli"><b>Ficha</b><dl>' + (d.ficha || []).map(function (f) { return '<div><dt>' + h(f[0]) + '</dt><dd>' + h(f[1]) + '</dd></div>'; }).join('') + '</dl>' + funil + '</div></div>') + '</div>';
     },
     entrar: function (el, d, api) {
-      var box = q(el, '.mensagens'); box.innerHTML = '';
+      var box = q(el, '.mensagens');
       var funil = qa(el, '.funil span');
-      if (d.funil) funil.forEach(function (s, i) { s.classList.toggle('at', i === d.funil.de); });
       (async function () {
+       for (;;) {
+        box.innerHTML = '';
+        if (d.funil) funil.forEach(function (s, i) { s.classList.toggle('at', i === d.funil.de); });
         await api.esperar(700);
         for (var i = 0; i < d.mensagens.length; i++) {
           var m = d.mensagens[i];
@@ -638,6 +690,8 @@
           await api.esperar(900);
         }
         if (d.funil) { await api.esperar(600); funil.forEach(function (s, i) { s.classList.toggle('at', i === d.funil.para); }); }
+        await api.esperar(5500);
+       }
       })().catch(function () {});
     }
   };
@@ -675,9 +729,12 @@
           '<div class="eventos"><p class="rotulo">Chegou ao escritório</p><p class="vazio">Nada ainda. O que o cliente faz no app aparece aqui.</p></div></div>') + '</div>';
     },
     entrar: function (el, d, api) {
-      var ev = q(el, '.eventos'), vazio = q(el, '.vazio'), feitos = {};
-      qa(ev, '.evento').forEach(function (e) { e.remove(); }); vazio.hidden = false;
+      var ev = q(el, '.eventos'), vazio = q(el, '.vazio'), feitos = {}, tocou = false;
       var bs = qa(el, '.tela-app .botao');
+      function zerar() {
+        feitos = {}; qa(ev, '.evento').forEach(function (e) { e.remove(); }); vazio.hidden = false;
+        bs.forEach(function (b, i) { b.disabled = false; b.textContent = d.itens[i].acao; b.classList.remove('botao--fantasma', 'apertado'); });
+      }
       function fazer(i) {
         if (feitos[i]) return; feitos[i] = true;
         var it = d.itens[i]; vazio.hidden = true;
@@ -686,8 +743,22 @@
         w.innerHTML = orb('assistente', { tamanho: 24, estatico: true, extras: false }) + '<div>' + h(it.evento[0]) + '<small>' + h(it.evento[1]) + ' · agora</small></div>';
         ev.appendChild(w); api.colorir(w);
       }
-      bs.forEach(function (b, i) { b.disabled = false; b.textContent = d.itens[i].acao; b.classList.remove('botao--fantasma'); api.ouvir(b, 'click', function () { fazer(i); }); });
-      api.depois(4200, function () { fazer(0); });
+      bs.forEach(function (b, i) { api.ouvir(b, 'click', function () { tocou = true; fazer(i); }); });
+      zerar();
+      (async function () {
+        await api.esperar(3200);
+        for (;;) {
+          for (var i = 0; i < bs.length; i++) {
+            if (tocou) return;
+            bs[i].classList.add('apertado'); await api.esperar(260); bs[i].classList.remove('apertado');
+            if (tocou) return;
+            fazer(i); await api.esperar(2600);
+          }
+          await api.esperar(3200);
+          if (tocou) return;
+          zerar(); await api.esperar(1600);
+        }
+      })().catch(function () {});
     }
   };
 
@@ -712,8 +783,7 @@
     },
     entrar: function (el, d, api) {
       var p = D.plataformas[d.plataforma], logo = q(el, 'heild-logo');
-      api.depois(1100, function () { logo.play(p.forma); });
-      api.ouvir(logo, 'click', function () { logo.play(p.forma); });
+      api.depois(1100, function () { logoEmLoop(api, logo, p.forma); });
     }
   };
 
@@ -748,11 +818,14 @@
     entrar: function (el, d, api) {
       var ps = qa(el, '.fios path'), nos = qa(el, '.no'), g = q(el, '.pulsos');
       api.ouvir(q(el, '.repetir-cena'), 'click', function () { api.repetir(); });
-      nos.forEach(function (n) { n.classList.remove('aceso'); }); ps.forEach(function (p) { p.classList.remove('aceso'); }); g.innerHTML = '';
+      g.innerHTML = '';
       var NS = 'http://www.w3.org/2000/svg';
       var cs = ps.map(function () { var c = document.createElementNS(NS, 'circle'); c.setAttribute('r', '4'); c.style.opacity = '0'; g.appendChild(c); return c; });
       var t0 = performance.now() + 1100;
+      function apagar() { nos.forEach(function (n) { n.classList.remove('aceso'); }); ps.forEach(function (p) { p.classList.remove('aceso'); }); }
+      apagar();
       api.quadro(function (agora) {
+        if (agora - t0 > ps.length * 140 + 950 + 4200) { apagar(); t0 = agora + 700; }
         var todos = true;
         ps.forEach(function (p, i) {
           var t = (agora - t0 - i * 140) / 950;
@@ -762,7 +835,7 @@
           var e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, L = p.getTotalLength(), pt = p.getPointAtLength(e * L);
           cs[i].setAttribute('cx', pt.x.toFixed(1)); cs[i].setAttribute('cy', pt.y.toFixed(1)); cs[i].style.opacity = '1';
         });
-        return !todos;
+        return true;
       });
     }
   };

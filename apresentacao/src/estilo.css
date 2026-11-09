@@ -614,8 +614,8 @@ html.parado .controles { opacity: 0; transform: translateY(6px); pointer-events:
 .s-camadas .pilha:not(.junto) .rotulo-base { opacity: 0; transition-delay: 0ms; }
 
 /* logo: a construção */
-.s-logo .construcao { position: relative; width: 760px; height: 420px; }
-.s-logo .construcao heild-logo { position: absolute; left: 80px; top: 140px; width: 600px; cursor: pointer; }
+.s-logo .construcao { position: relative; width: 760px; height: 470px; }
+.s-logo .construcao heild-logo { position: absolute; left: 120px; top: 155px; width: 520px; cursor: pointer; }
 .s-logo .anot .traco { stroke-dasharray: var(--l); stroke-dashoffset: var(--l); transition: stroke-dashoffset 800ms var(--sai) var(--d, 0ms); }
 .s-logo.entrou .anot .traco { stroke-dashoffset: 0; }
 .s-logo .anot .aparece { opacity: 0; transition: opacity 500ms var(--sai) var(--d, 0ms); }
