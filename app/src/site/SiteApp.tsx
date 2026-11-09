@@ -544,10 +544,11 @@ function SecaoPlataformas({ menos }: { menos?: string }) {
 function LinhaPlataforma({ p, i = 0 }: { p: Plataforma; i?: number }) {
   const logo = useRef<HeildLogoElement>(null)
   const linha = useRef<HTMLAnchorElement>(null)
-  const visto = useVisto(linha, { limiar: 0.6 })
+  // Toca toda vez que a plataforma entra na tela ao rolar (não só na primeira): no celular não há hover para chamar a animação.
+  const visto = useVisto(linha, { limiar: 0.6, sempre: true })
   useEffect(() => {
     if (!visto) return
-    const id = window.setTimeout(() => logo.current?.play?.(p.animacao), 300 + i * 500)
+    const id = window.setTimeout(() => logo.current?.play?.(p.animacao), 300 + i * 400)
     return () => window.clearTimeout(id)
   }, [visto, i, p.animacao])
   return (
@@ -747,13 +748,21 @@ function SecaoInteiro() {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return setJunto(true)
     const el = caixa.current
     if (!el) return
+    // A primeira vez as peças se encaixam; depois disso, voltar à seção ao rolar toca a centralização de novo.
+    let primeira = true
+    let saiu = false
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting) {
+        if (!e.isIntersecting) return void (saiu = true)
+        if (primeira) {
+          primeira = false
           setJunto(true)
           window.setTimeout(() => logo.current?.play?.('centralizar'), 500)
           window.setTimeout(() => setVivo(true), 1900)
-          io.disconnect()
+        } else if (saiu) {
+          saiu = false
+          setSobre(null)
+          window.setTimeout(() => logo.current?.play?.('centralizar'), 250)
         }
       },
       { threshold: 0.45 },
