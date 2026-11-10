@@ -55,8 +55,11 @@ export function Pergunta({ children, acao }: { children: ReactNode; acao?: React
 
 /** Linha do dia: blocos por confiança sobre a régua de horas; o agente numa faixa à parte. */
 export function LinhaDoDia({ sessoes, agente, onAbrir }: { sessoes: SessaoTs[]; agente?: { hora: string; minutos: number; cor: string; texto: string }[]; onAbrir?: (s: SessaoTs) => void }) {
-  const ini = Math.floor(Math.min(...sessoes.map((s) => min(s.inicio))) / 60)
-  const fim = Math.ceil(Math.max(...sessoes.map((s) => min(s.fim))) / 60)
+  // A escala cobre as sessões e o trabalho dos integrantes: com filtro de cliente, o agente pode cair fora das sessões visíveis.
+  const inicios = [...sessoes.map((s) => min(s.inicio)), ...(agente ?? []).map((a) => min(a.hora))]
+  const fins = [...sessoes.map((s) => min(s.fim)), ...(agente ?? []).map((a) => min(a.hora) + a.minutos)]
+  const ini = Math.floor(Math.min(...inicios) / 60)
+  const fim = Math.max(ini + 1, Math.ceil(Math.max(...fins) / 60))
   const total = (fim - ini) * 60
   const pos = (h: string) => ((min(h) - ini * 60) / total) * 100
   const horas = Array.from({ length: fim - ini + 1 }, (_, i) => ini + i)
@@ -79,7 +82,7 @@ export function LinhaDoDia({ sessoes, agente, onAbrir }: { sessoes: SessaoTs[]; 
         })}
       </div>
       {agente && agente.length > 0 && (
-        <div className="relative h-3" aria-label="Trabalho dos integrantes (série separada)">
+        <div className="relative h-3 overflow-hidden" aria-label="Trabalho dos integrantes (série separada)">
           {agente.map((a) => (
             <Tooltip key={a.hora} conteudo={`agente · ${a.hora} · ${a.texto} · ${a.minutos} min de máquina`}>
               <span className="absolute inset-y-0 rounded-full" style={{ left: `${pos(a.hora)}%`, width: `max(6px, ${(a.minutos / total) * 100}%)`, background: a.cor }} />
