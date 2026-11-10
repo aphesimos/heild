@@ -62,6 +62,8 @@ O livro da marca completo está no branch [`design-system`](../../tree/design-sy
 - Commits pequenos, com mensagem que diz o que mudou e por quê.
 - Nada inventado: a Heild ainda não foi lançada, então não há clientes, números de uso ou depoimentos para mostrar.
 
+As redes sociais (Instagram e Facebook) têm um design system de posts próprio, os modelos, o render e os posts prontos em [`redes-sociais/`](redes-sociais), com o plano editorial em [`docs/planos/Plano_Redes_Sociais.md`](docs/planos/Plano_Redes_Sociais.md).
+
 Os detalhes (como rodar cada parte, como publicar, como refazer as imagens deste README) estão em [`docs/fluxo-de-trabalho.md`](docs/fluxo-de-trabalho.md).
 
 ## As imagens deste README

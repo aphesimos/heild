@@ -20,6 +20,8 @@ O ponto de partida: o README animado, esta documentação e as ferramentas que g
 | `ferramentas/wordmark.json` | Os traçados da logo (HE, LD e as medidas da pílula), os mesmos do `<heild-logo>` |
 | `assets/readme/` | Os SVGs do README, claro e escuro |
 | `CLAUDE.md` | As regras para agentes que trabalham neste repositório |
+| `redes-sociais/` | O design system dos posts de Instagram e Facebook, os modelos em HTML, o render (Playwright) e os posts prontos com legendas |
+| `docs/planos/Plano_Redes_Sociais.md` | O plano editorial das redes: pilares, cadência, calendário, perfil e decisões; a pesquisa está em `docs/planos/pesquisa-redes-sociais/` |
 
 ## `design-system`
 
