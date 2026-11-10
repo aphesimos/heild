@@ -20,7 +20,10 @@ svg.filtros { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 /* Cada cena é uma camada de areia, clara ou escura (.forca-claro / .forca-escuro dos tokens), com a
    grade de pontos de 1 px a cada 24 px como chão. */
-.cena { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--fundo); color: var(--texto); }
+/* A sombra cheia na cor do fundo estende a camada um pouco para fora do quadro (o tremor da câmera nunca
+   mostra a borda); a câmera leva o fundo da cena de cima, e o borrão do chicote se funde nele. */
+.cena { position: absolute; inset: 0; overflow: hidden; visibility: hidden; background: var(--fundo); color: var(--texto); box-shadow: 0 0 0 24px var(--fundo); }
+.camera { background: var(--fundo); }
 .cena.on { visibility: visible; }
 .cena > * { position: absolute; }
 .chao {
@@ -90,6 +93,7 @@ heild-logo { display: block; color: var(--primaria); }
 .goo { inset: 0; }
 .gota { position: absolute; left: 0; top: 0; border-radius: var(--raio-pilula); background: var(--primaria); }
 .marca { transform-origin: 0 0; }
+.choque { left: 0; top: 0; border-radius: 50%; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--texto) 45%, transparent); }
 .int { display: flex; flex-direction: column; align-items: center; gap: 8px; transform-origin: 50% 30%; }
 .int .nome { font-size: var(--ui-p); line-height: 19px; font-weight: 500; color: var(--texto); text-align: center; white-space: nowrap; }
 

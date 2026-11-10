@@ -124,9 +124,72 @@ def folha(imgs: list[tuple[Image.Image, str]], destino: pathlib.Path, largura: i
     print(f'  folha: {destino}')
 
 
+def eventos(peca: str) -> list[dict]:
+    """Os eventos do roteiro com o tempo resolvido (como em motor.js e som.py)."""
+    p = ROTEIRO['pecas'][peca]
+    out = []
+    for e in p['eventos']:
+        if 't' not in e and 'em' not in e:
+            continue
+        ts = [e['t']] if 't' in e else p['marcas'][e['em']]
+        ts = ts if isinstance(ts, list) else [ts]
+        if 'indices' in e:
+            ts = [ts[i] for i in e['indices']]
+        for t in ts:
+            t += e.get('mais', 0.0)
+            if t >= 0:
+                out.append({**e, 't': t})
+    return sorted(out, key=lambda e: e['t'])
+
+
+def sincronia(arq: pathlib.Path, peca: str) -> None:
+    """Confere, no MP4 pronto, se cada impacto do roteiro bate com um ataque no áudio e com um salto na imagem.
+
+    Áudio: decodificado do arquivo (o ffmpeg respeita o atraso inicial do AAC); o ataque é o primeiro instante,
+    perto do evento, em que a energia em 1 ms passa de 6 vezes a energia de 10 a 20 ms antes. Imagem: a diferença
+    média entre quadros seguidos (cinza, reduzida); o tremor e o corte de cada impacto aparecem como um salto no
+    quadro do evento (num trecho que já vinha em movimento rápido, o salto pode não se destacar)."""
+    import numpy as np
+    fps, sr = ROTEIRO['fps'], 48000
+    r = subprocess.run(['ffmpeg', '-v', 'error', '-i', str(arq), '-ac', '1', '-ar', str(sr), '-f', 'f32le', '-'], capture_output=True, check=True)
+    x = np.frombuffer(r.stdout, dtype='<f4')
+    energia = np.convolve(x.astype(np.float64) ** 2, np.ones(48) / 48, 'same')
+
+    def ataque(t: float):
+        a, b = max(int(0.02 * sr), int((t - 0.03) * sr)), int((t + 0.08) * sr)
+        for i in range(a, min(b, len(energia)), 12):
+            base = energia[i - 960:i - 480].mean() + 1e-7
+            if energia[i] > 6 * base and energia[i] > 1e-5:
+                return (i / sr - t) * 1000
+        return None
+    r = subprocess.run(['ffmpeg', '-v', 'error', '-i', str(arq), '-vf', 'scale=96:-2,format=gray', '-f', 'rawvideo', '-'], capture_output=True, check=True)
+    d = ffprobe(arq)
+    v = next(s for s in d['streams'] if s['codec_type'] == 'video')
+    w = 96
+    h = int(round(v['height'] * 96 / v['width'] / 2) * 2)
+    q = np.frombuffer(r.stdout, dtype=np.uint8).reshape(-1, h, w).astype(np.float32)
+    dif = np.concatenate([[0], np.abs(np.diff(q, axis=0)).mean(axis=(1, 2))])
+    linhas, atrasos, saltos = [], [], 0
+    fortes = [e for e in eventos(peca) if e['som'] in ('impacto', 'carimbo', 'pop') and e.get('forca', 1) >= 0.5]
+    for e in fortes:
+        t = e['t']
+        atraso = ataque(t)
+        if atraso is not None:
+            atrasos.append(atraso)
+        fq = int(round(t * fps))
+        viz = dif[max(0, fq - 4):fq]
+        salto = dif[fq:fq + 2].max() > (viz.mean() if len(viz) else 0) * 1.15 if fq < len(dif) else False
+        saltos += bool(salto)
+        linhas.append(f"    {t:6.2f} s  {e['som']:<8} {e.get('em', ''):<20} áudio {('%+5.0f ms' % atraso) if atraso is not None else 'sobre som contínuo'}   imagem {'salta' if salto else 'parada'} no quadro {fq}")
+    print(f"  sincronia: {len(fortes)} impactos fortes; ataque do áudio a {np.median(np.abs(atrasos)):.0f} ms (mediana) do evento, "
+          f"o pior a {max(np.abs(atrasos)):.0f} ms ({len(atrasos)} medidos); {saltos} de {len(fortes)} com salto na imagem no quadro do evento")
+    print('\n'.join(linhas))
+
+
 def conferir_video(arq: pathlib.Path) -> None:
     print(resumo(arq))
     print(loudness(arq))
+    sincronia(arq, 'vinheta' if 'vinheta' in arq.name else 'principal')
     peca = 'vinheta' if 'vinheta' in arq.name else 'principal'
     ms = momentos(peca)
     imgs = [(quadro(arq, t), f'{t:05.2f} s  {n}') for t, n in ms]

@@ -68,8 +68,8 @@
         "lei.linhas": [14.66, 14.84, 15.02],
         "lei.seguranca": 15.36,
         "lei.sai": 16.80,
-        "camadas.planos": [17.05, 17.15, 17.25, 17.35, 17.45, 17.55],
-        "camadas.palavras": [17.20, 17.34, 17.50, 17.62, 17.76, 18.00],
+        "camadas.planos": [16.98, 17.06, 17.14, 17.22, 17.30, 17.38],
+        "camadas.palavras": [17.12, 17.26, 17.42, 17.54, 17.68, 18.00],
         "camadas.desce": 18.45,
         "camadas.junta": 19.00,
         "camadas.onda": 19.30,
@@ -122,7 +122,7 @@
         { "som": "pop", "em": "camadas.junta", "mais": 0.06, "forca": 0.5 },
         { "som": "onda", "em": "camadas.onda", "para": "claro", "forca": 0.8 },
         { "som": "acorde", "t": 20.0, "dur": 5.0, "forca": 1.0 },
-        { "som": "cascata", "em": "final.centralizar", "forca": 0.8 },
+        { "som": "cascata", "em": "final.centralizar", "forca": 0.8, "volta": 2.9 },
         { "som": "baque", "em": "final.palavras", "indices": [4], "forca": 0.35, "tremor": 0.3 },
         { "som": "pop", "em": "final.cta", "forca": 0.6, "tremor": 0.4 },
         { "som": "clique", "em": "final.toque", "forca": 0.7 }
@@ -158,7 +158,7 @@
         { "som": "impacto", "em": "juntar.pilula", "forca": 1.0, "tremor": 0.9 },
         { "som": "whoosh", "em": "juntar.logo", "dur": 0.25, "forca": 0.35 },
         { "som": "acorde", "em": "final.entra", "dur": 4.1, "forca": 1.0 },
-        { "som": "cascata", "em": "final.centralizar", "forca": 0.8 },
+        { "som": "cascata", "em": "final.centralizar", "forca": 0.8, "volta": 2.9 },
         { "som": "baque", "em": "final.palavras", "indices": [4], "forca": 0.35, "tremor": 0.3 },
         { "som": "pop", "em": "final.cta", "forca": 0.6, "tremor": 0.4 },
         { "som": "clique", "em": "final.toque", "forca": 0.7 }

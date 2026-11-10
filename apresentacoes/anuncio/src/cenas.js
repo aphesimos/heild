@@ -71,7 +71,7 @@
   function layoutFinal() {
     if (RET) return { w: 300, top: 230, tituloTop: 368, tam: F.fim };
     if (FEED) return { w: 270, top: 169, tituloTop: 288, tam: F.fim };
-    return { w: 290, top: 58, tituloTop: 177, tam: F.fim };
+    return { w: 320, top: 48, tituloTop: 178, tam: F.fim };
   }
   function caixaLogo(w, cx, cy) {
     var h = w * LG.VH / LG.VW, x = cx - w / 2, y = cy - h / 2, k = w / LG.VW;
@@ -111,9 +111,7 @@
     }
     /* para onde o I vai no time (centro do I e escala), e a grade dos doze */
     var ALVO3 = RET ? { x: F.cx, y: 545, s: 1.32 } : FEED ? { x: F.cx, y: 402, s: 1.25 } : { x: VIS.x + VIS.w / 2, y: 226, s: 1.0 };
-    var ORDEM = RET
-      ? ['fiscal', 'dp', 'contabil', 'societario', 'notas', 'consultor', 'atendimento', 'financeiro', 'bpo_pagar', 'bpo_receber', 'bpo_conciliacao', 'bpo_gerencial']
-      : ['fiscal', 'dp', 'contabil', 'societario', 'notas', 'consultor', 'atendimento', 'financeiro', 'bpo_pagar', 'bpo_receber', 'bpo_conciliacao', 'bpo_gerencial'];
+    var ORDEM = ['fiscal', 'dp', 'contabil', 'societario', 'notas', 'consultor', 'atendimento', 'financeiro', 'bpo_pagar', 'bpo_receber', 'bpo_conciliacao', 'bpo_gerencial'];
     function grade() {
       var cols, x0, x1, y0, y1, so;
       if (RET) { cols = 3; x0 = F.L; x1 = F.R; y0 = 350; y1 = F.B; so = 56; }
@@ -137,6 +135,7 @@
       svg('feColorMatrix', f, { values: '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9' });
       gooEl = U.el('div', 'goo', el);
       pilula = U.el('i', 'gota', gooEl);
+      cena.choque = U.el('div', 'choque', el);
 
       /* as vinte fichas */
       var nomes = R.conteudo.fichas, tempos = marca('gancho.fichas');
@@ -165,26 +164,29 @@
       /* o título do gancho, grande, à esquerda e no meio da área segura */
       var lg = A.texto('gancho');
       tGancho = new A.Titulo(el, lg, marca('gancho.palavras'), { classe: 't-gancho', escala: 2.5, borrao: 16, tamanho: F.gancho });
-      var larg = PAI ? F.R - F.L : F.R - F.L;
-      tGancho.caber(larg, k);
+      tGancho.caber(F.R - F.L, k);
       var hg = A.noPalco(tGancho.el).h;
       U.pos(tGancho.el, F.L, F.cy - hg / 2);
       tGancho.el.style.transformOrigin = U.px(alvo.x - F.L) + ' ' + U.px(alvo.y - (F.cy - hg / 2));
       /* as fichas debaixo do título saem do caminho quando cada palavra bate */
-      var palavras = tGancho.palavras.map(function (w) { var m = A.noPalco(w.el); return { t: w.t, x0: m.x - 14, y0: m.y - 10, x1: m.x + m.w + 14, y1: m.y + m.h + 10 }; });
+      var palavras = tGancho.palavras.map(function (w) { var m = A.noPalco(w.el); return { t: w.t, x0: m.x - 16, y0: m.y - 12, x1: m.x + m.w + 16, y1: m.y + m.h + 12 }; });
+      /* cada palavra empurra para fora do bloco já escrito (a união com as anteriores): a ficha nunca volta para cima de outra palavra */
+      palavras.forEach(function (p, i) { if (i) { var a0 = palavras[i - 1]; p.x0 = Math.min(p.x0, a0.x0); p.y0 = Math.min(p.y0, a0.y0); p.x1 = Math.max(p.x1, a0.x1); p.y1 = Math.max(p.y1, a0.y1); } });
       fichas.forEach(function (fi) {
         var x = fi.x, y = fi.y;
+        /* a caixa da ficha já girada (até ~11°), para nenhuma ponta ficar sob a palavra */
+        var ra = Math.abs(fi.rot) * Math.PI / 180, hw = fi.w / 2 * Math.cos(ra) + fi.h / 2 * Math.sin(ra), hh = fi.h / 2 * Math.cos(ra) + fi.w / 2 * Math.sin(ra);
         palavras.forEach(function (p) {
-          var fx0 = x - fi.w / 2, fx1 = x + fi.w / 2, fy0 = y - fi.h / 2, fy1 = y + fi.h / 2;
+          var fx0 = x - hw, fx1 = x + hw, fy0 = y - hh, fy1 = y + hh;
           if (fx1 < p.x0 || fx0 > p.x1 || fy1 < p.y0 || fy0 > p.y1) {
             // fora: só a onda de choque (empurrão pequeno, para longe da palavra)
             var dx = x - (p.x0 + p.x1) / 2, dy = y - (p.y0 + p.y1) / 2, d = Math.hypot(dx, dy) || 1, a = 14 / (1 + d / 120);
             fi.empurroes.push({ t: p.t, dx: dx / d * a, dy: dy / d * a, volta: true });
             return;
           }
-          var cimaY = p.y0 - fi.h / 2 - 4, baixoY = p.y1 + fi.h / 2 + 4;
+          var cimaY = p.y0 - hh - 6, baixoY = p.y1 + hh + 6;
           var ny = Math.abs(cimaY - y) < Math.abs(baixoY - y) ? cimaY : baixoY;
-          if (ny - fi.h / 2 < 0) ny = baixoY; if (ny + fi.h / 2 > F.H) ny = cimaY;
+          if (ny - hh < 0) ny = baixoY; if (ny + hh > F.H) ny = cimaY;
           var nx = x + (x - (p.x0 + p.x1) / 2) * 0.18;
           fi.empurroes.push({ t: p.t, dx: nx - x, dy: ny - y });
           x = nx; y = ny;
@@ -283,9 +285,11 @@
           rot = U.lerp(rot, dir, U.seg(u, 0.12, 0.45));
           var enc = U.lerp(1, 0.32, e2);
           sx = s * (1 + 1.2 * vn) * enc; sy = s * (1 - 0.45 * vn) * enc; bx = 14 * vn;
-          op *= 1 - U.seg(u, 0.32, 0.52);
-          if (u > 0.32 && u < 1) {
-            var gw = Math.max(16, fi.w * sx), gh = Math.max(11, fi.h * sy);
+          op *= 1 - U.seg(u, 0.3, 0.5);
+          if (u > 0.26 && u < 1) {
+            /* a gota: uma cápsula da espessura das da logo (fina e constante), que nasce dentro da ficha e
+               estica com a velocidade; perto da pílula, as vizinhas se fundem */
+            var g0 = U.saiCub(U.seg(u, 0.26, 0.42)), gh = 10 * g0, gw = gh + 40 * vn * g0;
             var g = fi.gota.style;
             g.visibility = 'visible'; g.width = U.px(gw); g.height = U.px(gh);
             g.transform = 'translate(' + (x - gw / 2).toFixed(2) + 'px,' + (y - gh / 2).toFixed(2) + 'px) rotate(' + rot.toFixed(2) + 'deg)';
@@ -320,6 +324,14 @@
         ps.transform = 'translate(' + (alvo.x - wq / 2).toFixed(2) + 'px,' + (alvo.y - hq / 2).toFixed(2) + 'px)';
         ps.opacity = String(1 - U.seg(t, tl, tl + 0.06));
       } else pilula.style.visibility = 'hidden';
+      /* a onda de choque do impacto: um anel fino que abre e some */
+      var qc = U.seg(t, tp, tp + 0.5);
+      if (qc > 0 && qc < 1) {
+        var rc = U.lerp(alvo.h * 0.6, F.H * 0.42, U.saiCub(qc));
+        U.opacidade(cena.choque, 0.5 * (1 - qc));
+        cena.choque.style.transform = 'translate(' + (alvo.x - rc).toFixed(2) + 'px,' + (alvo.y - rc).toFixed(2) + 'px)';
+        cena.choque.style.width = cena.choque.style.height = U.px(2 * rc);
+      } else U.opacidade(cena.choque, 0);
       if (gooV > 0.3 && (algumaGota || t < tl)) { gooBlur.setAttribute('stdDeviation', gooV.toFixed(2)); if (gooEl._f !== 1) { gooEl.style.filter = 'url(#goo-abertura)'; gooEl._f = 1; } }
       else if (gooEl._f !== 0) { gooEl.style.filter = 'none'; gooEl._f = 0; }
 
@@ -702,7 +714,7 @@
       D.titulo = new A.Titulo(el, A.texto('camadas'), marca('camadas.palavras'), { tamanho: F.hero });
       if (PAI) { D.titulo.caber(COL.w, k); var h = A.noPalco(D.titulo.el).h; U.pos(D.titulo.el, COL.x, F.cy - h / 2 + 8); }
       else { D.titulo.caber(F.R - F.L, k); U.pos(D.titulo.el, F.L, F.T); }
-      var n = NOMES.length, yb = G.y0 + n * G.sp, rw = G.s * Math.SQRT2;
+      var n = NOMES.length, yb = G.y0 + n * G.sp;
       G.yb = yb;
       D.pilha = U.el('div', 'pilha', el); D.pilha.style.cssText += ';left:0;top:0;width:100%;height:100%;';
       D.fio = U.el('div', 'fio-pilha', D.pilha); U.pos(D.fio, G.cx, G.y0, null, yb - G.y0);
@@ -734,7 +746,8 @@
       D.planos.forEach(function (p, i) {
         var tau = t - tps[i], y = p.y, op = U.clamp(tau / 0.08);
         if (tau < 0) { U.opacidade(p.el, 0); return; }
-        y -= 46 * U.mola(tau, 15, 0.55);
+        var entra = 46 * U.mola(tau, 15, 0.55);
+        y -= entra;
         /* descem para a base: os de baixo primeiro; o de cima chega por último, no impacto */
         var fim = tj - (n - 1 - i) * 0.045, ini = fim - 0.5;
         var q = U.seg(t, ini, fim), e = 0.35 * U.vaiVolta(q) + 0.65 * U.entraCub(q);
@@ -742,7 +755,7 @@
         if (t >= fim) op = 0;
         U.opacidade(p.el, op);
         p.el.style.transform = 'translateY(' + y.toFixed(2) + 'px)';
-        if (p.et) { var qe = U.seg(t, td, td + 0.25); U.opacidade(p.et, 1 - qe); p.et.style.transform = 'translateX(' + (14 * qe).toFixed(2) + 'px)'; }
+        if (p.et) { var qe = U.seg(t, td, td + 0.25); U.opacidade(p.et, 1 - qe); p.et.style.transform = 'translate(' + (14 * qe + 10 * U.clamp(U.mola(tau, 15, 0.55))).toFixed(2) + 'px,' + (t < fim ? entra * (1 - e) : 0).toFixed(2) + 'px)'; }
       });
       var tb = t - tps[0];
       U.opacidade(D.base.el, U.clamp(tb / 0.1));
@@ -805,7 +818,7 @@
         var x = F.cx + sx + (fx - sx) * junta, y = D.faixaY + sy + (fy - sy) * junta;
         var s = (0.85 + 0.15 * Math.sin(t * 0.9 + i * 1.1)) * (0.6 + 0.4 * junta);
         D.manchas[i].style.transform = 'translate(' + (x - D.mw / 2).toFixed(2) + 'px,' + (y - D.mh / 2).toFixed(2) + 'px) scale(' + s.toFixed(4) + ')';
-        U.opacidade(D.manchas[i], 0.42 * (0.3 + 0.7 * junta) * U.clamp(tl / 0.3));
+        U.opacidade(D.manchas[i], 0.42 * Math.pow(junta, 1.6) * U.clamp(tl / 0.3));
       }
       A.uma(cena, 'centralizar', t, marca('final.centralizar'), function () { D.logo.play('centralizar'); });
       D.titulo.quadro(t);

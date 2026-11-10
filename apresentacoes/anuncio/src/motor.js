@@ -28,7 +28,7 @@
   var FORMATOS = {
     '9x16': { qw: 1080, qh: 1920, z: 2, W: 540, H: 960, L: 34, R: 466, T: 148, B: 740, tipo: 'retrato', hero: 56, gancho: 92, fim: 48, ui: 21, uiP: 17, uiG: 31, ficha: 21 },
     '4x5': { qw: 1080, qh: 1350, z: 2, W: 540, H: 675, L: 40, R: 500, T: 50, B: 625, tipo: 'feed', hero: 50, gancho: 84, fim: 44, ui: 19, uiP: 16, uiG: 29, ficha: 20 },
-    '16x9': { qw: 1920, qh: 1080, z: 2.25, W: 1920 / 2.25, H: 480, L: 56, R: 797, T: 44, B: 400, tipo: 'paisagem', hero: 56, gancho: 90, fim: 44, ui: 18, uiP: 15, uiG: 26, ficha: 18 }
+    '16x9': { qw: 1920, qh: 1080, z: 2.25, W: 1920 / 2.25, H: 480, L: 56, R: 797, T: 44, B: 400, tipo: 'paisagem', hero: 56, gancho: 90, fim: 48, ui: 18, uiP: 15, uiG: 26, ficha: 20 }
   };
   function formatoPelaJanela() { var a = innerWidth / Math.max(1, innerHeight); return a < 0.7 ? '9x16' : a < 1.25 ? '4x5' : '16x9'; }
   var idFormato = FORMATOS[busca.get('formato')] ? busca.get('formato') : formatoPelaJanela();
@@ -158,6 +158,11 @@
       var p = U.seg(t, a, w.t), e = U.saiCub(p);
       var s = U.lerp(S0, 1, e), y = (1 - e) * 0.16, b = (o.borrao || 12) * (1 - U.saiQuad(p)), op = U.clamp(p * 3);
       if (t > w.t) s = 1 - 0.045 * Math.sin((t - w.t) * 26) * Math.exp(-(t - w.t) * 11);
+      if (o.sai === undefined || t < o.sai) {
+        /* assentou: identidade exata (o texto parado é sempre desenhado do mesmo jeito) */
+        if (t > w.t + 0.45) { U.opacidade(w.el, 1); if (w.el._quieto !== 1) { w.el.style.transform = 'none'; w.el.style.filter = 'none'; w.el._quieto = 1; } continue; }
+      }
+      w.el._quieto = 0;
       if (o.sai !== undefined) {
         var ts = o.sai + i * (o.cascataSai || 0.025), q = U.seg(t, ts, ts + (o.durSai || 0.22)), eq = U.entraQuad(q);
         y -= eq * (o.subirSai === undefined ? 0.9 : o.subirSai); b += eq * 14; op *= 1 - q; s *= 1 - 0.06 * eq;
@@ -256,12 +261,16 @@
     if (t < ultimo - 0.0001) cenas.forEach(function (c) { c._feito = {}; if (c.reiniciar) c.reiniciar(); });
     ultimo = t;
     var tr = tremor(t);
-    camera.style.transform = 'translate(' + tr.x.toFixed(2) + 'px,' + tr.y.toFixed(2) + 'px) rotate(' + tr.r.toFixed(3) + 'deg) scale(' + (1 + tr.s).toFixed(4) + ')';
+    var parada = Math.abs(tr.x) < 0.01 && Math.abs(tr.y) < 0.01 && Math.abs(tr.r) < 0.001 && tr.s < 0.0001;
+    camera.style.transform = parada ? 'none' : 'translate(' + tr.x.toFixed(2) + 'px,' + tr.y.toFixed(2) + 'px) rotate(' + tr.r.toFixed(3) + 'deg) scale(' + (1 + tr.s).toFixed(4) + ')';
+    var tema = null;
     cenas.forEach(function (c) {
       var vis = t >= c.de && t < c.ate;
       if (c._vis !== vis) { c.el.classList.toggle('on', vis); c._vis = vis; }
+      if (vis) tema = c.tema;
       if (vis || c.sempre) c.quadro(t, A);
     });
+    if (tema && camera._tema !== tema) { camera.classList.toggle('forca-escuro', tema === 'escuro'); camera.classList.toggle('forca-claro', tema !== 'escuro'); camera._tema = tema; }
   };
   A.comecar = function () { inicio = performance.now(); ultimo = -1; };
   A.montar = montar;

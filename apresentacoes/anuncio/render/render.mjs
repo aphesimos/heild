@@ -22,7 +22,10 @@
  *
  * Determinismo: Math.random com semente, o IntersectionObserver sempre "visível" (os orbs nunca param por
  * estarem fora da tela) e o devicePixelRatio em 3 para os orbs (canvas) saírem nítidos no palco ampliado.
- * Dois renders do mesmo quadro saem idênticos (veja o README).
+ * Do lado do Chromium: o compositor termina a rasterização antes de desenhar, cada quadro rasteriza a página
+ * inteira de novo (sem ladrilhos guardados de quadros anteriores) e um quadro de assentamento vem antes da
+ * captura. O estado da página é idêntico entre renders; a imagem também, com a exceção descrita no README
+ * (anti-serrilhado de uma letra em movimento, em poucos quadros).
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { once } from 'node:events';
@@ -107,7 +110,12 @@ async function renderizar(peca, formato) {
   const faixa = intervalo();
   const nome = `${NOME[peca]}-${formato}`;
   const erros = [];
-  const browser = await chromium.launch({ args: ['--font-render-hinting=none', '--disable-lcd-text', '--force-color-profile=srgb'] });
+  const browser = await chromium.launch({ args: [
+    '--font-render-hinting=none', '--disable-lcd-text', '--force-color-profile=srgb',
+    // o compositor termina tudo (inclusive a rasterização) antes de desenhar: nada de ladrilho atrasado ou de baixa resolução
+    '--run-all-compositor-stages-before-draw', '--disable-checker-imaging', '--disable-threaded-animation',
+    '--disable-image-animation-resync', '--disable-new-content-rendering-timeout',
+    ...(process.env.CHROMIUM_FLAGS ? process.env.CHROMIUM_FLAGS.split(/\s+/).filter(Boolean) : [])] });
   const contexto = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, colorScheme: 'light', reducedMotion: 'no-preference' });
   const page = await contexto.newPage();
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') erros.push(`${m.type()}: ${m.text()}`); });
@@ -155,9 +163,12 @@ async function renderizar(peca, formato) {
     if (alvo > antes) await page.clock.runFor(alvo - antes);
     antes = alvo;
     const t = i / FPS;
-    await page.evaluate((tt) => window.ANUNCIO.quadro(tt), t);
+    // o fundo da página (coberto pelo quadro) muda um nível de cor a cada quadro: isso invalida a camada inteira e
+    // obriga a rasterizar tudo de novo, sem reaproveitar ladrilhos de quadros anteriores
+    await page.evaluate(([tt, k]) => { window.ANUNCIO.quadro(tt); document.body.style.backgroundColor = k % 2 ? 'rgb(19, 17, 15)' : 'rgb(19, 17, 14)'; }, [t, i]);
     const quer = faixa ? i >= faixa.de && (i - faixa.de) % faixa.passo === 0 : true;
     if (!quer) continue;
+    await page.screenshot({ type: 'png', clip: { x: 0, y: 0, width: 1, height: 1 } }); // um quadro de assentamento
     const png = await page.screenshot({ type: 'png' });
     if (ff) { if (!ff.stdin.write(png)) await once(ff.stdin, 'drain'); }
     else fs.writeFileSync(path.join(pastaPng, `q${String(i).padStart(4, '0')}.png`), png);
