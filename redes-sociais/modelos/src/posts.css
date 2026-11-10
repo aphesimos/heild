@@ -1,0 +1,139 @@
+/*
+ * O design system dos posts da Heild — o quadro, a grade, a tipografia e as peças.
+ *
+ * O quadro é desenhado em pontos de celular: um post de feed tem 390 × 520 pt (3:4), o tamanho em que ele
+ * aparece no feed de um celular comum. O render amplia com `zoom` até o tamanho exato do arquivo
+ * (1080 × 1440 px, fator 2,7692). Assim os tokens do design system entram como estão (raio, sombra,
+ * espaço, a escala do celular), sem conta à mão, e o que se lê no post é o que se lê na tela.
+ *
+ * Tokens: apresentacoes/comum/tokens.css (cópia fiel de design-system/tokens.css). Nada de hexadecimal aqui.
+ * Tema: cada quadro leva .forca-claro ou .forca-escuro (os modos forçados dos tokens).
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: var(--areia-500); }
+body { font-family: var(--font-texto); -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+#palco { display: flex; flex-wrap: wrap; gap: 0; align-items: flex-start; }
+
+/* ---------- o quadro ---------- */
+.quadro {
+  --pw: 390px;          /* largura em pontos */
+  --ph: 520px;          /* altura em pontos */
+  --m: 24px;            /* margem: espaco-6 */
+  --col: calc((var(--pw) - 2 * var(--m) - 5 * 8px) / 6);   /* 6 colunas, calha de 8px (espaco-2) */
+  position: relative;
+  width: var(--pw);
+  height: var(--ph);
+  overflow: hidden;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--font-texto);
+  font-size: 15px;
+  line-height: 21px;
+  flex: none;
+}
+.quadro.stories { --ph: 693.33px; }   /* 1080 × 1920 */
+.quadro.quadrado { --ph: 390px; }     /* 1080 × 1080 */
+.quadro.capa-fb { --pw: 390px; --ph: 144.27px; --m: 16px; } /* 1702 × 630 (2× 851 × 315) desenhado em 390 pt */
+
+/* o chão: a grade de pontos da marca (marca-e-site.md), 1px a cada 24px na escala da tela */
+.chao-pontos {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, var(--grade-ponto) 0.55px, transparent 0.75px);
+  background-size: 12px 12px;
+  background-position: 6px 6px;
+}
+/* o chão de produto: o gradiente de fundo, vertical, de altura cheia */
+.chao-gradiente { position: absolute; inset: 0; background: var(--gradiente-fundo); }
+.chao-rebaixado { position: absolute; inset: 0; background: var(--gradiente-rebaixada); }
+
+/* a área útil, dentro das margens */
+.area { position: absolute; inset: var(--m); display: flex; flex-direction: column; }
+.stories .area { inset: 96px var(--m) 172px; }        /* zona segura: 250 px em cima, 340 px embaixo (a logo fica na faixa dos 340) */
+.reels .area { inset: 96px 40px 250px var(--m); }     /* Reels: 270 px em cima, 670 px embaixo, botões à direita */
+
+/* ---------- a assinatura: logo e contador ---------- */
+.pe { position: absolute; left: var(--m); right: var(--m); bottom: var(--m); display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.pe heild-logo { width: 80px; color: var(--primaria); display: block; }
+.contador { font-size: 12px; line-height: 16px; color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+.serie { font-size: 12px; line-height: 16px; color: var(--texto-suave); }
+.topo { position: absolute; left: var(--m); right: var(--m); top: var(--m); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* ---------- tipografia (pontos de celular) ---------- */
+.t-hero { font-family: var(--font-titulo); font-size: 44px; line-height: 44px; font-weight: 500; letter-spacing: -0.04em; text-wrap: balance; margin: 0; }
+.t-hero.g { font-size: 52px; line-height: 50px; }
+.t-titulo { font-family: var(--font-titulo); font-size: 30px; line-height: 32px; font-weight: 500; letter-spacing: -0.04em; text-wrap: balance; margin: 0; }
+.t-leve { font-family: var(--font-titulo); font-size: 56px; line-height: 56px; font-weight: 300; letter-spacing: -0.025em; text-wrap: balance; margin: 0; }
+.t-leve.g { font-size: 76px; line-height: 72px; }
+.t-leve.p { font-size: 36px; line-height: 40px; }
+.t-sub { font-size: 17px; line-height: 24px; letter-spacing: -0.01em; color: var(--texto-suave); text-wrap: pretty; margin: 0; }
+.t-corpo { font-size: 15px; line-height: 22px; text-wrap: pretty; margin: 0; }
+.t-enfase { font-size: 15px; line-height: 22px; font-weight: 500; margin: 0; }
+.t-rotulo { font-size: 12px; line-height: 16px; color: var(--texto-suave); margin: 0; }
+.t-cita { font-style: italic; font-size: 15px; line-height: 23px; text-wrap: pretty; margin: 0; }
+.t-cita-g { font-family: var(--font-titulo); font-style: italic; font-weight: 300; font-size: 30px; line-height: 34px; letter-spacing: -0.02em; text-wrap: balance; margin: 0; }
+.t-codigo { font-family: var(--font-mono); font-size: 12px; line-height: 16px; color: var(--texto-suave); }
+.num { font-variant-numeric: tabular-nums; }
+.suave { color: var(--texto-suave); }
+.destaque-texto { color: var(--destaque-texto); }
+
+/* ---------- peças ---------- */
+.ponto-destaque { display: inline-block; width: 8px; height: 8px; border-radius: var(--raio-pilula); background: var(--destaque); flex: none; }
+.marcador { display: inline-block; width: 8px; height: 8px; border-radius: var(--raio-pilula); background: var(--c); flex: none; }
+.pilula { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: var(--raio-pilula); background: var(--elevada); box-shadow: var(--sombra-contorno); font-size: 12px; line-height: 16px; white-space: nowrap; }
+.botao { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 16px; border-radius: var(--raio-pilula); background: var(--primaria); color: var(--texto-sobre-primaria); font-size: 14px; font-weight: 500; white-space: nowrap; }
+.botao.sec { background: var(--elevada); color: var(--texto); box-shadow: var(--sombra-contorno); }
+.cartao { background: var(--superficie); border-radius: var(--raio-cartao); box-shadow: var(--sombra-cartao); padding: 16px; }
+.cartao.elevado { background: var(--elevada); }
+.painel { background: var(--superficie); border-radius: var(--raio-campo); box-shadow: var(--sombra-painel); padding: 16px; }
+.rebaixada { background: var(--rebaixada); border-radius: var(--raio-cartao); padding: 16px; }
+.selo { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px; border-radius: var(--raio-pilula); font-size: 12px; line-height: 16px; font-weight: 500; color: var(--texto); background: color-mix(in srgb, var(--c) 15%, transparent); }
+.selo .ico { color: var(--c); }
+.ico { width: 14px; height: 14px; flex: none; }
+.divisoria { height: 1px; background: var(--borda); border: 0; margin: 0; }
+.exemplo { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; color: var(--texto-suave); }
+.exemplo::before { content: ''; width: 6px; height: 6px; border-radius: var(--raio-pilula); background: var(--texto-suave); }
+
+/* orb: a sombra-orb nunca sai (orbs claros no claro dependem dela) */
+.orb { display: block; flex: none; filter: drop-shadow(var(--sombra-orb)); }
+.orb svg { display: block; width: 100%; height: 100%; }
+
+/* ---------- a luz: manchas nas cores dos integrantes juntas numa faixa (a exceção do hero e do fechamento) ---------- */
+.luz {
+  --mistura: multiply; --luz-nucleo: rgb(255 255 255 / 0.85);
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+}
+.forca-escuro .luz { --mistura: screen; --luz-nucleo: rgb(255 244 230 / 0.22); }
+.luz .mancha {
+  position: absolute; left: 50%; top: var(--y, 50%); width: 220px; aspect-ratio: 1.5;
+  background: radial-gradient(closest-side, var(--c), color-mix(in oklab, var(--c) 40%, transparent) 45%, transparent);
+  mix-blend-mode: var(--mistura); opacity: var(--forca, 0.55);
+  transform: translate(-50%, -50%) translate(var(--x), var(--dy, 0px)) scale(var(--s, 1));
+}
+.luz .nucleo {
+  position: absolute; left: 50%; top: var(--y, 50%); width: 96%; height: 18%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, var(--luz-nucleo), transparent);
+}
+
+/* ---------- o desenho das camadas (marca-e-site.md): planos isométricos em traço ---------- */
+.camadas { position: relative; }
+.camadas .plano {
+  position: absolute; left: 50%; width: var(--lw, 220px); height: var(--lh, 140px);
+  border: 1.5px solid var(--texto); border-radius: var(--raio-cartao); background: var(--fundo);
+  transform: translate(-50%, -50%) rotateX(60deg) rotateZ(-45deg);
+}
+.camadas .rotulo-plano { position: absolute; transform: translate(0, -50%); }
+.linha-passagem { position: absolute; width: 0; border-left: 1.5px dashed var(--texto-suave); }
+
+/* a pílula do I (o ícone da marca abaixo de 72px, logos/heild-i-*.svg): as medidas do componente, 147,297 × 386,111 */
+.pilula-marca { display: block; aspect-ratio: 147.297 / 386.111; border-radius: var(--raio-pilula); background: var(--primaria); }
+
+/* No claro, o fim do gradiente de fundo (areia 300) reprova o texto-suave (3,8:1): o que fica no pé leva texto
+   (gradientes.md). Vale para o pé e para a marca de exemplo, que ficam na parte de baixo do quadro. */
+.forca-claro .chao-gradiente ~ .pe .serie,
+.forca-claro .chao-gradiente ~ .pe .contador,
+.forca-claro .chao-gradiente ~ .area .exemplo { color: var(--texto); }
+.forca-claro .chao-gradiente ~ .area .exemplo::before { background: var(--texto); }
