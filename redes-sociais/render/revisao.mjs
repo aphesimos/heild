@@ -1,7 +1,7 @@
 // A revisão visual: folhas de contato de cada grupo e o mock do perfil, com a grade no corte 3:4.
 //
 // Uso (depois do render.mjs):  node redes-sociais/render/revisao.mjs
-// Saída em redes-sociais/revisao/: folha-fixados.png, folha-feed.png, folha-stories-perfil.png e grade.png
+// Saída em redes-sociais/revisao/: folha-fixados.png, folha-feed.png, folha-stories-perfil.png e grade.png (em 2×)
 // (e grade.html, a mesma grade para abrir no navegador). Lê revisao/manifesto.json, escrito pelo render.
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
@@ -29,6 +29,7 @@ const base = `<meta charset="utf-8"><style>${tokens}
   h1 { font-size: 22px; margin: 0 0 20px; font-weight: 500; } .linha { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 22px; }
   .rot { width: 150px; flex: none; font-size: 13px; line-height: 18px; } .rot b { display: block; font-size: 16px; }
   img { display: block; border-radius: 4px; box-shadow: var(--sombra-cartao); }
+  .id { opacity: 0; transition: opacity .15s; } .cel:hover .id { opacity: 1; }  /* o número de ordem só ao passar o mouse: a grade fica como o perfil real */
 </style>`;
 
 function folha(titulo, posts, alt = 300) {
@@ -56,9 +57,9 @@ function perfilHtml(larg) {
   </div>
   <div style="padding:0 20px 14px;font-size:14px;line-height:19px">${bio.map((l, i) => i === 0 ? `<b>${l}</b>` : l).join('<br>')}</div>
   <div style="display:flex;gap:16px;padding:4px 20px 18px">${destaques.map(d => `<div style="text-align:center;font-size:12px"><div style="width:64px;height:64px;border-radius:50%;padding:3px;border:1px solid #ddd"><img src="${url(d.arquivos[0])}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;box-shadow:none"></div>${NOMES[d.id]}</div>`).join('')}</div>
-  <div style="display:grid;grid-template-columns:repeat(3,${cel}px);gap:2px">${grade.map(p => `<div style="position:relative;width:${cel}px;aspect-ratio:3/4;overflow:hidden">
+  <div style="display:grid;grid-template-columns:repeat(3,${cel}px);gap:2px">${grade.map(p => `<div class="cel" style="position:relative;width:${cel}px;aspect-ratio:3/4;overflow:hidden">
     <img src="${url(p.arquivos[0])}" style="width:100%;height:100%;object-fit:cover;border-radius:0;box-shadow:none">${p.grupo === 'fixado' ? pino : p.tipo === 'reels' ? reel : p.tipo === 'carrossel' ? multi : ''}
-    <span style="position:absolute;left:6px;bottom:6px;font:11px ui-monospace,monospace;color:#fff;background:rgba(0,0,0,.45);padding:1px 5px;border-radius:4px">${p.id}</span></div>`).join('')}</div></div>`;
+    <span class="id" style="position:absolute;left:6px;top:6px;font:11px ui-monospace,monospace;color:#fff;background:rgba(0,0,0,.45);padding:1px 5px;border-radius:4px">${p.id}</span></div>`).join('')}</div></div>`;
 }
 
 const browser = await chromium.launch();
@@ -75,7 +76,16 @@ async function foto_(html, arq) {
 await foto_(folha('Os três fixados', fixados), 'folha-fixados.png');
 await foto_(folha('O feed, de 01 a 21', lista.filter(p => p.grupo === 'feed' || p.grupo === 'reels'), 260), 'folha-feed.png');
 await foto_(folha('Stories, perfil e destaques', lista.filter(p => p.grupo === 'stories' || p.grupo === 'perfil'), 360), 'folha-stories-perfil.png');
-await page.setViewportSize({ width: 430, height: 900 });
-await foto_(perfilHtml(430), 'grade.png');
+// a grade em resolução dobrada (deviceScaleFactor 2), para ler os detalhes
+const page2 = await (await browser.newContext({ viewport: { width: 430, height: 900 }, deviceScaleFactor: 2 })).newPage();
+{
+  const tmp = path.join(REV, '_tmp.html');
+  fs.writeFileSync(tmp, perfilHtml(430));
+  await page2.goto('file://' + tmp);
+  await page2.waitForLoadState('networkidle');
+  await page2.screenshot({ path: path.join(REV, 'grade.png'), fullPage: true });
+  fs.unlinkSync(tmp);
+  console.log('grade.png');
+}
 fs.writeFileSync(path.join(REV, 'grade.html'), perfilHtml(430).replaceAll('file://' + RS + '/', '../'));
 await browser.close();
