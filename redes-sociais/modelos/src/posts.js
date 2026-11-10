@@ -471,7 +471,7 @@
     video: 'A logo em movimento: o <heild-logo> com animation="cycle" gravado em tela, 1080 × 1920, uns 30 segundos, com as formas do post 10.',
     slides: [{ l: 'livre', html:
       '<div class="area" style="justify-content:center;gap:16px">' +
-      '<div style="height:150px;display:flex;align-items:center">' + logo(260, 'orbs') + '</div>' +
+      '<div style="height:150px;display:flex;align-items:center">' + logo(200, 'orbs') + '</div>' +
       '<h1 class="t-hero g" style="max-width:320px">A logo que se transforma.</h1>' +
       '<p class="t-sub" style="max-width:300px">As formas do I, em movimento.</p></div>', semPe: true }],
     legenda: 'A logo que se transforma.\n\nO I da Heild se divide em cápsulas, vira uma forma e volta a ser uma pílula. Contração, divisão em cascata, pausa e retorno, com um leve assentamento.\n\nAs formas paradas estão no carrossel "O I que vira tudo".',
