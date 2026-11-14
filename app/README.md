@@ -94,6 +94,8 @@ Tema (src/theme/temas.ts)                       subplano 01, seção 10
 - **Sombras** nomeadas, na tinta do tema (`--shadow-ink`: o texto no claro, preto no escuro): `shadow-contorno`, `shadow-cartao`, `shadow-painel`, `shadow-campo`, `shadow-pilula`, `inset-shadow-trilho`, e as padrão `shadow-sm` a `shadow-2xl` redefinidas.
 - Avatar do integrante pode ter cor própria no escuro (`cor_escuro`), porque o orb preto do Assistente sumiria no fundo escuro.
 - Três temas de exemplo: **tema de fábrica = o visual do Figma** (FG `#696665`, degradê de branco a `#d9d2cc`, coluna de `#c0c0c0` a `#96928f`, o Geral se chama "Assistente" e tem orb preto), Horizonte Contábil e Verde Campo Assessoria (este renomeia o DP para "Pessoal", para provar que o nome vem do tema).
+- Dois temas de escritórios parceiros reais, **Condesp** e **Requinte** (`src/theme/temas/`), com a marca deles e permissão deles, só no wireframe: não entram no site nem no GitHub Pages. Origem das cores, contrastes e limitações em `src/theme/TEMAS-ESCRITORIOS.md`.
+- Logo em negativo para o escuro: `logotipo_ref_escuro` e `logo_completa_ref_escuro` (opcionais).
 
 ## Estrutura das telas (do Figma)
 

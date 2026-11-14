@@ -1,4 +1,6 @@
 import type { Tema } from './tipos'
+import { temaCondesp } from './temas/condesp'
+import { temaRequinte } from './temas/requinte'
 
 /**
  * Temas de exemplo para o laboratório. Os escritórios são fictícios.
@@ -172,4 +174,9 @@ export const temaVerdeCampo: Tema = {
   },
 }
 
-export const temas = [temaFabrica, temaContabilidadeHorizonte, temaVerdeCampo]
+/**
+ * Condesp e Requinte: marcas reais de escritórios parceiros, usadas com a
+ * permissão deles, só no wireframe (nunca no site nem no GitHub Pages).
+ * Detalhes em ./TEMAS-ESCRITORIOS.md.
+ */
+export const temas = [temaFabrica, temaContabilidadeHorizonte, temaVerdeCampo, temaCondesp, temaRequinte]

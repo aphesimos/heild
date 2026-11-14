@@ -83,6 +83,9 @@ export interface Tema {
   logotipo_ref?: string
   /** Logo completa do escritório, com a barra aberta, no login e no app. Sem ela, logotipo (ou sigla) e nome. */
   logo_completa_ref?: string
+  /** Versões para o modo escuro (a logo em negativo), quando a do claro some no fundo escuro. */
+  logotipo_ref_escuro?: string
+  logo_completa_ref_escuro?: string
   /** A marca da própria Heild: wordmark animado (HE fechado, HEILD aberto). Marca branca não usa. */
   marca?: 'heild'
   tokens: TokensTema
