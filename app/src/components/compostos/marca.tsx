@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { useTema } from '@/theme/ThemeProvider'
-import type { Tema } from '@/theme/tipos'
+import type { ModoCor, Tema } from '@/theme/tipos'
 
 /*
  * A marca do sistema em dois desenhos:
@@ -23,6 +23,15 @@ const ALTURA = 387
 
 export const ehHeild = (tema: Tema) => tema.marca === 'heild'
 
+/** Logotipo e logo completa do modo atual: no escuro, as versões em negativo, se o tema tiver. */
+export function logosDoModo(tema: Tema, modo: ModoCor) {
+  const escuro = modo === 'escuro'
+  return {
+    logotipo: (escuro && tema.logotipo_ref_escuro) || tema.logotipo_ref,
+    completa: (escuro && tema.logo_completa_ref_escuro) || tema.logo_completa_ref,
+  }
+}
+
 /** O wordmark da Heild. `aberta` falso mostra só o HE; trocar anima HE ⇄ HEILD. */
 export function MarcaHeild({ aberta = true, altura = 26, className }: { aberta?: boolean; altura?: number; className?: string }) {
   const k = altura / ALTURA
@@ -44,11 +53,12 @@ export function MarcaHeild({ aberta = true, altura = 26, className }: { aberta?:
 }
 
 /** Logotipo da marca branca (imagem ou sigla) num quadrado de 44 px. */
-function Logotipo({ tema }: { tema: Tema }) {
+function Logotipo({ tema, modo }: { tema: Tema; modo: ModoCor }) {
+  const { logotipo } = logosDoModo(tema, modo)
   return (
     <span className="flex h-11 w-11 shrink-0 items-center justify-center">
-      {tema.logotipo_ref ? (
-        <img src={tema.logotipo_ref} alt={tema.nome_produto} className="max-h-9 w-auto max-w-11 object-contain" />
+      {logotipo ? (
+        <img src={logotipo} alt={tema.nome_produto} className="max-h-9 w-auto max-w-11 object-contain" />
       ) : (
         <span className="text-foreground text-[26px] leading-none font-semibold tracking-tighter" style={{ fontFamily: 'var(--font-heading)' }} aria-label={tema.nome_produto}>
           {tema.sigla}
@@ -63,7 +73,8 @@ function Logotipo({ tema }: { tema: Tema }) {
  * documentos). `aberta` falso é a versão curta: o HE da Heild, o logotipo do escritório.
  */
 export function Marca({ aberta = true, className }: { aberta?: boolean; className?: string }) {
-  const { tema } = useTema()
+  const { tema, modo } = useTema()
+  const { completa } = logosDoModo(tema, modo)
   if (ehHeild(tema)) {
     // O HE fica centrado na coluna de 44 px da barra fechada; aberta, o wordmark segue dali.
     return (
@@ -72,16 +83,16 @@ export function Marca({ aberta = true, className }: { aberta?: boolean; classNam
       </span>
     )
   }
-  if (aberta && tema.logo_completa_ref) {
+  if (aberta && completa) {
     return (
       <span className={cn('flex h-11 shrink-0 items-center', className)}>
-        <img src={tema.logo_completa_ref} alt={tema.nome_produto} className="max-h-9 w-auto max-w-[200px] object-contain" />
+        <img src={completa} alt={tema.nome_produto} className="max-h-9 w-auto max-w-[200px] object-contain" />
       </span>
     )
   }
   return (
     <span className={cn('flex min-w-0 items-center gap-2.5', className)}>
-      <Logotipo tema={tema} />
+      <Logotipo tema={tema} modo={modo} />
       {aberta && <span className="truncate text-base font-medium tracking-tight whitespace-nowrap">{tema.nome_produto}</span>}
     </span>
   )

@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tooltip } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { useTema } from '@/theme/ThemeProvider'
-import { ehHeild, Marca, MarcaHeild } from './marca'
+import { ehHeild, logosDoModo, Marca, MarcaHeild } from './marca'
 
 export interface ItemLateral {
   id: string
@@ -211,13 +211,14 @@ function ItemMenu({ icone, children, onClick }: { icone: ReactNode; children: Re
 
 /** Marca curta do sistema (o HE da Heild, ou o logotipo/sigla do escritório), num quadrado de 44 px. */
 export function SiglaMarca() {
-  const { tema } = useTema()
+  const { tema, modo } = useTema()
+  const { logotipo } = logosDoModo(tema, modo)
   return (
     <span className="flex h-11 w-11 shrink-0 items-center justify-center">
       {ehHeild(tema) ? (
         <MarcaHeild aberta={false} />
-      ) : tema.logotipo_ref ? (
-        <img src={tema.logotipo_ref} alt={tema.nome_produto} className="max-h-9 w-auto max-w-11 object-contain" />
+      ) : logotipo ? (
+        <img src={logotipo} alt={tema.nome_produto} className="max-h-9 w-auto max-w-11 object-contain" />
       ) : (
         <span className="text-foreground text-[26px] leading-none font-semibold tracking-tighter" style={{ fontFamily: 'var(--font-heading)' }} aria-label={tema.nome_produto}>
           {tema.sigla}
